@@ -5,6 +5,7 @@ import com.codewarts.noriter.oauth.jwt.JwtProvider;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -47,5 +48,14 @@ public class OAuthController {
         response.setHeader("Access-Token", jwtAccessToken);
         response.setHeader("Refresh-Token", jwtRefreshToken);
         return Collections.singletonMap("profileImageUrl", loginMember.getProfileImageUrl());
+    }
+
+    @GetMapping("reissue/access-token")
+    public void reissue(HttpServletRequest request, HttpServletResponse response) {
+        String refreshToken = request.getHeader("Refresh-Token");
+        Long refreshTokenMemberId = jwtProvider.decode(refreshToken);
+        String reissuedAccessToken = jwtProvider.issueAccessToken(refreshTokenMemberId);
+
+        response.setHeader("Access-Token", reissuedAccessToken);
     }
 }

@@ -21,25 +21,26 @@ public class JwtProvider {
     }
 
     public String issueAccessToken(Long memberId) {
-        return JWT.create()
-            .withIssuer(issuer)
-            .withSubject("Access-Token")
-            .withAudience(memberId.toString())
-            .withIssuedAt(Date.from(Instant.now()))
-            .withExpiresAt(Date.from(Instant.now().plusMillis(ONE_HOUR)))
-
-            .withClaim("memberId", memberId)
-
-            .sign(algorithm);
+        return issueToken("Access-Token", memberId, Date.from(Instant.now().plusMillis(ONE_HOUR)));
     }
 
     public String issueRefreshToken(Long memberId) {
+        return issueToken("Refresh-Token", memberId, Date.from(Instant.now().plusMillis(ONE_WEEK)));
+    }
+
+    public Long decode(String token) {
+        return JWT.decode(token)
+            .getClaim("memberId")
+            .asLong();
+    }
+
+    private String issueToken(String subject, Long memberId, Date expiresAt) {
         return JWT.create()
             .withIssuer(issuer)
-            .withSubject("Refresh-Token")
+            .withSubject(subject)
             .withAudience(memberId.toString())
             .withIssuedAt(Date.from(Instant.now()))
-            .withExpiresAt(Date.from(Instant.now().plusMillis(ONE_WEEK)))
+            .withExpiresAt(expiresAt)
 
             .withClaim("memberId", memberId)
 
