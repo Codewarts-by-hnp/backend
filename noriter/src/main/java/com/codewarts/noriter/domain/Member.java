@@ -36,13 +36,20 @@ public class Member {
     private String nickname;
     private String email;
     private String profileImageUrl;
+    private String refreshToken;
 
     @Builder
-    public Member(ResourceServer resourceServer, Long resourceServerId, String nickname, String email, String profileImageUrl) {
+    public Member(ResourceServer resourceServer, Long resourceServerId,
+        String nickname, String email, String profileImageUrl, String refreshToken) {
         this.resourceServer = resourceServer;
         this.resourceServerId = resourceServerId;
         this.nickname = nickname;
         this.email = email;
         this.profileImageUrl = profileImageUrl;
+        this.refreshToken = refreshToken;
+    }
+
+    public void updateRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
     }
 }

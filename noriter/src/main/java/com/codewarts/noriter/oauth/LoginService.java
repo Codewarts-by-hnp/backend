@@ -26,4 +26,19 @@ public class LoginService {
         }
         return optionalMember.get();
     }
+
+    @Transactional
+    public void updateRefreshToken(String jwtRefreshToken, Long memberId) {
+        Member findMember = memberRepository.findById(memberId)
+            .orElseThrow(RuntimeException::new);
+        findMember.updateRefreshToken(jwtRefreshToken);
+    }
+
+    @Transactional
+    public void deleteRefreshToken(Long decodedMemberId) {
+        Member findMember = memberRepository.findById(decodedMemberId)
+            .orElseThrow(RuntimeException::new);
+
+        findMember.updateRefreshToken(null);
+    }
 }
