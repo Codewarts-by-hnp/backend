@@ -1,6 +1,7 @@
 package com.codewarts.noriter.oauth;
 
 import com.codewarts.noriter.domain.Member;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -17,7 +18,7 @@ public class GithubOAuthService implements OAuthService {
 
     @Override
     public OAuthAccessToken reqeustAccessToken(String code) {
-        return (OAuthAccessToken) webClient
+        GithubAccessTokenResponse githubAccessTokenResponse = webClient
             .post()
             .uri(oauthProperties.getAccessTokenApiUrl())
             .accept(MediaType.APPLICATION_JSON)
@@ -29,11 +30,22 @@ public class GithubOAuthService implements OAuthService {
             )
             .retrieve()
             .bodyToMono(GithubAccessTokenResponse.class)
-            .subscribe(GithubAccessTokenResponse::toOAuthAccessToken);
+            .block();
+
+        return githubAccessTokenResponse.toOAuthAccessToken();
     }
 
     @Override
     public Member reqeustUserInfo(OAuthAccessToken oauthAccessToken) {
-        return null;
+        GithubUserInfo githubUserInfo = webClient
+            .get()
+            .uri(oauthProperties.getUserInfoApiUrl())
+            .accept(MediaType.APPLICATION_JSON)
+            .header(HttpHeaders.AUTHORIZATION, oauthAccessToken.getAuthorizationValue())
+            .retrieve()
+            .bodyToMono(GithubUserInfo.class)
+            .block();
+
+        return githubUserInfo.toMember();
     }
 }
