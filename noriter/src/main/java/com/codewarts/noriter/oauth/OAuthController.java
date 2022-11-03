@@ -25,7 +25,7 @@ public class OAuthController {
     private final LoginService loginService;
     private final JwtProvider jwtProvider;
 
-    @GetMapping("/{resource-server}/loginform")
+    @GetMapping("/{resource-server}/login/form")
     public void redirectLoginForm(HttpServletResponse response,
         @PathVariable(name = "resource-server") String resourceServer) throws IOException {
         String loginFormUrl = mapper.getOAuthProperties(resourceServer).getLoginFormUrl();
@@ -44,6 +44,7 @@ public class OAuthController {
 
         String jwtAccessToken = jwtProvider.issueAccessToken(loginMember.getId());
         String jwtRefreshToken = jwtProvider.issueRefreshToken(loginMember.getId());
+        loginService.updateRefreshToken(jwtRefreshToken, loginMember.getId());
 
         response.setHeader("Access-Token", jwtAccessToken);
         response.setHeader("Refresh-Token", jwtRefreshToken);
@@ -53,9 +54,17 @@ public class OAuthController {
     @GetMapping("reissue/access-token")
     public void reissue(HttpServletRequest request, HttpServletResponse response) {
         String refreshToken = request.getHeader("Refresh-Token");
-        Long refreshTokenMemberId = jwtProvider.decode(refreshToken);
-        String reissuedAccessToken = jwtProvider.issueAccessToken(refreshTokenMemberId);
+        Long decodedMemberId = jwtProvider.decode(refreshToken);
+        String reissuedAccessToken = jwtProvider.issueAccessToken(decodedMemberId);
 
         response.setHeader("Access-Token", reissuedAccessToken);
+    }
+
+    @PostMapping("/logout")
+    public void logout(HttpServletRequest request) {
+        String refreshToken = request.getHeader("Refresh-Token");
+        Long decodedMemberId = jwtProvider.decode(refreshToken);
+
+        loginService.deleteRefreshToken(decodedMemberId);
     }
 }
