@@ -31,6 +31,9 @@ dependencies {
 
 	annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
 
+	// JWT
+	implementation 'com.auth0:java-jwt:4.2.1'
+
 }
 
 tasks.named('test') {
