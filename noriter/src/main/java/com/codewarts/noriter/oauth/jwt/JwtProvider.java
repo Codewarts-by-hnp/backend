@@ -1,5 +1,7 @@
 package com.codewarts.noriter.oauth.jwt;
 
+import static com.codewarts.noriter.oauth.utils.OAuthUtils.ACCESS_TOKEN;
+import static com.codewarts.noriter.oauth.utils.OAuthUtils.REFRESH_TOKEN;
 import static javax.management.timer.Timer.ONE_HOUR;
 import static javax.management.timer.Timer.ONE_WEEK;
 
@@ -21,11 +23,11 @@ public class JwtProvider {
     }
 
     public String issueAccessToken(Long memberId) {
-        return issueToken("Access-Token", memberId, Date.from(Instant.now().plusMillis(ONE_HOUR)));
+        return issueToken(ACCESS_TOKEN, memberId, Date.from(Instant.now().plusMillis(ONE_HOUR)));
     }
 
     public String issueRefreshToken(Long memberId) {
-        return issueToken("Refresh-Token", memberId, Date.from(Instant.now().plusMillis(ONE_WEEK)));
+        return issueToken(REFRESH_TOKEN, memberId, Date.from(Instant.now().plusMillis(ONE_WEEK)));
     }
 
     public Long decode(String token) {
