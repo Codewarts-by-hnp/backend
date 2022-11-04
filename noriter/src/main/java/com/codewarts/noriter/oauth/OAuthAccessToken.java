@@ -6,8 +6,8 @@ import lombok.Getter;
 @Getter
 public class OAuthAccessToken {
 
-    private String tokenValue;
-    private String tokenType;
+    private final String tokenValue;
+    private final String tokenType;
 
     @Builder
     public OAuthAccessToken(String tokenValue, String tokenType) {

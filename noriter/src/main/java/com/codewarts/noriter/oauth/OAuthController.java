@@ -1,5 +1,8 @@
 package com.codewarts.noriter.oauth;
 
+import static com.codewarts.noriter.oauth.utils.OAuthUtils.ACCESS_TOKEN;
+import static com.codewarts.noriter.oauth.utils.OAuthUtils.REFRESH_TOKEN;
+
 import com.codewarts.noriter.domain.Member;
 import com.codewarts.noriter.oauth.jwt.JwtProvider;
 import java.io.IOException;
@@ -46,23 +49,23 @@ public class OAuthController {
         String jwtRefreshToken = jwtProvider.issueRefreshToken(loginMember.getId());
         loginService.updateRefreshToken(jwtRefreshToken, loginMember.getId());
 
-        response.setHeader("Access-Token", jwtAccessToken);
-        response.setHeader("Refresh-Token", jwtRefreshToken);
+        response.setHeader(ACCESS_TOKEN, jwtAccessToken);
+        response.setHeader(REFRESH_TOKEN, jwtRefreshToken);
         return Collections.singletonMap("profileImageUrl", loginMember.getProfileImageUrl());
     }
 
     @GetMapping("reissue/access-token")
     public void reissue(HttpServletRequest request, HttpServletResponse response) {
-        String refreshToken = request.getHeader("Refresh-Token");
+        String refreshToken = request.getHeader(REFRESH_TOKEN);
         Long decodedMemberId = jwtProvider.decode(refreshToken);
         String reissuedAccessToken = jwtProvider.issueAccessToken(decodedMemberId);
 
-        response.setHeader("Access-Token", reissuedAccessToken);
+        response.setHeader(ACCESS_TOKEN, reissuedAccessToken);
     }
 
     @PostMapping("/logout")
     public void logout(HttpServletRequest request) {
-        String refreshToken = request.getHeader("Refresh-Token");
+        String refreshToken = request.getHeader(REFRESH_TOKEN);
         Long decodedMemberId = jwtProvider.decode(refreshToken);
 
         loginService.deleteRefreshToken(decodedMemberId);
