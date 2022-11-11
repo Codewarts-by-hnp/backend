@@ -8,9 +8,12 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Hashtag {
 
@@ -25,4 +28,10 @@ public class Hashtag {
   private String content;
   private boolean deleted;
 
+  @Builder
+  public Hashtag(Article article, String content) {
+    this.article = article;
+    this.content = content;
+    this.deleted = false;
+  }
 }
