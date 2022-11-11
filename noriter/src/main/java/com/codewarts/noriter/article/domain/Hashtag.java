@@ -17,21 +17,21 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Hashtag {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn
-  private Article article;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn
+    private Article article;
 
-  private String content;
-  private boolean deleted;
+    private String content;
+    private boolean deleted;
 
-  @Builder
-  public Hashtag(Article article, String content) {
-    this.article = article;
-    this.content = content;
-    this.deleted = false;
-  }
+    @Builder
+    public Hashtag(Article article, String content) {
+        this.article = article;
+        this.content = content;
+        this.deleted = false;
+    }
 }
