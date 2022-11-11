@@ -11,11 +11,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Study extends Article {
 
-  private boolean completed;
+    private boolean completed;
 
-  @Builder
-  public Study(String title, String content, Member writer) {
-    super(title, content, writer, ArticleType.STUDY);
-    this.completed = false;
-  }
+    @Builder
+    public Study(String title, String content, Member writer) {
+        super(title, content, writer, ArticleType.STUDY);
+        this.completed = false;
+    }
 }

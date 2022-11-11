@@ -31,50 +31,52 @@ import org.springframework.util.ObjectUtils;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Article {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-  private String title;
-  private String content;
+    private String title;
+    private String content;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn
-  private Member writer;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn
+    private Member writer;
 
-  @OneToMany(mappedBy = "article", cascade = CascadeType.ALL)
-  private List<Hashtag> hashtags = new ArrayList<>();
+    @OneToMany(mappedBy = "article", cascade = CascadeType.ALL)
+    private List<Hashtag> hashtags = new ArrayList<>();
 
-  @OneToMany(mappedBy = "article")
-  private List<Image> images = new ArrayList<>();
+    @OneToMany(mappedBy = "article")
+    private List<Image> images = new ArrayList<>();
 
-  @OneToMany(mappedBy = "article")
-  private List<Wish> wishList = new ArrayList<>();
+    @OneToMany(mappedBy = "article")
+    private List<Wish> wishList = new ArrayList<>();
 
-  @OneToMany(mappedBy = "article")
-  private List<Comment> comments = new ArrayList<>();
+    @OneToMany(mappedBy = "article")
+    private List<Comment> comments = new ArrayList<>();
 
-  private LocalDateTime writtenTime;
-  private LocalDateTime editedTime;
+    private LocalDateTime writtenTime;
+    private LocalDateTime editedTime;
 
-  @Enumerated(EnumType.STRING)
-  private ArticleType articleType;
-  private boolean deleted;
+    @Enumerated(EnumType.STRING)
+    private ArticleType articleType;
+    private boolean deleted;
 
-  public Article(String title, String content, Member writer, ArticleType articleType) {
-    this.title = title;
-    this.content = content;
-    this.writer = writer;
-    this.writtenTime = LocalDateTime.now();
-    this.editedTime = LocalDateTime.now();
-    this.articleType = articleType;
-    this.deleted = false;
-  }
-
-  public void addHashtags(List<String> requestHashtags) {
-    if (ObjectUtils.isEmpty(requestHashtags)) return;
-    for (String requestHashtag : requestHashtags) {
-      this.hashtags.add(Hashtag.builder().article(this).content(requestHashtag).build());
+    public Article(String title, String content, Member writer, ArticleType articleType) {
+        this.title = title;
+        this.content = content;
+        this.writer = writer;
+        this.writtenTime = LocalDateTime.now();
+        this.editedTime = LocalDateTime.now();
+        this.articleType = articleType;
+        this.deleted = false;
     }
-  }
+
+    public void addHashtags(List<String> requestHashtags) {
+      if (ObjectUtils.isEmpty(requestHashtags)) {
+        return;
+      }
+        for (String requestHashtag : requestHashtags) {
+            this.hashtags.add(Hashtag.builder().article(this).content(requestHashtag).build());
+        }
+    }
 }

@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 @SpringBootTest
 class QuestionServiceTest {
+
     @Autowired
     private QuestionService questionService;
     @Autowired
@@ -29,13 +30,14 @@ class QuestionServiceTest {
     @Test
     @DisplayName("요청 받은 제목과 내용의 글을 저장한다")
     void post_title() {
-    	// given
+        // given
         Member member = Member.builder().nickname("phil").build();
         Member savedMember = memberRepository.save(member);
         List<String> hashtagsRequest = Arrays.asList("Spring", "Test");
-        QuestionPostRequest request = new QuestionPostRequest("안녕 나는 질문이야", "헬륨가스 먹고 요렇게 됐지", hashtagsRequest);
+        QuestionPostRequest request = new QuestionPostRequest("안녕 나는 질문이야", "헬륨가스 먹고 요렇게 됐지",
+            hashtagsRequest);
         Long questionId = questionService.add(request, savedMember.getId());
-    	// when
+        // when
         Article question = articleRepository.findById(questionId)
             .orElseThrow(RuntimeException::new);
         // then
@@ -51,7 +53,8 @@ class QuestionServiceTest {
         Member member = Member.builder().nickname("phil").build();
         Member savedMember = memberRepository.save(member);
         List<String> hashtagsRequest = Arrays.asList("Spring", "Test");
-        QuestionPostRequest request = new QuestionPostRequest("안녕 나는 질문이야", "헬륨가스 먹고 요렇게 됐지", hashtagsRequest);
+        QuestionPostRequest request = new QuestionPostRequest("안녕 나는 질문이야", "헬륨가스 먹고 요렇게 됐지",
+            hashtagsRequest);
         Long questionId = questionService.add(request, savedMember.getId());
         Article question = articleRepository.findById(questionId)
             .orElseThrow(RuntimeException::new);

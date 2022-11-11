@@ -58,7 +58,8 @@ class StudyServiceTest {
                         removeHeaders(HOST, CONTENT_LENGTH))
                     .withResponseDefaults(
                         prettyPrint(),
-                        removeHeaders(CONTENT_LENGTH, CONNECTION, DATE, TRANSFER_ENCODING, "Keep-Alive",
+                        removeHeaders(CONTENT_LENGTH, CONNECTION, DATE, TRANSFER_ENCODING,
+                            "Keep-Alive",
                             HttpHeaders.VARY))
             )
             .build();

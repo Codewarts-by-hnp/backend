@@ -19,7 +19,8 @@ public class QuestionController {
     private final JwtProvider jwtProvider;
 
     @PostMapping("/question")
-    public void create(@RequestBody QuestionPostRequest questionRequest, HttpServletRequest request) {
+    public void create(@RequestBody QuestionPostRequest questionRequest,
+        HttpServletRequest request) {
         Long memberId = jwtProvider.decode(request.getHeader("Authorization"));
         questionService.add(questionRequest, memberId);
     }
