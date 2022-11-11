@@ -34,6 +34,12 @@ dependencies {
 	// JWT
 	implementation 'com.auth0:java-jwt:4.2.1'
 
+	// 테스트 환경 lombok 사용
+	testCompileOnly 'org.projectlombok:lombok:1.18.24'
+	testAnnotationProcessor 'org.projectlombok:lombok:1.18.24'
+
+	// 인메모리 test 를 위한 h2 의존성 추가
+	runtimeOnly 'com.h2database:h2'
 }
 
 tasks.named('test') {
