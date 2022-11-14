@@ -5,9 +5,11 @@ import com.codewarts.noriter.common.domain.Member;
 import javax.persistence.Entity;
 import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Study extends Article {
 
