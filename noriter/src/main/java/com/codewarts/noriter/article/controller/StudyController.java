@@ -1,13 +1,17 @@
 package com.codewarts.noriter.article.controller;
 
+import com.codewarts.noriter.article.domain.dto.study.StudyListResponse;
 import com.codewarts.noriter.article.domain.dto.study.StudyPostRequest;
 import com.codewarts.noriter.article.service.StudyService;
 import com.codewarts.noriter.auth.jwt.JwtProvider;
+import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -26,4 +30,8 @@ public class StudyController {
         studyService.register(studyPostRequest, memberId);
     }
 
+    @GetMapping
+    public List<StudyListResponse> gatheringList(@RequestParam(required = false) Boolean completed) {
+        return studyService.findStudyList(completed);
+    }
 }
