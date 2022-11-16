@@ -72,9 +72,9 @@ public class Article {
     }
 
     public void addHashtags(List<String> requestHashtags) {
-      if (ObjectUtils.isEmpty(requestHashtags)) {
-        return;
-      }
+        if (ObjectUtils.isEmpty(requestHashtags)) {
+            return;
+        }
         for (String requestHashtag : requestHashtags) {
             this.hashtags.add(Hashtag.builder().article(this).content(requestHashtag).build());
         }

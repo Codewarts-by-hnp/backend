@@ -2,19 +2,21 @@ package com.codewarts.noriter.common.domain.dto;
 
 import com.codewarts.noriter.common.domain.Member;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
 public class WriterInfoResponse {
 
-    private Long id;
-    private String nickname;
-    private String profileImage;
+    private final Long id;
+    private final String nickName;
+    private final String profileImage;
 
-    public WriterInfoResponse(Member member) {
-        this.id = member.getId();
-        this.nickname = member.getNickname();
-        this.profileImage = member.getProfileImageUrl();
+    public WriterInfoResponse(Member writer) {
+        this.id = writer.getId();
+        this.nickName = writer.getNickname();
+        this.profileImage = writer.getProfileImageUrl();
+    }
+
+    public static WriterInfoResponse from(Member member) {
+        return new WriterInfoResponse(member);
     }
 }
