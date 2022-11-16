@@ -2,6 +2,7 @@ package com.codewarts.noriter.article.service;
 
 import com.codewarts.noriter.article.domain.Article;
 import com.codewarts.noriter.article.domain.Study;
+import com.codewarts.noriter.article.domain.dto.study.StudyDetailResponse;
 import com.codewarts.noriter.article.domain.dto.study.StudyListResponse;
 import com.codewarts.noriter.article.domain.dto.study.StudyPostRequest;
 import com.codewarts.noriter.article.domain.type.ArticleType;
@@ -31,7 +32,7 @@ public class StudyService {
         articleRepository.save(study);
     }
 
-    public List<StudyListResponse> findStudyList(Boolean completed) {
+    public List<StudyListResponse> findList(Boolean completed) {
 
         if (completed == null) {
             List<Article> allByArticleType = articleRepository.findAllByArticleType(
@@ -45,5 +46,10 @@ public class StudyService {
         return allStudy.stream()
             .map(StudyListResponse::new)
             .collect(Collectors.toList());
+    }
+
+    public StudyDetailResponse findDetail(Long id) {
+        Study study = articleRepository.findByStudyId(id);
+        return new StudyDetailResponse(study);
     }
 }
