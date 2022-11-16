@@ -11,13 +11,18 @@ import org.springframework.data.repository.query.Param;
 
 public interface ArticleRepository extends JpaRepository<Article, Long> {
 
+    @Query("select a from Article a where a.articleType = :articleType")
+    List<Article> findAllByArticleType(@Param("articleType") ArticleType articleType);
+
     @Query("select s from Study s where s.completed = :completed")
     List<Study> findStudyByCompleted(@Param("completed") boolean completed);
 
-    @Query("select a from Article a where a.articleType = :articleType")
-    List<Article> findAllByArticleType(@Param("articleType") ArticleType articleType);
+    @Query("select s from Study s where s.id =:id")
+    Study findByStudyId(@Param("id") Long id);
+
     @Query("select q from Question q")
     List<Question> findAllQuestion();
+
     @Query("select q from Question q where q.completed = :status")
     List<Question> findQuestionByCompleted(@Param("status") boolean status);
 }
