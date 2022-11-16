@@ -1,8 +1,12 @@
 INSERT INTO members
     (id, email, nickname, profile_image_url, refresh_token, resource_server, resource_server_id)
-VALUES (1, 'olx.rko.o@gmail.com', 'rkolx', 'https://avatars.githubusercontent.com/u/92699009?v=4',
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2Njg5MTUwMjA5fQ.ljyiSCdelyGB_DDXNBC-yQh0A7uQ38IhzQ4OuBOboY0',
-        'GITHUB', 92699009);
+VALUES
+    (1, 'olx.rko.o@gmail.com', 'rkolx', 'https://avatars.githubusercontent.com/u/92699009?v=4',
+     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2NjExMzExODEsImF1ZCI6IjkyNjk5MDA5IiwiZXhwIjoxNjY4OTE1MDIwOSwibWVtYmVySWQiOjkyNjk5MDA5LCJpc3MiOiIxc2VwaGlsIiwic3ViIjoiUmVmcmVzaC1Ub2tlbiJ9.WTIn5iPi5k9LIsFPKN4LpmK7nFm69glsJ4xU-vEqmDc',
+     'GITHUB', 92699009),
+    (2, 'peelhw@gmail.com', 'philsogooood', 'https://avatars.githubusercontent.com/u/87455844?v=4',
+     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2NjExMzExODEsImF1ZCI6Ijg3NDU1ODQ0IiwiZXhwIjoxNjY4OTE1MDIwOSwibWVtYmVySWQiOjg3NDU1ODQ0LCJpc3MiOiIxc2VwaGlsIiwic3ViIjoiUmVmcmVzaC1Ub2tlbiJ9.OuH6NJnCcCZBMWu_BvxVFKhxccx3FvkWc6j2EsHa60c',
+     'GITHUB', 87455844);
 
 
 INSERT INTO article
@@ -22,4 +26,12 @@ VALUES
     (3, false),
     (4, true),
     (5, false);
+
+INSERT INTO comment
+    (id, content, deleted, secret, writer_id, article_id, written_time, edited_time)
+VALUES
+    (1, '우왕 잘봤어용', false, false, 2, 1, '2022-11-12 16:25:58.991061', '2022-11-12 16:25:58.991061'),
+    (2, '우왕 잘봤어용2', false, false, 2, 1, '2022-11-12 17:25:58.991061', '2022-11-12 17:25:58.991061'),
+    (3, '우왕 잘봤어3', false, false, 2, 1, '2022-11-12 19:25:58.991061', '2022-11-12 19:25:58.991061'),
+    (4, '우왕 잘봤어용4', false, false, 2, 1, '2022-11-13 16:25:58.991061', '2022-11-13 16:25:58.991061');
 
