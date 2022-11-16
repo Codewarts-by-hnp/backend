@@ -13,11 +13,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Question extends Article {
 
-    private boolean solved;
+    private boolean completed;
 
     @Builder
     public Question(String title, String content, Member writer) {
         super(title, content, writer, ArticleType.QUESTION);
-        this.solved = false;
+        this.completed = false;
+    }
+
+    public void changeStatus(boolean status) {
+        completed = status;
     }
 }
