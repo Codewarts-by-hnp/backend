@@ -43,16 +43,16 @@ public class Article {
     private Member writer;
 
     @OneToMany(mappedBy = "article", cascade = CascadeType.ALL)
-    private List<Hashtag> hashtags = new ArrayList<>();
+    private final List<Hashtag> hashtags = new ArrayList<>();
 
     @OneToMany(mappedBy = "article")
-    private List<Image> images = new ArrayList<>();
+    private final List<Image> images = new ArrayList<>();
+
+    @OneToMany(mappedBy = "article", cascade = CascadeType.ALL)
+    private final List<Wish> wishList = new ArrayList<>();
 
     @OneToMany(mappedBy = "article")
-    private List<Wish> wishList = new ArrayList<>();
-
-    @OneToMany(mappedBy = "article")
-    private List<Comment> comments = new ArrayList<>();
+    private final List<Comment> comments = new ArrayList<>();
 
     private LocalDateTime writtenTime;
     private LocalDateTime editedTime;
