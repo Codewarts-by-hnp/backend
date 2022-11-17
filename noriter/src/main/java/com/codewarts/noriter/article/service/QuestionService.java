@@ -43,7 +43,7 @@ public class QuestionService {
 
     // 질문 상세 조회 기능
     public QuestionDetailResponse findDetail(Long id) {
-        Question question = questionRepository.findQuestionById(id)
+        Question question = questionRepository.findByQuestionId(id)
             .orElseThrow(NoSuchQuestionException::new);
         return QuestionDetailResponse.from(question);
     }
