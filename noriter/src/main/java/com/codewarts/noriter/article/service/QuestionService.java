@@ -47,4 +47,9 @@ public class QuestionService {
             .orElseThrow(NoSuchQuestionException::new);
         return QuestionDetailResponse.from(question);
     }
+
+    @Transactional
+    public void delete(Long questionId, Long writerId) {
+        questionRepository.deleteByIdAndWriterId(questionId, writerId);
+    }
 }
