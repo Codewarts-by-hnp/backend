@@ -49,7 +49,12 @@ public class StudyService {
     }
 
     public StudyDetailResponse findDetail(Long id) {
-        Study study = articleRepository.findByStudyId(id);
+        Study study = articleRepository.findByStudyId(id).orElseThrow(RuntimeException::new);
         return new StudyDetailResponse(study);
+    }
+
+    @Transactional
+    public void delete(Long id, Long writerId) {
+        articleRepository.deleteByIdAndWriterId(id, writerId);
     }
 }
