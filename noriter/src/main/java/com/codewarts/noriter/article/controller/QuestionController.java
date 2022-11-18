@@ -8,6 +8,7 @@ import com.codewarts.noriter.auth.jwt.JwtProvider;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -39,5 +40,11 @@ public class QuestionController {
     @GetMapping("/{id}")
     public QuestionDetailResponse questionDetail(@PathVariable Long id) {
         return questionService.findDetail(id);
+    }
+
+    @DeleteMapping("/{id}")
+    public void questionRemove(@PathVariable Long id, HttpServletRequest request) {
+        Long memberId = jwtProvider.decode(request.getHeader("Authorization"));
+        questionService.delete(id, memberId);
     }
 }

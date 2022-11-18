@@ -42,16 +42,16 @@ public class Article {
     @JoinColumn
     private Member writer;
 
-    @OneToMany(mappedBy = "article", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "article", cascade = CascadeType.ALL, orphanRemoval = true)
     private final List<Hashtag> hashtags = new ArrayList<>();
 
-    @OneToMany(mappedBy = "article")
+    @OneToMany(mappedBy = "article", orphanRemoval = true)
     private final List<Image> images = new ArrayList<>();
 
-    @OneToMany(mappedBy = "article", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "article", orphanRemoval = true)
     private final List<Wish> wishList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "article")
+    @OneToMany(mappedBy = "article", orphanRemoval = true)
     private final List<Comment> comments = new ArrayList<>();
 
     private LocalDateTime writtenTime;
