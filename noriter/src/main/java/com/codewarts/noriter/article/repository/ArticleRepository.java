@@ -19,7 +19,10 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
     List<Study> findStudyByCompleted(@Param("completed") boolean completed);
 
     @Query("select s from Study s where s.id =:id")
-    Study findByStudyId(@Param("id") Long id);
+    Optional<Study> findByStudyId(@Param("id") Long id);
+
+    @Query("select q from Question q where q.id =:id")
+    Optional<Question> findByQuestionId(@Param("id") Long id);
 
     @Query("select q from Question q")
     List<Question> findAllQuestion();

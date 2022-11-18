@@ -8,6 +8,7 @@ import com.codewarts.noriter.auth.jwt.JwtProvider;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,18 +28,24 @@ public class StudyController {
     @PostMapping
     public void register(@RequestBody StudyPostRequest studyPostRequest,
         HttpServletRequest request) {
-        String authorization = request.getHeader("Authorization");
-        Long memberId = jwtProvider.decode(authorization);
+        Long memberId = jwtProvider.decode(request.getHeader("Authorization"));
         studyService.register(studyPostRequest, memberId);
     }
 
     @GetMapping
-    public List<StudyListResponse> gatheringList(@RequestParam(required = false) Boolean completed) {
+    public List<StudyListResponse> gatheringList(
+        @RequestParam(required = false) Boolean completed) {
         return studyService.findList(completed);
     }
 
     @GetMapping("/{id}")
     public StudyDetailResponse gatheringDetail(@PathVariable Long id) {
         return studyService.findDetail(id);
+    }
+
+    @DeleteMapping("/{id}")
+    public void studyRemove(@PathVariable Long id, HttpServletRequest request) {
+        Long memberId = jwtProvider.decode(request.getHeader("Authorization"));
+        studyService.delete(id, memberId);
     }
 }
