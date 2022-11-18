@@ -1,12 +1,12 @@
 INSERT INTO members
     (id, email, nickname, profile_image_url, refresh_token, resource_server, resource_server_id)
 VALUES
-    (1, 'olx.rko.o@gmail.com', 'rkolx', 'https://avatars.githubusercontent.com/u/92699009?v=4',
+    (1, 'admin1@gmail.com', 'admin1', 'https://avatars.githubusercontent.com/u/111111?v=4',
      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2NjExMzExODEsImF1ZCI6IjkyNjk5MDA5IiwiZXhwIjoxNjY4OTE1MDIwOSwibWVtYmVySWQiOjkyNjk5MDA5LCJpc3MiOiIxc2VwaGlsIiwic3ViIjoiUmVmcmVzaC1Ub2tlbiJ9.WTIn5iPi5k9LIsFPKN4LpmK7nFm69glsJ4xU-vEqmDc',
-     'GITHUB', 92699009),
-    (2, 'peelhw@gmail.com', 'philsogooood', 'https://avatars.githubusercontent.com/u/87455844?v=4',
+     'GITHUB', 111111),
+    (2, 'admin2@gmail.com', 'admin2', 'https://avatars.githubusercontent.com/u/222222?v=4',
      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2NjExMzExODEsImF1ZCI6Ijg3NDU1ODQ0IiwiZXhwIjoxNjY4OTE1MDIwOSwibWVtYmVySWQiOjg3NDU1ODQ0LCJpc3MiOiIxc2VwaGlsIiwic3ViIjoiUmVmcmVzaC1Ub2tlbiJ9.OuH6NJnCcCZBMWu_BvxVFKhxccx3FvkWc6j2EsHa60c',
-     'GITHUB', 87455844);
+     'GITHUB', 222222);
 
 
 INSERT INTO article
