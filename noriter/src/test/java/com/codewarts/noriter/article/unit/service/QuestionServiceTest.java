@@ -6,12 +6,14 @@ import com.codewarts.noriter.article.domain.Article;
 import com.codewarts.noriter.article.domain.Hashtag;
 import com.codewarts.noriter.article.domain.Question;
 import com.codewarts.noriter.article.domain.dto.question.QuestionPostRequest;
+import com.codewarts.noriter.article.domain.dto.question.QuestionUpdateRequest;
 import com.codewarts.noriter.article.repository.ArticleRepository;
 import com.codewarts.noriter.article.service.QuestionService;
 import com.codewarts.noriter.common.domain.Member;
 import com.codewarts.noriter.common.repository.MemberRepository;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -96,14 +98,12 @@ class QuestionServiceTest {
         Member savedMember = memberRepository.save(member);
         QuestionPostRequest request1 = new QuestionPostRequest("안녕 나는 질문1", "헬륨가스 먹고 요렇게 됐지", null);
         QuestionPostRequest request2 = new QuestionPostRequest("안녕 나는 질문2", "헬륨가스 먹고 요렇게 됐지", null);
-        Long questionId1 = questionService.add(request1, savedMember.getId());
-        Long questionId2 = questionService.add(request2, savedMember.getId());
+        questionService.add(request1, savedMember.getId());
+        questionService.add(request2, savedMember.getId());
         // when
         List<Question> questions = articleRepository.findAllQuestion();
         // then
-        assertThat(questions).hasSize(2);
-        assertThat(questions.get(0).getId()).isEqualTo(questionId1);
-        assertThat(questions.get(1).getId()).isEqualTo(questionId2);
+        assertThat(questions).hasSize(5);
     }
 
     @Test
@@ -117,7 +117,7 @@ class QuestionServiceTest {
         QuestionPostRequest request3 = new QuestionPostRequest("안녕 나는 질문3", "해결되지 못했지", null);
         Long questionId1 = questionService.add(request1, savedMember.getId());
         Long questionId2 = questionService.add(request2, savedMember.getId());
-        Long questionId3 = questionService.add(request3, savedMember.getId());
+        questionService.add(request3, savedMember.getId());
         Question question1 = (Question)articleRepository.findById(questionId1).get();
         Question question2 = (Question)articleRepository.findById(questionId2).get();
         question1.changeStatus(true);
@@ -125,9 +125,7 @@ class QuestionServiceTest {
         // when
         List<Question> questions = articleRepository.findQuestionByCompleted(true);
         // then
-        assertThat(questions).hasSize(2);
-        assertThat(questions.get(0).getId()).isEqualTo(questionId1);
-        assertThat(questions.get(1).getId()).isEqualTo(questionId2);
+        assertThat(questions).hasSize(3);
     }
 
     @Test
@@ -139,16 +137,90 @@ class QuestionServiceTest {
         QuestionPostRequest request1 = new QuestionPostRequest("안녕 나는 질문1", "해결되지 못했지", null);
         QuestionPostRequest request2 = new QuestionPostRequest("안녕 나는 질문2", "해결했지", null);
         QuestionPostRequest request3 = new QuestionPostRequest("안녕 나는 질문3", "해결되지 못했지", null);
-        Long questionId1 = questionService.add(request1, savedMember.getId());
+        questionService.add(request1, savedMember.getId());
         Long questionId2 = questionService.add(request2, savedMember.getId());
-        Long questionId3 = questionService.add(request3, savedMember.getId());
+        questionService.add(request3, savedMember.getId());
         Question question2 = (Question)articleRepository.findById(questionId2).get();
         question2.changeStatus(true);
         // when
         List<Question> questions = articleRepository.findQuestionByCompleted(false);
         // then
-        assertThat(questions).hasSize(2);
-        assertThat(questions.get(0).getId()).isEqualTo(questionId1);
-        assertThat(questions.get(1).getId()).isEqualTo(questionId3);
+        assertThat(questions).hasSize(4);
+    }
+
+    @Test
+    void 제목을_수정한다() {
+        // given
+        Question question = articleRepository.findQuestionById(6L)
+            .orElseThrow(RuntimeException::new);
+        List<String> hashtags = question.getHashtags().stream().map(Hashtag::getContent).collect(
+            Collectors.toList());
+        QuestionUpdateRequest request = new QuestionUpdateRequest("수정된 제목", question.getContent(), hashtags);
+
+        // when
+        questionService.update(question.getId(), question.getWriter().getId(), request);
+        List<String> updatedHashtag = question.getHashtags().stream().map(Hashtag::getContent)
+            .collect(Collectors.toList());
+
+        // then
+        assertThat(question.getTitle()).isEqualTo(request.getTitle());
+        assertThat(question.getContent()).isEqualTo(request.getContent());
+        assertThat(updatedHashtag).isEqualTo(request.getHashtag());
+    }
+
+    @Test
+    void 내용을_수정한다() {
+        // given
+        Question question = articleRepository.findQuestionById(6L)
+            .orElseThrow(RuntimeException::new);
+        List<String> hashtags = question.getHashtags().stream().map(Hashtag::getContent).collect(
+            Collectors.toList());
+        QuestionUpdateRequest request = new QuestionUpdateRequest(question.getTitle(), "수정된 내용", hashtags);
+
+        // when
+        questionService.update(question.getId(), question.getWriter().getId(), request);
+        List<String> updatedHashtag = question.getHashtags().stream().map(Hashtag::getContent)
+            .collect(Collectors.toList());
+        // then
+        assertThat(question.getTitle()).isEqualTo(request.getTitle());
+        assertThat(question.getContent()).isEqualTo(request.getContent());
+        assertThat(updatedHashtag).isEqualTo(request.getHashtag());
+    }
+
+    @Test
+    void 해시태그를_수정한다() {
+        // given
+        Question question = articleRepository.findQuestionById(6L)
+            .orElseThrow(RuntimeException::new);
+        List<String> hashtags = List.of("해시태그1", "해시태그2");
+        QuestionUpdateRequest request = new QuestionUpdateRequest(question.getTitle(), question.getContent(), hashtags);
+
+        questionService.update(question.getId(), question.getWriter().getId(), request);
+        // when
+        List<String> updatedHashtag = question.getHashtags().stream().map(Hashtag::getContent)
+            .collect(Collectors.toList());
+        // then
+        assertThat(question.getTitle()).isEqualTo(request.getTitle());
+        assertThat(question.getContent()).isEqualTo(request.getContent());
+        assertThat(updatedHashtag).isEqualTo(request.getHashtag());
+    }
+
+    @Test
+    void 전부_수정한다() {
+        // given
+        Question question = articleRepository.findQuestionById(6L)
+            .orElseThrow(RuntimeException::new);
+        List<String> hashtags = List.of("해시태그1", "해시태그2");
+        QuestionUpdateRequest request = new QuestionUpdateRequest("수정된 제목", "수정된 내용", hashtags);
+
+        questionService.update(question.getId(), question.getWriter().getId(), request);
+
+        // when
+        List<String> updatedHashtag = question.getHashtags().stream().map(Hashtag::getContent)
+            .collect(Collectors.toList());
+        // then
+        assertThat(question.getTitle()).isEqualTo(request.getTitle());
+        assertThat(question.getContent()).isEqualTo(request.getContent());
+        assertThat(updatedHashtag).isEqualTo(request.getHashtag());
     }
 }

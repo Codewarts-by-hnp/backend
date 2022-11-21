@@ -1,28 +1,58 @@
 package com.codewarts.noriter.article.docs.question;
 
+import static io.restassured.RestAssured.given;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+import static org.springframework.http.HttpHeaders.CONNECTION;
+import static org.springframework.http.HttpHeaders.CONTENT_LENGTH;
+import static org.springframework.http.HttpHeaders.DATE;
+import static org.springframework.http.HttpHeaders.HOST;
+import static org.springframework.http.HttpHeaders.TRANSFER_ENCODING;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.removeHeaders;
+import static org.springframework.restdocs.restassured3.RestAssuredRestDocumentation.documentationConfiguration;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.codewarts.noriter.article.domain.Hashtag;
 import com.codewarts.noriter.article.domain.Question;
 import com.codewarts.noriter.article.domain.dto.question.QuestionPostRequest;
+import com.codewarts.noriter.article.domain.dto.question.QuestionUpdateRequest;
 import com.codewarts.noriter.article.repository.ArticleRepository;
 import com.codewarts.noriter.article.service.QuestionService;
+import com.codewarts.noriter.auth.jwt.JwtProvider;
 import com.codewarts.noriter.common.domain.Member;
 import com.codewarts.noriter.common.repository.MemberRepository;
+import io.restassured.RestAssured;
+import io.restassured.builder.RequestSpecBuilder;
+import io.restassured.specification.RequestSpecification;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.hamcrest.Matchers;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.DisplayNameGeneration;
+import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.restdocs.RestDocumentationContextProvider;
+import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
-@SpringBootTest
+@DisplayNameGeneration(ReplaceUnderscores.class)
+@ExtendWith({RestDocumentationExtension.class})
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 class QuestionCreateTest {
 
@@ -34,6 +64,33 @@ class QuestionCreateTest {
     private QuestionService questionService;
     @Autowired
     private MemberRepository memberRepository;
+
+    @LocalServerPort
+    int port;
+
+    @Autowired
+    protected JwtProvider jwtProvider;
+
+    protected RequestSpecification documentationSpec;
+
+    @BeforeEach
+    void setup(RestDocumentationContextProvider restDocumentation) {
+        RestAssured.port = port;
+        documentationSpec = new RequestSpecBuilder()
+            .addFilter(
+                documentationConfiguration(restDocumentation)
+                    .operationPreprocessors()
+                    .withRequestDefaults(
+                        prettyPrint(),
+                        removeHeaders(HOST, CONTENT_LENGTH))
+                    .withResponseDefaults(
+                        prettyPrint(),
+                        removeHeaders(CONTENT_LENGTH, CONNECTION, DATE, TRANSFER_ENCODING,
+                            "Keep-Alive",
+                            HttpHeaders.VARY))
+            )
+            .build();
+    }
 
     @Test
     @DisplayName("미해결 질문 글 조회")
@@ -54,9 +111,9 @@ class QuestionCreateTest {
         mockMvc.perform(get("/community/question?completion=false")
                 .contentType(APPLICATION_JSON))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.size()", Matchers.is(2)))
-            .andExpect(jsonPath("$[0].id").value(questionId1))
-            .andExpect(jsonPath("$[1].id").value(questionId3))
+            .andExpect(jsonPath("$.size()", Matchers.is(4)))
+            .andExpect(jsonPath("$[2].id").value(questionId1))
+            .andExpect(jsonPath("$[3].id").value(questionId3))
             .andDo(print());
     }
 
@@ -79,8 +136,8 @@ class QuestionCreateTest {
         mockMvc.perform(get("/community/question?completion=true")
                 .contentType(APPLICATION_JSON))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.size()", Matchers.is(1)))
-            .andExpect(jsonPath("$[0].id").value(questionId2))
+            .andExpect(jsonPath("$.size()", Matchers.is(2)))
+            .andExpect(jsonPath("$[1].id").value(questionId2))
             .andDo(print());
     }
 
@@ -103,11 +160,32 @@ class QuestionCreateTest {
         mockMvc.perform(get("/community/question")
                 .contentType(APPLICATION_JSON))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.size()", Matchers.is(3)))
-            .andExpect(jsonPath("$[0].id").value(questionId1))
-            .andExpect(jsonPath("$[1].id").value(questionId2))
-            .andExpect(jsonPath("$[2].id").value(questionId3))
+            .andExpect(jsonPath("$.size()", Matchers.is(6)))
+            .andExpect(jsonPath("$[3].id").value(questionId1))
+            .andExpect(jsonPath("$[4].id").value(questionId2))
+            .andExpect(jsonPath("$[5].id").value(questionId3))
             .andDo(print());
     }
 
+    @Test
+    void 제목을_수정한다() {
+
+        Question question = articleRepository.findQuestionById(6L)
+            .orElseThrow(RuntimeException::new);
+        String accessToken = jwtProvider.issueAccessToken(question.getWriter().getId());
+        List<String> hashtag = question.getHashtags().stream().map(Hashtag::getContent)
+            .collect(Collectors.toList());
+        QuestionUpdateRequest updateRequest = new QuestionUpdateRequest("수정된 제목", question.getContent(), hashtag);
+
+        given(documentationSpec)
+            .contentType(APPLICATION_JSON_VALUE)
+            .header(AUTHORIZATION, accessToken)
+            .body(updateRequest)
+
+            .when()
+            .put("/community/question/6")
+
+            .then()
+            .statusCode(HttpStatus.OK.value());
+    }
 }
