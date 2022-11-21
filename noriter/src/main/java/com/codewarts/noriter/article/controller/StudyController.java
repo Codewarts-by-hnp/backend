@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -47,5 +48,11 @@ public class StudyController {
     public void studyRemove(@PathVariable Long id, HttpServletRequest request) {
         Long memberId = jwtProvider.decode(request.getHeader("Authorization"));
         studyService.delete(id, memberId);
+    }
+
+    @PatchMapping("/{id}")
+    public void recruitmentCompletionUpdate(@PathVariable Long id, HttpServletRequest request) {
+        Long memberId = jwtProvider.decode(request.getHeader("Authorization"));
+        studyService.updateCompletion(id, memberId);
     }
 }
