@@ -4,8 +4,7 @@ import com.codewarts.noriter.article.domain.Question;
 import com.codewarts.noriter.article.domain.dto.question.QuestionDetailResponse;
 import com.codewarts.noriter.article.domain.dto.question.QuestionPostRequest;
 import com.codewarts.noriter.article.domain.dto.question.QuestionResponse;
-import com.codewarts.noriter.article.exception.member.NoSuchMemberException;
-import com.codewarts.noriter.article.exception.question.NoSuchQuestionException;
+import com.codewarts.noriter.article.domain.dto.question.QuestionUpdateRequest;
 import com.codewarts.noriter.article.repository.ArticleRepository;
 import com.codewarts.noriter.common.domain.Member;
 import com.codewarts.noriter.common.repository.MemberRepository;
@@ -26,7 +25,7 @@ public class QuestionService {
     // 질문 등록 기능
     @Transactional
     public Long add(QuestionPostRequest request, Long memberId) {
-        Member writer = memberRepository.findById(memberId).orElseThrow(NoSuchMemberException::new);
+        Member writer = memberRepository.findById(memberId).orElseThrow(RuntimeException::new);
         Question question = request.toEntity(writer);
         question.addHashtags(request.getHashtag());
         Question savedQuestion = questionRepository.save(question);
@@ -44,12 +43,19 @@ public class QuestionService {
     // 질문 상세 조회 기능
     public QuestionDetailResponse findDetail(Long id) {
         Question question = questionRepository.findByQuestionId(id)
-            .orElseThrow(NoSuchQuestionException::new);
+            .orElseThrow(RuntimeException::new);
         return QuestionDetailResponse.from(question);
     }
 
     @Transactional
     public void delete(Long questionId, Long writerId) {
         questionRepository.deleteByIdAndWriterId(questionId, writerId);
+    }
+
+    @Transactional
+    public void update(Long id, Long writerId, QuestionUpdateRequest request) {
+        Question findQuestion = questionRepository.findByQuestionIdAndWriterId(id, writerId)
+            .orElseThrow(RuntimeException::new);
+        findQuestion.update(request.getTitle(), request.getContent(), request.getHashtag());
     }
 }

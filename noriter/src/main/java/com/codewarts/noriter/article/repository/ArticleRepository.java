@@ -37,4 +37,6 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
     Optional<Question> findQuestionById(@Param("id") Long id);
 
     void deleteByIdAndWriterId(Long id, Long writerId);
+    @Query("select q from Question q where q.id =:id and q.writer.id = :writerId")
+    Optional<Question> findByQuestionIdAndWriterId(@Param("id") Long id, @Param("writerId") Long writerId);
 }
