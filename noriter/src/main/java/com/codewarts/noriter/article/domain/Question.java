@@ -2,6 +2,7 @@ package com.codewarts.noriter.article.domain;
 
 import com.codewarts.noriter.article.domain.type.ArticleType;
 import com.codewarts.noriter.common.domain.Member;
+import java.util.List;
 import javax.persistence.Entity;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -23,5 +24,10 @@ public class Question extends Article {
 
     public void changeStatus(boolean status) {
         completed = status;
+    }
+
+    @Override
+    public void update(String newTitle, String newContent, List<String> newHashTags) {
+        super.update(newTitle, newContent, newHashTags);
     }
 }

@@ -1,9 +1,9 @@
 package com.codewarts.noriter.article.domain;
 
+import com.codewarts.noriter.article.domain.type.ArticleType;
 import com.codewarts.noriter.comment.domain.Comment;
 import com.codewarts.noriter.common.domain.Member;
 import com.codewarts.noriter.wish.domain.Wish;
-import com.codewarts.noriter.article.domain.type.ArticleType;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -78,5 +78,13 @@ public class Article {
         for (String requestHashtag : requestHashtags) {
             this.hashtags.add(Hashtag.builder().article(this).content(requestHashtag).build());
         }
+    }
+
+    protected void update(String newTitle, String newContent , List<String> requestHashtags) {
+        this.title = newTitle;
+        this.content = newContent;
+        this.editedTime = LocalDateTime.now();
+        this.hashtags.clear();
+        addHashtags(requestHashtags);
     }
 }
