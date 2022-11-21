@@ -21,6 +21,9 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
     @Query("select s from Study s where s.id =:id")
     Optional<Study> findByStudyId(@Param("id") Long id);
 
+    @Query("select s from Study s where s.id =:id and s.writer.id =:writerId")
+    Optional<Study> findByStudyIdAndWriterId(@Param("id") Long id, @Param("writerId") Long writerId);
+
     @Query("select q from Question q where q.id =:id")
     Optional<Question> findByQuestionId(@Param("id") Long id);
 

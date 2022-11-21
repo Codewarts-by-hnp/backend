@@ -57,4 +57,11 @@ public class StudyService {
     public void delete(Long id, Long writerId) {
         articleRepository.deleteByIdAndWriterId(id, writerId);
     }
+
+    @Transactional
+    public void updateCompletion(Long id, Long writerId) {
+        Study study = articleRepository.findByStudyIdAndWriterId(id, writerId)
+            .orElseThrow(RuntimeException::new);
+        study.completion();
+    }
 }

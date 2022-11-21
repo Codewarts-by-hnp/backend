@@ -20,4 +20,8 @@ public class Study extends Article {
         super(title, content, writer, ArticleType.STUDY);
         this.completed = false;
     }
+
+    public void completion() {
+        completed = true;
+    }
 }
