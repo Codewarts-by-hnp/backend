@@ -21,12 +21,15 @@ import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.specification.RequestSpecification;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
@@ -152,6 +155,27 @@ class QuestionUpdateTest {
 
             .when()
             .put("/community/question/6")
+
+            .then()
+            .statusCode(HttpStatus.OK.value());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"true", "false"})
+    void 해결_여부를_변경한다(String completed) {
+
+        Question question = articleRepository.findQuestionById(6L)
+            .orElseThrow(RuntimeException::new);
+        String accessToken = jwtProvider.issueAccessToken(question.getWriter().getId());
+        Map<String, String> map = Map.of("completed", completed, "Authorization", accessToken);
+
+        given(documentationSpec)
+            .contentType(APPLICATION_JSON_VALUE)
+            .header(AUTHORIZATION, accessToken)
+            .body(map)
+
+            .when()
+            .patch("/community/question/6")
 
             .then()
             .statusCode(HttpStatus.OK.value());
