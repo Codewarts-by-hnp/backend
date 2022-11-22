@@ -16,7 +16,6 @@ import com.codewarts.noriter.auth.jwt.JwtProvider;
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.specification.RequestSpecification;
-import java.util.Collections;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -35,7 +34,7 @@ import org.springframework.test.context.jdbc.Sql;
 @ExtendWith({RestDocumentationExtension.class})
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Sql("classpath:/data.sql")
-class StudyUpdateCompletionTest {
+class StudyDeleteTest {
 
     @LocalServerPort
     int port;
@@ -65,19 +64,19 @@ class StudyUpdateCompletionTest {
     }
 
     @Test
-    void 게시글의_모집상태를_변경한다() {
+    void 게시글을_삭제한다() {
         String accessToken = jwtProvider.issueAccessToken(1L);
 
         given(documentationSpec)
             .contentType(APPLICATION_JSON_VALUE)
             .header(AUTHORIZATION, accessToken)
             .pathParam("id", 1)
-            .body(Collections.singletonMap("completion", true))
 
             .when()
-            .patch("/community/gathering/{id}")
+            .delete("/community/gathering/{id}")
 
             .then()
             .statusCode(HttpStatus.OK.value());
     }
+
 }

@@ -16,7 +16,8 @@ import com.codewarts.noriter.auth.jwt.JwtProvider;
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.specification.RequestSpecification;
-import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -35,7 +36,7 @@ import org.springframework.test.context.jdbc.Sql;
 @ExtendWith({RestDocumentationExtension.class})
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Sql("classpath:/data.sql")
-class StudyUpdateCompletionTest {
+class StudyEditTest {
 
     @LocalServerPort
     int port;
@@ -65,19 +66,23 @@ class StudyUpdateCompletionTest {
     }
 
     @Test
-    void 게시글의_모집상태를_변경한다() {
+    void 글을_수정한다() {
         String accessToken = jwtProvider.issueAccessToken(1L);
+
+        Map<String, Object> requestBody = Map.of("title", "내가 글을 수정해볼게",
+            "content", "하나둘셋 얍", "hashtags", List.of("ㄱㄴㄱㄴ", "얍", "모여라"));
 
         given(documentationSpec)
             .contentType(APPLICATION_JSON_VALUE)
             .header(AUTHORIZATION, accessToken)
             .pathParam("id", 1)
-            .body(Collections.singletonMap("completion", true))
+            .body(requestBody)
 
             .when()
-            .patch("/community/gathering/{id}")
+            .put("/community/gathering/{id}")
 
             .then()
             .statusCode(HttpStatus.OK.value());
     }
+
 }
