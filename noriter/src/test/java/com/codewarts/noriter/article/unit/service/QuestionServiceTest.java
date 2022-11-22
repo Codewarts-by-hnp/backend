@@ -223,4 +223,18 @@ class QuestionServiceTest {
         assertThat(question.getContent()).isEqualTo(request.getContent());
         assertThat(updatedHashtag).isEqualTo(request.getHashtag());
     }
+    @Test
+    void 해결_여부를_수정한다() {
+        // given
+        Question question = articleRepository.findQuestionById(6L)
+            .orElseThrow(RuntimeException::new);
+        boolean completed = question.isCompleted();
+
+        // when
+        questionService.updateComplete(question.getId(), question.getWriter().getId(), !completed);
+
+        // then
+        assertThat(question.isCompleted()).isEqualTo(!completed);
+
+    }
 }

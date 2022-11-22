@@ -1,14 +1,11 @@
 package com.codewarts.noriter.article.docs.question;
 
-import static io.restassured.RestAssured.given;
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpHeaders.CONNECTION;
 import static org.springframework.http.HttpHeaders.CONTENT_LENGTH;
 import static org.springframework.http.HttpHeaders.DATE;
 import static org.springframework.http.HttpHeaders.HOST;
 import static org.springframework.http.HttpHeaders.TRANSFER_ENCODING;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.removeHeaders;
 import static org.springframework.restdocs.restassured3.RestAssuredRestDocumentation.documentationConfiguration;
@@ -17,10 +14,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.codewarts.noriter.article.domain.Hashtag;
 import com.codewarts.noriter.article.domain.Question;
 import com.codewarts.noriter.article.domain.dto.question.QuestionPostRequest;
-import com.codewarts.noriter.article.domain.dto.question.QuestionUpdateRequest;
 import com.codewarts.noriter.article.repository.ArticleRepository;
 import com.codewarts.noriter.article.service.QuestionService;
 import com.codewarts.noriter.auth.jwt.JwtProvider;
@@ -29,8 +24,6 @@ import com.codewarts.noriter.common.repository.MemberRepository;
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.specification.RequestSpecification;
-import java.util.List;
-import java.util.stream.Collectors;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -43,7 +36,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.test.web.servlet.MockMvc;
@@ -165,27 +157,5 @@ class QuestionCreateTest {
             .andExpect(jsonPath("$[4].id").value(questionId2))
             .andExpect(jsonPath("$[5].id").value(questionId3))
             .andDo(print());
-    }
-
-    @Test
-    void 제목을_수정한다() {
-
-        Question question = articleRepository.findQuestionById(6L)
-            .orElseThrow(RuntimeException::new);
-        String accessToken = jwtProvider.issueAccessToken(question.getWriter().getId());
-        List<String> hashtag = question.getHashtags().stream().map(Hashtag::getContent)
-            .collect(Collectors.toList());
-        QuestionUpdateRequest updateRequest = new QuestionUpdateRequest("수정된 제목", question.getContent(), hashtag);
-
-        given(documentationSpec)
-            .contentType(APPLICATION_JSON_VALUE)
-            .header(AUTHORIZATION, accessToken)
-            .body(updateRequest)
-
-            .when()
-            .put("/community/question/6")
-
-            .then()
-            .statusCode(HttpStatus.OK.value());
     }
 }
