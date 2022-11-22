@@ -60,10 +60,14 @@ public class StudyService {
     }
 
     @Transactional
-    public void updateCompletion(Long id, Long writerId) {
+    public void updateCompletion(Long id, Long writerId, boolean completion) {
         Study study = articleRepository.findByStudyIdAndWriterId(id, writerId)
             .orElseThrow(RuntimeException::new);
-        study.completion();
+
+        if (completion) {study.completion();
+        } else {
+            study.incomplete();
+        }
     }
 
     @Transactional
