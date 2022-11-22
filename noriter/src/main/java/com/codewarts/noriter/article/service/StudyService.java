@@ -3,6 +3,7 @@ package com.codewarts.noriter.article.service;
 import com.codewarts.noriter.article.domain.Article;
 import com.codewarts.noriter.article.domain.Study;
 import com.codewarts.noriter.article.domain.dto.study.StudyDetailResponse;
+import com.codewarts.noriter.article.domain.dto.study.StudyEditRequest;
 import com.codewarts.noriter.article.domain.dto.study.StudyListResponse;
 import com.codewarts.noriter.article.domain.dto.study.StudyPostRequest;
 import com.codewarts.noriter.article.domain.type.ArticleType;
@@ -63,5 +64,12 @@ public class StudyService {
         Study study = articleRepository.findByStudyIdAndWriterId(id, writerId)
             .orElseThrow(RuntimeException::new);
         study.completion();
+    }
+
+    @Transactional
+    public void update(Long id, StudyEditRequest request, Long writerId) {
+        Study study = articleRepository.findByStudyIdAndWriterId(id, writerId)
+            .orElseThrow(RuntimeException::new);
+        study.update(request.getTitle(), request.getContent(), request.getHashtags());
     }
 }

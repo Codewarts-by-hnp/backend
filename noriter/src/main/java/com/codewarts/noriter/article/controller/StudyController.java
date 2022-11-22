@@ -55,4 +55,10 @@ public class StudyController {
         Long memberId = jwtProvider.decode(request.getHeader("Authorization"));
         studyService.updateCompletion(id, memberId);
     }
+
+    @PutMapping("/{id}")
+    public void postEdit(@PathVariable Long id, @RequestBody StudyEditRequest studyEditRequest,HttpServletRequest request) {
+        Long memberId = jwtProvider.decode(request.getHeader("Authorization"));
+        studyService.update(id, studyEditRequest, memberId);
+    }
 }
