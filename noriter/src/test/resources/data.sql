@@ -1,3 +1,12 @@
+DELETE from image;
+DELETE from hashtag;
+DELETE from wish;
+DELETE from comment;
+DELETE from question;
+DELETE from study;
+DELETE from article;
+DELETE from members;
+
 INSERT INTO members
     (id, email, nickname, profile_image_url, refresh_token, resource_server, resource_server_id)
 VALUES
