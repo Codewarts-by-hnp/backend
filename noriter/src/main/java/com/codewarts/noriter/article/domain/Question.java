@@ -30,4 +30,11 @@ public class Question extends Article {
     public void update(String newTitle, String newContent, List<String> newHashTags) {
         super.update(newTitle, newContent, newHashTags);
     }
+    public void changeCompletedTrue() {
+        this.completed = true;
+    }
+
+    public void changeCompletedFalse() {
+        this.completed = false;
+    }
 }

@@ -58,4 +58,14 @@ public class QuestionService {
             .orElseThrow(RuntimeException::new);
         findQuestion.update(request.getTitle(), request.getContent(), request.getHashtag());
     }
+    public void updateComplete(Long id, Long writerId, boolean completed) {
+        Question findQuestion = questionRepository.findByQuestionIdAndWriterId(id, writerId)
+            .orElseThrow(RuntimeException::new);
+
+        if (completed) {
+            findQuestion.changeCompletedTrue();
+            return;
+        }
+        findQuestion.changeCompletedFalse();
+    }
 }

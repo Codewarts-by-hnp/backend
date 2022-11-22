@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -54,5 +55,11 @@ public class QuestionController {
     public void questionEdit(@PathVariable Long id, @RequestBody QuestionUpdateRequest updateRequest, HttpServletRequest request) {
         Long memberId = jwtProvider.decode(request.getHeader("Authorization"));
         questionService.update(id, memberId, updateRequest);
+    }
+
+    @PatchMapping("/{id}")
+    public void questionEditCompleted(@PathVariable Long id, boolean completed, HttpServletRequest request) {
+        Long memberId = jwtProvider.decode(request.getHeader("Authorization"));
+        questionService.updateComplete(id, memberId, completed);
     }
 }
