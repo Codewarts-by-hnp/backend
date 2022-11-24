@@ -1,9 +1,9 @@
 package com.codewarts.noriter.article.domain;
 
+import com.codewarts.noriter.article.domain.type.ArticleType;
 import com.codewarts.noriter.comment.domain.Comment;
 import com.codewarts.noriter.common.domain.Member;
 import com.codewarts.noriter.wish.domain.Wish;
-import com.codewarts.noriter.article.domain.type.ArticleType;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,10 +23,12 @@ import javax.persistence.OneToMany;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import org.springframework.util.ObjectUtils;
 
 @Getter
 @Entity
+@SuperBuilder
 @Inheritance(strategy = InheritanceType.JOINED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Article {
@@ -61,12 +63,13 @@ public class Article {
     private ArticleType articleType;
     private boolean deleted;
 
-    public Article(String title, String content, Member writer, ArticleType articleType) {
+    public Article(String title, String content, Member writer, LocalDateTime writtenTime,
+        LocalDateTime editedTime, ArticleType articleType) {
         this.title = title;
         this.content = content;
         this.writer = writer;
-        this.writtenTime = LocalDateTime.now();
-        this.editedTime = LocalDateTime.now();
+        this.writtenTime = writtenTime;
+        this.editedTime = editedTime;
         this.articleType = articleType;
         this.deleted = false;
     }
