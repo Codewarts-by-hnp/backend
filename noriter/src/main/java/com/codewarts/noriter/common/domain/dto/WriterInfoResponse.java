@@ -7,12 +7,12 @@ import lombok.Getter;
 public class WriterInfoResponse {
 
     private final Long id;
-    private final String nickName;
+    private final String nickname;
     private final String profileImage;
 
     public WriterInfoResponse(Member writer) {
         this.id = writer.getId();
-        this.nickName = writer.getNickname();
+        this.nickname = writer.getNickname();
         this.profileImage = writer.getProfileImageUrl();
     }
 
