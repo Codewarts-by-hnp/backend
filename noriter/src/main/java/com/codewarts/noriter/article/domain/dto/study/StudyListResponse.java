@@ -16,6 +16,8 @@ public class StudyListResponse {
     private Long id;
     private String title;
     private String content;
+
+    private String writerNickname;
     private List<String> hashtag;
     private LocalDateTime writtenTime;
     private LocalDateTime editedTime;
@@ -27,6 +29,7 @@ public class StudyListResponse {
         this.id = study.getId();
         this.title = study.getTitle();
         this.content = study.getContent();
+        this.writerNickname = study.getWriter().getNickname();
         this.hashtag = study.getHashtags().stream().map(Hashtag::getContent).collect(Collectors.toList());
         this.writtenTime = study.getWrittenTime();
         this.editedTime = study.getEditedTime();
@@ -39,6 +42,7 @@ public class StudyListResponse {
         this.id = article.getId();
         this.title = article.getTitle();
         this.content = article.getContent();
+        this.writerNickname = article.getWriter().getNickname();
         this.hashtag = article.getHashtags().stream().map(Hashtag::getContent).collect(Collectors.toList());
         this.writtenTime = article.getWrittenTime();
         this.editedTime = article.getEditedTime();
