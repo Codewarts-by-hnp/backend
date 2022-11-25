@@ -1,6 +1,7 @@
 package com.codewarts.noriter.article.service;
 
 import com.codewarts.noriter.article.domain.Article;
+import com.codewarts.noriter.article.domain.dto.free.FreeDetailResponse;
 import com.codewarts.noriter.article.domain.dto.free.FreePostRequest;
 import com.codewarts.noriter.article.repository.ArticleRepository;
 import com.codewarts.noriter.common.domain.Member;
@@ -23,5 +24,10 @@ public class FreeService {
         Article free = freePostRequest.toEntity(member);
         free.addHashtags(freePostRequest.getHashtags());
         articleRepository.save(free);
+    }
+
+    public FreeDetailResponse findDetail(Long id) {
+        Article article = articleRepository.findById(id).orElseThrow(RuntimeException::new);
+        return new FreeDetailResponse(article);
     }
 }
