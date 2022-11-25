@@ -2,9 +2,11 @@ package com.codewarts.noriter.article.controller;
 
 
 import com.codewarts.noriter.article.domain.dto.free.FreeDetailResponse;
+import com.codewarts.noriter.article.domain.dto.free.FreeListResponse;
 import com.codewarts.noriter.article.domain.dto.free.FreePostRequest;
 import com.codewarts.noriter.article.service.FreeService;
 import com.codewarts.noriter.auth.jwt.JwtProvider;
+import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,4 +34,10 @@ public class FreeController {
     public FreeDetailResponse freeDetail(@PathVariable Long id) {
         return freeService.findDetail(id);
     }
+
+    @GetMapping()
+    public List<FreeListResponse> freeDetail() {
+        return freeService.findList();
+    }
+
 }

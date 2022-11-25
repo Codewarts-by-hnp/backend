@@ -1,8 +1,7 @@
-package com.codewarts.noriter.article.domain.dto.study;
+package com.codewarts.noriter.article.domain.dto.free;
 
 import com.codewarts.noriter.article.domain.Article;
 import com.codewarts.noriter.article.domain.Hashtag;
-import com.codewarts.noriter.article.domain.Study;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -11,7 +10,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class StudyListResponse {
+public class FreeListResponse {
 
     private Long id;
     private String title;
@@ -25,27 +24,16 @@ public class StudyListResponse {
     private int commentCount;
     private boolean completed;
 
-    public StudyListResponse(Study study) {
-        this.id = study.getId();
-        this.title = study.getTitle();
-        this.content = study.getContent();
-        this.writerNickname = study.getWriter().getNickname();
-        this.hashtag = study.getHashtags().stream().map(Hashtag::getContent).collect(Collectors.toList());
-        this.writtenTime = study.getWrittenTime();
-        this.editedTime = study.getEditedTime();
-        this.wishCount = study.getWishList().size();
-        this.commentCount = study.getComments().size();
-        this.completed = study.isCompleted();
-    }
-
-    public StudyListResponse(Article article) {
+    public FreeListResponse(Article article) {
         this.id = article.getId();
         this.title = article.getTitle();
         this.content = article.getContent();
         this.writerNickname = article.getWriter().getNickname();
-        this.hashtag = article.getHashtags().stream().map(Hashtag::getContent).collect(Collectors.toList());
+        this.hashtag = article.getHashtags().stream()
+            .map(Hashtag::getContent)
+            .collect(Collectors.toList());
         this.writtenTime = article.getWrittenTime();
-        this.editedTime = article.getEditedTime();
+        this.editedTime = article.getWrittenTime();
         this.wishCount = article.getWishList().size();
         this.commentCount = article.getComments().size();
         this.completed = isCompleted();
