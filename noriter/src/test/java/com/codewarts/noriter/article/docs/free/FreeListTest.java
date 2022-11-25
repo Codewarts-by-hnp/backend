@@ -36,7 +36,7 @@ import org.springframework.test.context.jdbc.Sql;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Profile({"test"})
 @Sql("classpath:/data.sql")
-public class FreeDetailTest {
+public class FreeListTest {
 
     @LocalServerPort
     int port;
@@ -66,37 +66,29 @@ public class FreeDetailTest {
     }
 
     @Test
-    void 상세조회를_한다() {
+    void 리스트를_조회한다() {
 
         given(documentationSpec)
             .contentType(APPLICATION_JSON_VALUE)
-            .pathParam("id", 10)
 
             .when()
-            .get("/community/free/{id}")
+            .get("/community/free")
 
             .then()
             .statusCode(HttpStatus.OK.value())
-            .body("id", equalTo(10))
-            .body("title", equalTo("붕어빵 먹고싶어요"))
-            .body("content", equalTo("강남 붕어빵 맛잇는 집"))
-            .body("writer.id", equalTo(2))
-            .body("writer.nickname", equalTo("admin2"))
-            .body("writer.profileImage",
-                equalTo("https://avatars.githubusercontent.com/u/222222?v=4"))
-            .body("hashtag[0]", equalTo("강남역"))
-            .body("hashtag[1]", equalTo("붕어팥"))
-            .body("hashtag[2]", equalTo("팥"))
-            .body("hashtag[3]", equalTo("슈크림"))
-            .body("hashtag[4]", equalTo("겨울"))
-            .body("writtenTime", equalTo("2022-11-25T16:25:58.991061"))
-            .body("editedTime", equalTo("2022-11-25T16:25:58.991061"))
-            .body("wishCount", equalTo(0))
-            .body("comment[0].id", equalTo(5))
-            .body("comment[0].content", equalTo("강남역 11번출구에서 팔아요"))
-            .body("comment[0].writer.id", equalTo(1))
-            .body("comment[0].writer.nickname", equalTo("admin1"))
-            .body("comment[0].writer.profileImage", equalTo("https://avatars.githubusercontent.com/u/111111?v=4"));
+            .body("[0].id", equalTo(10))
+            .body("[0].title", equalTo("붕어빵 먹고싶어요"))
+            .body("[0].content", equalTo("강남 붕어빵 맛잇는 집"))
+            .body("[0].writerNickname", equalTo("admin2"))
+            .body("[0].hashtag[0]", equalTo("강남역"))
+            .body("[0].hashtag[1]", equalTo("붕어팥"))
+            .body("[0].hashtag[2]", equalTo("팥"))
+            .body("[0].hashtag[3]", equalTo("슈크림"))
+            .body("[0].hashtag[4]", equalTo("겨울"))
+            .body("[0].writtenTime", equalTo("2022-11-25T16:25:58.991061"))
+            .body("[0].editedTime", equalTo("2022-11-25T16:25:58.991061"))
+            .body("[0].wishCount", equalTo(0))
+            .body("[0].commentCount", equalTo(1));
     }
 
 }
