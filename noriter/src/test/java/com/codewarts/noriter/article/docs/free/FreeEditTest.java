@@ -75,7 +75,7 @@ class FreeEditTest {
         given(documentationSpec)
             .contentType(APPLICATION_JSON_VALUE)
             .header(AUTHORIZATION, accessToken)
-            .pathParam("id", 1)
+            .pathParam("id", 10)
             .body(requestBody)
 
             .when()
