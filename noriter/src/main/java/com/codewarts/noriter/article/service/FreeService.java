@@ -24,8 +24,8 @@ public class FreeService {
     private final MemberRepository memberRepository;
 
     @Transactional
-    public void create(FreePostRequest freePostRequest, Long memberId) {
-        Member member = memberRepository.findById(memberId).orElseThrow(RuntimeException::new);
+    public void create(FreePostRequest freePostRequest, Long writerId) {
+        Member member = memberRepository.findById(writerId).orElseThrow(RuntimeException::new);
         Article free = freePostRequest.toEntity(member);
         free.addHashtags(freePostRequest.getHashtags());
         articleRepository.save(free);
@@ -42,8 +42,12 @@ public class FreeService {
     }
 
     @Transactional
-    public void update(Long id, FreeEditRequest request, Long memberId) {
-        Article free = articleRepository.findByIdAndWriterId(id, memberId);
+    public void update(Long id, FreeEditRequest request, Long writerId) {
+        Article free = articleRepository.findByIdAndWriterId(id, writerId);
         free.update(request.getTitle(), request.getContent(), request.getHashtags());
+    }
+
+    public void delete(Long id, Long writerId) {
+        articleRepository.deleteByIdAndWriterId(id, writerId);
     }
 }
