@@ -2,6 +2,7 @@ package com.codewarts.noriter.article.service;
 
 import com.codewarts.noriter.article.domain.Article;
 import com.codewarts.noriter.article.domain.dto.free.FreeDetailResponse;
+import com.codewarts.noriter.article.domain.dto.free.FreeEditRequest;
 import com.codewarts.noriter.article.domain.dto.free.FreeListResponse;
 import com.codewarts.noriter.article.domain.dto.free.FreePostRequest;
 import com.codewarts.noriter.article.domain.type.ArticleType;
@@ -38,5 +39,11 @@ public class FreeService {
     public List<FreeListResponse> findList() {
         List<Article> freeTypeArticle = articleRepository.findAllByArticleType(ArticleType.FREE);
         return freeTypeArticle.stream().map(FreeListResponse::new).collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void update(Long id, FreeEditRequest request, Long memberId) {
+        Article free = articleRepository.findByIdAndWriterId(id, memberId);
+        free.update(request.getTitle(), request.getContent(), request.getHashtags());
     }
 }
