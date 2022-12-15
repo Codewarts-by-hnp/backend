@@ -5,7 +5,7 @@ import com.codewarts.noriter.common.domain.Member;
 
 public interface OAuthService {
 
-    OAuthAccessToken reqeustAccessToken(String code);
+    OAuthAccessToken requestAccessToken(String code);
 
     Member reqeustUserInfo(OAuthAccessToken oauthAccessToken);
 }

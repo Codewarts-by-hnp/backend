@@ -1,11 +1,11 @@
 package com.codewarts.noriter.auth.oauth.service;
 
-import com.codewarts.noriter.auth.oauth.dto.OAuthAccessToken;
-import com.codewarts.noriter.auth.oauth.properties.OAuthProperties;
-import com.codewarts.noriter.auth.oauth.properties.OAuthPropertiesMapper;
 import com.codewarts.noriter.auth.oauth.dto.GithubAccessTokenRequest;
 import com.codewarts.noriter.auth.oauth.dto.GithubAccessTokenResponse;
 import com.codewarts.noriter.auth.oauth.dto.GithubUserInfo;
+import com.codewarts.noriter.auth.oauth.dto.OAuthAccessToken;
+import com.codewarts.noriter.auth.oauth.properties.OAuthProperties;
+import com.codewarts.noriter.auth.oauth.properties.OAuthPropertiesMapper;
 import com.codewarts.noriter.common.domain.Member;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -14,6 +14,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 @Service("github")
 public class GithubOAuthService implements OAuthService {
+
     private final WebClient webClient;
     private final OAuthProperties oauthProperties;
 
@@ -23,7 +24,7 @@ public class GithubOAuthService implements OAuthService {
     }
 
     @Override
-    public OAuthAccessToken reqeustAccessToken(String code) {
+    public OAuthAccessToken requestAccessToken(String code) {
         GithubAccessTokenResponse githubAccessTokenResponse = webClient
             .post()
             .uri(oauthProperties.getAccessTokenApiUrl())
