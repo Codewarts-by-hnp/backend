@@ -15,7 +15,7 @@ import static org.springframework.restdocs.restassured3.RestAssuredRestDocumenta
 import com.codewarts.noriter.article.domain.Hashtag;
 import com.codewarts.noriter.article.domain.Question;
 import com.codewarts.noriter.article.domain.dto.question.QuestionUpdateRequest;
-import com.codewarts.noriter.article.repository.ArticleRepository;
+import com.codewarts.noriter.article.repository.QuestionRepository;
 import com.codewarts.noriter.auth.jwt.JwtProvider;
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
@@ -49,7 +49,7 @@ class QuestionUpdateTest {
     @LocalServerPort
     int port;
     @Autowired
-    private ArticleRepository articleRepository;
+    private QuestionRepository questionRepository;
     @Autowired
     protected JwtProvider jwtProvider;
 
@@ -77,7 +77,7 @@ class QuestionUpdateTest {
     @Test
     void 제목을_수정한다() {
 
-        Question question = articleRepository.findQuestionById(6L)
+        Question question = questionRepository.findQuestionById(6L)
             .orElseThrow(RuntimeException::new);
         String accessToken = jwtProvider.issueAccessToken(question.getWriter().getId());
         List<String> hashtag = question.getHashtags().stream().map(Hashtag::getContent)
@@ -98,7 +98,7 @@ class QuestionUpdateTest {
     @Test
     void 내용을_수정한다() {
 
-        Question question = articleRepository.findQuestionById(6L)
+        Question question = questionRepository.findQuestionById(6L)
             .orElseThrow(RuntimeException::new);
         String accessToken = jwtProvider.issueAccessToken(question.getWriter().getId());
         List<String> hashtag = question.getHashtags().stream().map(Hashtag::getContent)
@@ -121,7 +121,7 @@ class QuestionUpdateTest {
     @Test
     void 해시태그를_수정한다() {
 
-        Question question = articleRepository.findQuestionById(6L)
+        Question question = questionRepository.findQuestionById(6L)
             .orElseThrow(RuntimeException::new);
         String accessToken = jwtProvider.issueAccessToken(question.getWriter().getId());
 
@@ -142,7 +142,7 @@ class QuestionUpdateTest {
     @Test
     void 전부_수정한다() {
 
-        Question question = articleRepository.findQuestionById(6L)
+        Question question = questionRepository.findQuestionById(6L)
             .orElseThrow(RuntimeException::new);
         String accessToken = jwtProvider.issueAccessToken(question.getWriter().getId());
 
@@ -164,7 +164,7 @@ class QuestionUpdateTest {
     @ValueSource(strings = {"true", "false"})
     void 해결_여부를_변경한다(String completed) {
 
-        Question question = articleRepository.findQuestionById(6L)
+        Question question = questionRepository.findQuestionById(6L)
             .orElseThrow(RuntimeException::new);
         String accessToken = jwtProvider.issueAccessToken(question.getWriter().getId());
         Map<String, String> map = Map.of("completed", completed, "Authorization", accessToken);

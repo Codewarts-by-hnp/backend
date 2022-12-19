@@ -8,6 +8,7 @@ import com.codewarts.noriter.article.domain.dto.study.StudyListResponse;
 import com.codewarts.noriter.article.domain.dto.study.StudyPostRequest;
 import com.codewarts.noriter.article.domain.type.ArticleType;
 import com.codewarts.noriter.article.repository.ArticleRepository;
+import com.codewarts.noriter.article.repository.StudyRepository;
 import com.codewarts.noriter.common.domain.Member;
 import com.codewarts.noriter.common.repository.MemberRepository;
 import java.util.List;
@@ -23,6 +24,7 @@ public class StudyService {
 
     private final MemberRepository memberRepository;
     private final ArticleRepository articleRepository;
+    private final StudyRepository studyRepository;
 
     @Transactional
     public void register(StudyPostRequest studyPostRequest, Long memberId) {
@@ -30,7 +32,7 @@ public class StudyService {
             .orElseThrow(IllegalArgumentException::new);
         Study study = studyPostRequest.toEntity(member);
         study.addHashtags(studyPostRequest.getHashtags());
-        articleRepository.save(study);
+        studyRepository.save(study);
     }
 
     public List<StudyListResponse> findList(Boolean completed) {
@@ -43,14 +45,14 @@ public class StudyService {
                 .collect(Collectors.toList());
         }
 
-        List<Study> allStudy = articleRepository.findStudyByCompleted(completed);
+        List<Study> allStudy = studyRepository.findStudyByCompleted(completed);
         return allStudy.stream()
             .map(StudyListResponse::new)
             .collect(Collectors.toList());
     }
 
     public StudyDetailResponse findDetail(Long id) {
-        Study study = articleRepository.findByStudyId(id).orElseThrow(RuntimeException::new);
+        Study study = studyRepository.findByStudyId(id).orElseThrow(RuntimeException::new);
         return new StudyDetailResponse(study);
     }
 
@@ -61,7 +63,7 @@ public class StudyService {
 
     @Transactional
     public void updateCompletion(Long id, Long writerId, boolean completion) {
-        Study study = articleRepository.findByStudyIdAndWriterId(id, writerId)
+        Study study = studyRepository.findByStudyIdAndWriterId(id, writerId)
             .orElseThrow(RuntimeException::new);
 
         if (completion) {study.completion();
@@ -72,7 +74,7 @@ public class StudyService {
 
     @Transactional
     public void update(Long id, StudyEditRequest request, Long writerId) {
-        Study study = articleRepository.findByStudyIdAndWriterId(id, writerId)
+        Study study = studyRepository.findByStudyIdAndWriterId(id, writerId)
             .orElseThrow(RuntimeException::new);
         study.update(request.getTitle(), request.getContent(), request.getHashtags());
     }
