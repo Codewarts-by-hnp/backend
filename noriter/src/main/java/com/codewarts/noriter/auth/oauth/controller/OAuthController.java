@@ -55,13 +55,7 @@ public class OAuthController {
             throw new GlobalNoriterException(AuthExceptionType.EMPTY_AUTHORIZATION_CODE);
         }
 
-        OAuthAccessToken oAuthAccessToken;
-
-        try {
-             oAuthAccessToken = oAuthService.requestAccessToken(code);
-        } catch (Exception e) {
-            throw new GlobalNoriterException(AuthExceptionType.INVALID_AUTHORIZATION_CODE);
-        }
+        OAuthAccessToken oAuthAccessToken = oAuthService.requestAccessToken(code);
 
         Member oauthUser = oAuthService.reqeustUserInfo(oAuthAccessToken);
         Member loginMember = loginService.login(oauthUser);

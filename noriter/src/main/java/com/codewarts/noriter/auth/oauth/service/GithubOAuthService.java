@@ -7,6 +7,8 @@ import com.codewarts.noriter.auth.oauth.dto.OAuthAccessToken;
 import com.codewarts.noriter.auth.oauth.properties.OAuthProperties;
 import com.codewarts.noriter.auth.oauth.properties.OAuthPropertiesMapper;
 import com.codewarts.noriter.common.domain.Member;
+import com.codewarts.noriter.exception.GlobalNoriterException;
+import com.codewarts.noriter.exception.type.AuthExceptionType;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -38,6 +40,10 @@ public class GithubOAuthService implements OAuthService {
             .retrieve()
             .bodyToMono(GithubAccessTokenResponse.class)
             .block();
+
+        if (githubAccessTokenResponse.getAccessToken() == null) {
+            throw new GlobalNoriterException(AuthExceptionType.INVALID_AUTHORIZATION_CODE);
+        }
 
         return githubAccessTokenResponse.toOAuthAccessToken();
     }
