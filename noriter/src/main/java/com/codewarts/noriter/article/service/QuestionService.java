@@ -6,6 +6,7 @@ import com.codewarts.noriter.article.domain.dto.question.QuestionPostRequest;
 import com.codewarts.noriter.article.domain.dto.question.QuestionResponse;
 import com.codewarts.noriter.article.domain.dto.question.QuestionUpdateRequest;
 import com.codewarts.noriter.article.repository.ArticleRepository;
+import com.codewarts.noriter.article.repository.QuestionRepository;
 import com.codewarts.noriter.common.domain.Member;
 import com.codewarts.noriter.common.repository.MemberRepository;
 import java.util.List;
@@ -19,7 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class QuestionService {
 
-    private final ArticleRepository questionRepository;
+    private final QuestionRepository questionRepository;
+    private final ArticleRepository articleRepository;
     private final MemberRepository memberRepository;
 
     // 질문 등록 기능
@@ -35,9 +37,11 @@ public class QuestionService {
     // 질문 조회 기능
     public List<QuestionResponse> findList(Boolean status) {
         if (status == null) {
-            return  questionRepository.findAllQuestion().stream().map(QuestionResponse::new).collect(Collectors.toList());
+            return questionRepository.findAllQuestion().stream().map(QuestionResponse::new)
+                .collect(Collectors.toList());
         }
-        return questionRepository.findQuestionByCompleted(status).stream().map(QuestionResponse::new).collect(Collectors.toList());
+        return questionRepository.findQuestionByCompleted(status).stream()
+            .map(QuestionResponse::new).collect(Collectors.toList());
     }
 
     // 질문 상세 조회 기능
@@ -49,7 +53,7 @@ public class QuestionService {
 
     @Transactional
     public void delete(Long questionId, Long writerId) {
-        questionRepository.deleteByIdAndWriterId(questionId, writerId);
+        articleRepository.deleteByIdAndWriterId(questionId, writerId);
     }
 
     @Transactional
@@ -58,6 +62,7 @@ public class QuestionService {
             .orElseThrow(RuntimeException::new);
         findQuestion.update(request.getTitle(), request.getContent(), request.getHashtag());
     }
+
     public void updateComplete(Long id, Long writerId, boolean completed) {
         Question findQuestion = questionRepository.findByQuestionIdAndWriterId(id, writerId)
             .orElseThrow(RuntimeException::new);

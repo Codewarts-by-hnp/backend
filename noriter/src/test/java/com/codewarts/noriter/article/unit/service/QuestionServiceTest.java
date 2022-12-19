@@ -7,7 +7,7 @@ import com.codewarts.noriter.article.domain.Hashtag;
 import com.codewarts.noriter.article.domain.Question;
 import com.codewarts.noriter.article.domain.dto.question.QuestionPostRequest;
 import com.codewarts.noriter.article.domain.dto.question.QuestionUpdateRequest;
-import com.codewarts.noriter.article.repository.ArticleRepository;
+import com.codewarts.noriter.article.repository.QuestionRepository;
 import com.codewarts.noriter.article.service.QuestionService;
 import com.codewarts.noriter.common.domain.Member;
 import com.codewarts.noriter.common.repository.MemberRepository;
@@ -27,7 +27,7 @@ class QuestionServiceTest {
     @Autowired
     private QuestionService questionService;
     @Autowired
-    private ArticleRepository articleRepository;
+    private QuestionRepository questionRepository;
     @Autowired
     private MemberRepository memberRepository;
 
@@ -42,7 +42,7 @@ class QuestionServiceTest {
             hashtagsRequest);
         Long questionId = questionService.add(request, savedMember.getId());
         // when
-        Article question = articleRepository.findById(questionId)
+        Article question = questionRepository.findById(questionId)
             .orElseThrow(RuntimeException::new);
         // then
         assertThat(question.getTitle()).isEqualTo(request.getTitle());
@@ -60,7 +60,7 @@ class QuestionServiceTest {
         QuestionPostRequest request = new QuestionPostRequest("안녕 나는 질문이야", "헬륨가스 먹고 요렇게 됐지",
             hashtagsRequest);
         Long questionId = questionService.add(request, savedMember.getId());
-        Article question = articleRepository.findById(questionId)
+        Article question = questionRepository.findById(questionId)
             .orElseThrow(RuntimeException::new);
         // when
         List<Hashtag> hashtags = question.getHashtags();
@@ -82,7 +82,7 @@ class QuestionServiceTest {
         Member savedMember = memberRepository.save(member);
         QuestionPostRequest request = new QuestionPostRequest("안녕 나는 질문이야", "헬륨가스 먹고 요렇게 됐지", null);
         Long questionId = questionService.add(request, savedMember.getId());
-        Article question = articleRepository.findById(questionId)
+        Article question = questionRepository.findById(questionId)
             .orElseThrow(RuntimeException::new);
         // when
         List<Hashtag> hashtags = question.getHashtags();
@@ -101,7 +101,7 @@ class QuestionServiceTest {
         questionService.add(request1, savedMember.getId());
         questionService.add(request2, savedMember.getId());
         // when
-        List<Question> questions = articleRepository.findAllQuestion();
+        List<Question> questions = questionRepository.findAllQuestion();
         // then
         assertThat(questions).hasSize(5);
     }
@@ -118,12 +118,12 @@ class QuestionServiceTest {
         Long questionId1 = questionService.add(request1, savedMember.getId());
         Long questionId2 = questionService.add(request2, savedMember.getId());
         questionService.add(request3, savedMember.getId());
-        Question question1 = (Question)articleRepository.findById(questionId1).get();
-        Question question2 = (Question)articleRepository.findById(questionId2).get();
+        Question question1 = questionRepository.findById(questionId1).get();
+        Question question2 = questionRepository.findById(questionId2).get();
         question1.changeStatus(true);
         question2.changeStatus(true);
         // when
-        List<Question> questions = articleRepository.findQuestionByCompleted(true);
+        List<Question> questions = questionRepository.findQuestionByCompleted(true);
         // then
         assertThat(questions).hasSize(3);
     }
@@ -140,10 +140,10 @@ class QuestionServiceTest {
         questionService.add(request1, savedMember.getId());
         Long questionId2 = questionService.add(request2, savedMember.getId());
         questionService.add(request3, savedMember.getId());
-        Question question2 = (Question)articleRepository.findById(questionId2).get();
+        Question question2 = questionRepository.findById(questionId2).get();
         question2.changeStatus(true);
         // when
-        List<Question> questions = articleRepository.findQuestionByCompleted(false);
+        List<Question> questions = questionRepository.findQuestionByCompleted(false);
         // then
         assertThat(questions).hasSize(4);
     }
@@ -151,7 +151,7 @@ class QuestionServiceTest {
     @Test
     void 제목을_수정한다() {
         // given
-        Question question = articleRepository.findQuestionById(6L)
+        Question question = questionRepository.findQuestionById(6L)
             .orElseThrow(RuntimeException::new);
         List<String> hashtags = question.getHashtags().stream().map(Hashtag::getContent).collect(
             Collectors.toList());
@@ -171,7 +171,7 @@ class QuestionServiceTest {
     @Test
     void 내용을_수정한다() {
         // given
-        Question question = articleRepository.findQuestionById(6L)
+        Question question = questionRepository.findQuestionById(6L)
             .orElseThrow(RuntimeException::new);
         List<String> hashtags = question.getHashtags().stream().map(Hashtag::getContent).collect(
             Collectors.toList());
@@ -190,7 +190,7 @@ class QuestionServiceTest {
     @Test
     void 해시태그를_수정한다() {
         // given
-        Question question = articleRepository.findQuestionById(6L)
+        Question question = questionRepository.findQuestionById(6L)
             .orElseThrow(RuntimeException::new);
         List<String> hashtags = List.of("해시태그1", "해시태그2");
         QuestionUpdateRequest request = new QuestionUpdateRequest(question.getTitle(), question.getContent(), hashtags);
@@ -208,7 +208,7 @@ class QuestionServiceTest {
     @Test
     void 전부_수정한다() {
         // given
-        Question question = articleRepository.findQuestionById(6L)
+        Question question = questionRepository.findQuestionById(6L)
             .orElseThrow(RuntimeException::new);
         List<String> hashtags = List.of("해시태그1", "해시태그2");
         QuestionUpdateRequest request = new QuestionUpdateRequest("수정된 제목", "수정된 내용", hashtags);
@@ -226,7 +226,7 @@ class QuestionServiceTest {
     @Test
     void 해결_여부를_수정한다() {
         // given
-        Question question = articleRepository.findQuestionById(6L)
+        Question question = questionRepository.findQuestionById(6L)
             .orElseThrow(RuntimeException::new);
         boolean completed = question.isCompleted();
 
