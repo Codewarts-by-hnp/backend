@@ -3,12 +3,14 @@ package com.codewarts.noriter.auth.oauth.controller;
 import static com.codewarts.noriter.auth.utils.OAuthUtils.ACCESS_TOKEN;
 import static com.codewarts.noriter.auth.utils.OAuthUtils.REFRESH_TOKEN;
 
-import com.codewarts.noriter.auth.service.LoginService;
+import com.codewarts.noriter.auth.jwt.JwtProvider;
 import com.codewarts.noriter.auth.oauth.dto.OAuthAccessToken;
 import com.codewarts.noriter.auth.oauth.properties.OAuthPropertiesMapper;
 import com.codewarts.noriter.auth.oauth.service.OAuthService;
+import com.codewarts.noriter.auth.service.LoginService;
 import com.codewarts.noriter.common.domain.Member;
-import com.codewarts.noriter.auth.jwt.JwtProvider;
+import com.codewarts.noriter.exception.GlobalNoriterException;
+import com.codewarts.noriter.exception.type.AuthExceptionType;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
@@ -35,6 +37,9 @@ public class OAuthController {
     @GetMapping("/{resource-server}/login/form")
     public void redirectLoginForm(HttpServletResponse response,
         @PathVariable(name = "resource-server") String resourceServer) throws IOException {
+        if (!oauthServiceMap.containsKey(resourceServer)) {
+            throw new GlobalNoriterException(AuthExceptionType.RESOURCE_SERVER_NOT_FOUND);
+        }
         String loginFormUrl = mapper.getOAuthProperties(resourceServer).getLoginFormUrl();
         response.sendRedirect(loginFormUrl);
     }
@@ -44,7 +49,13 @@ public class OAuthController {
         @RequestBody Map<String, String> map, HttpServletResponse response) {
 
         OAuthService oAuthService = oauthServiceMap.get(resourceServer);
-        OAuthAccessToken oAuthAccessToken = oAuthService.reqeustAccessToken(map.get("code"));
+
+        String code = map.get("code");
+        if (code == null) {
+            throw new GlobalNoriterException(AuthExceptionType.EMPTY_AUTHORIZATION_CODE);
+        }
+
+        OAuthAccessToken oAuthAccessToken = oAuthService.requestAccessToken(code);
 
         Member oauthUser = oAuthService.reqeustUserInfo(oAuthAccessToken);
         Member loginMember = loginService.login(oauthUser);
