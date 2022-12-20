@@ -36,6 +36,14 @@ public class JwtProvider {
             .asLong();
     }
 
+    public void verifyToken(String token) {
+        JWT.require(algorithm)
+            .withIssuer(issuer)
+            .withSubject(ACCESS_TOKEN)
+            .build()
+            .verify(token);
+    }
+
     private String issueToken(String subject, Long memberId, Date expiresAt) {
         return JWT.create()
             .withIssuer(issuer)
