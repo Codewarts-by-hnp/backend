@@ -6,7 +6,6 @@ import com.codewarts.noriter.article.domain.dto.free.FreeEditRequest;
 import com.codewarts.noriter.article.domain.dto.free.FreeListResponse;
 import com.codewarts.noriter.article.domain.dto.free.FreePostRequest;
 import com.codewarts.noriter.article.service.FreeService;
-import com.codewarts.noriter.auth.jwt.JwtProvider;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -21,15 +20,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/community/free")
+@RequestMapping("/community/playground")
 public class FreeController {
 
     private final FreeService freeService;
-    private final JwtProvider jwtProvider;
 
     @PostMapping
     public void register(@RequestBody FreePostRequest freePostRequest, HttpServletRequest request) {
-        Long memberId = jwtProvider.decode(request.getHeader("Authorization"));
+        Long memberId = getMemberId(request);
         freeService.create(freePostRequest, memberId);
     }
 
@@ -38,7 +36,7 @@ public class FreeController {
         return freeService.findDetail(id);
     }
 
-    @GetMapping()
+    @GetMapping
     public List<FreeListResponse> freeDetail() {
         return freeService.findList();
     }
@@ -46,13 +44,17 @@ public class FreeController {
     @PutMapping("/{id}")
     public void postEdit(@PathVariable Long id, @RequestBody FreeEditRequest freeEditRequest,
         HttpServletRequest request) {
-        Long memberId = jwtProvider.decode(request.getHeader("Authorization"));
+        Long memberId = getMemberId(request);
         freeService.update(id, freeEditRequest, memberId);
     }
 
     @DeleteMapping("/{id}")
     public void freeRemove(@PathVariable Long id, HttpServletRequest request) {
-        Long memberId = jwtProvider.decode(request.getHeader("Authorization"));
+        Long memberId = getMemberId(request);
         freeService.delete(id, memberId);
+    }
+
+    private Long getMemberId(HttpServletRequest request) {
+        return (Long)request.getAttribute("memberId");
     }
 }
