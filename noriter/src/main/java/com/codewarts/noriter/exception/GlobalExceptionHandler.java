@@ -3,6 +3,7 @@ package com.codewarts.noriter.exception;
 import com.codewarts.noriter.exception.response.ErrorResponse;
 import com.codewarts.noriter.exception.type.CommonExceptionType;
 import java.util.HashMap;
+import javax.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +25,7 @@ public class GlobalExceptionHandler {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ErrorResponse invalidRequestHandler(MethodArgumentNotValidException exception) {
+    public ErrorResponse invalidBindHandler(MethodArgumentNotValidException exception) {
         ErrorResponse response = ErrorResponse.builder()
             .errorCode(CommonExceptionType.INVALID_REQUEST.getErrorCode())
             .message(CommonExceptionType.INVALID_REQUEST.getErrorMessage())
@@ -35,5 +36,14 @@ public class GlobalExceptionHandler {
             response.addDetail(fieldError.getField(), fieldError.getDefaultMessage());
         }
         return response;
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ErrorResponse invalidRequestHandler(ConstraintViolationException exception) {
+        return ErrorResponse.builder()
+            .errorCode(CommonExceptionType.INVALID_REQUEST.getErrorCode())
+            .message(exception.getMessage())
+            .build();
     }
 }

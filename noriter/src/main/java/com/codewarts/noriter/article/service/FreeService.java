@@ -7,6 +7,8 @@ import com.codewarts.noriter.article.domain.dto.free.FreeListResponse;
 import com.codewarts.noriter.article.domain.dto.free.FreePostRequest;
 import com.codewarts.noriter.article.domain.type.ArticleType;
 import com.codewarts.noriter.article.repository.ArticleRepository;
+import com.codewarts.noriter.exception.GlobalNoriterException;
+import com.codewarts.noriter.exception.type.ArticleExceptionType;
 import com.codewarts.noriter.member.domain.Member;
 import com.codewarts.noriter.member.service.MemberService;
 import java.util.List;
@@ -32,7 +34,7 @@ public class FreeService {
     }
 
     public FreeDetailResponse findDetail(Long id) {
-        Article article = articleRepository.findById(id).orElseThrow(RuntimeException::new);
+        Article article = findArticle(id);
         return new FreeDetailResponse(article);
     }
 
@@ -49,5 +51,10 @@ public class FreeService {
 
     public void delete(Long id, Long writerId) {
         articleRepository.deleteByIdAndWriterId(id, writerId);
+    }
+
+    public Article findArticle(Long id) {
+        return articleRepository.findById(id)
+            .orElseThrow(() -> new GlobalNoriterException(ArticleExceptionType.ARTICLE_NOT_FOUND));
     }
 }
