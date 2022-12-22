@@ -73,7 +73,7 @@ public class FreeDetailTest {
             .pathParam("id", 10)
 
             .when()
-            .get("/community/free/{id}")
+            .get("/community/playground/{id}")
 
             .then()
             .statusCode(HttpStatus.OK.value())

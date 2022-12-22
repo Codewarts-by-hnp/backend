@@ -72,7 +72,7 @@ public class FreeListTest {
             .contentType(APPLICATION_JSON_VALUE)
 
             .when()
-            .get("/community/free")
+            .get("/community/playground")
 
             .then()
             .statusCode(HttpStatus.OK.value())

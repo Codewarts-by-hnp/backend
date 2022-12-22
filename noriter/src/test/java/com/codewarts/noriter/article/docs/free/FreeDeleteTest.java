@@ -73,7 +73,7 @@ public class FreeDeleteTest {
             .pathParam("id", 10)
 
             .when()
-            .delete("/community/free/{id}")
+            .delete("/community/playground/{id}")
 
             .then()
             .statusCode(HttpStatus.OK.value());

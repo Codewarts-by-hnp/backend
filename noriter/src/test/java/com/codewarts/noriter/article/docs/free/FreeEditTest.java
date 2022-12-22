@@ -79,7 +79,7 @@ class FreeEditTest {
             .body(requestBody)
 
             .when()
-            .put("/community/free/{id}")
+            .put("/community/playground/{id}")
 
             .then()
             .statusCode(HttpStatus.OK.value());
