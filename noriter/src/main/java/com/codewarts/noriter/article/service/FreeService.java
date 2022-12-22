@@ -7,8 +7,8 @@ import com.codewarts.noriter.article.domain.dto.free.FreeListResponse;
 import com.codewarts.noriter.article.domain.dto.free.FreePostRequest;
 import com.codewarts.noriter.article.domain.type.ArticleType;
 import com.codewarts.noriter.article.repository.ArticleRepository;
-import com.codewarts.noriter.common.domain.Member;
-import com.codewarts.noriter.common.repository.MemberRepository;
+import com.codewarts.noriter.member.domain.Member;
+import com.codewarts.noriter.member.service.MemberService;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -21,11 +21,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class FreeService {
 
     private final ArticleRepository articleRepository;
-    private final MemberRepository memberRepository;
+    private final MemberService memberService;
 
     @Transactional
     public void create(FreePostRequest freePostRequest, Long writerId) {
-        Member member = memberRepository.findById(writerId).orElseThrow(RuntimeException::new);
+        Member member = memberService.findMember(writerId);
         Article free = freePostRequest.toEntity(member);
         free.addHashtags(freePostRequest.getHashtags());
         articleRepository.save(free);
