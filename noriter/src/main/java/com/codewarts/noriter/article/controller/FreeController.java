@@ -8,7 +8,9 @@ import com.codewarts.noriter.article.domain.dto.free.FreePostRequest;
 import com.codewarts.noriter.article.service.FreeService;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,12 +23,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/community/playground")
+@Validated
 public class FreeController {
 
     private final FreeService freeService;
 
     @PostMapping
-    public void register(@RequestBody FreePostRequest freePostRequest, HttpServletRequest request) {
+    public void register(@RequestBody @Valid FreePostRequest freePostRequest, HttpServletRequest request) {
         Long memberId = getMemberId(request);
         freeService.create(freePostRequest, memberId);
     }
