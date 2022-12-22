@@ -2,7 +2,7 @@ package com.codewarts.noriter.article.domain;
 
 import com.codewarts.noriter.article.domain.type.ArticleType;
 import com.codewarts.noriter.comment.domain.Comment;
-import com.codewarts.noriter.common.domain.Member;
+import com.codewarts.noriter.member.domain.Member;
 import com.codewarts.noriter.wish.domain.Wish;
 import java.time.LocalDateTime;
 import java.util.ArrayList;

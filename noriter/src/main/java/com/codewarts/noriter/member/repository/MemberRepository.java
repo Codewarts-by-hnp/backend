@@ -1,6 +1,6 @@
-package com.codewarts.noriter.common.repository;
+package com.codewarts.noriter.member.repository;
 
-import com.codewarts.noriter.common.domain.Member;
+import com.codewarts.noriter.member.domain.Member;
 import com.codewarts.noriter.auth.oauth.type.ResourceServer;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;

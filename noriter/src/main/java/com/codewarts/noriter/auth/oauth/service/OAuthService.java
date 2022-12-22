@@ -1,7 +1,7 @@
 package com.codewarts.noriter.auth.oauth.service;
 
 import com.codewarts.noriter.auth.oauth.dto.OAuthAccessToken;
-import com.codewarts.noriter.common.domain.Member;
+import com.codewarts.noriter.member.domain.Member;
 
 public interface OAuthService {
 

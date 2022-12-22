@@ -1,7 +1,7 @@
 package com.codewarts.noriter.auth.service;
 
-import com.codewarts.noriter.common.repository.MemberRepository;
-import com.codewarts.noriter.common.domain.Member;
+import com.codewarts.noriter.member.repository.MemberRepository;
+import com.codewarts.noriter.member.domain.Member;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

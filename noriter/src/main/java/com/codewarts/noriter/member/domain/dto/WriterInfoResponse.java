@@ -1,6 +1,6 @@
-package com.codewarts.noriter.common.domain.dto;
+package com.codewarts.noriter.member.domain.dto;
 
-import com.codewarts.noriter.common.domain.Member;
+import com.codewarts.noriter.member.domain.Member;
 import lombok.Getter;
 
 @Getter

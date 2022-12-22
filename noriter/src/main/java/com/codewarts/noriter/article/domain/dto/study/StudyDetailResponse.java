@@ -3,7 +3,7 @@ package com.codewarts.noriter.article.domain.dto.study;
 import com.codewarts.noriter.article.domain.Hashtag;
 import com.codewarts.noriter.article.domain.Study;
 import com.codewarts.noriter.comment.domain.dto.CommentResponse;
-import com.codewarts.noriter.common.domain.dto.WriterInfoResponse;
+import com.codewarts.noriter.member.domain.dto.WriterInfoResponse;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
