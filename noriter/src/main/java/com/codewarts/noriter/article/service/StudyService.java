@@ -67,8 +67,7 @@ public class StudyService {
         Study study = studyRepository.findByStudyIdAndWriterId(id, writerId)
             .orElseThrow(RuntimeException::new);
 
-        if (completion) {
-            study.completion();
+        if (completion) {study.completion();
         } else {
             study.incomplete();
         }
@@ -76,13 +75,14 @@ public class StudyService {
 
     @Transactional
     public void update(Long id, StudyEditRequest request, Long writerId) {
-        Study study = studyRepository.findByStudyIdAndWriterId(id, writerId)
-            .orElseThrow(RuntimeException::new);
+        memberService.findMember(writerId);
+        Study study = findStudy(id);
+        study.checkWriter(writerId);
         study.update(request.getTitle(), request.getContent(), request.getHashtags());
     }
 
     public Study findStudy(Long id) {
-        return studyRepository.findById(id).
+       return studyRepository.findById(id).
             orElseThrow(() -> new GlobalNoriterException(ArticleExceptionType.ARTICLE_NOT_FOUND));
     }
 }

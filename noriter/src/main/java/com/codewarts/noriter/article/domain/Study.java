@@ -24,12 +24,6 @@ public class Study extends Article {
         this.completed = completed;
     }
 
-//    @Builder
-//    public Study(String title, String content, Member writer) {
-//        super(title, content, writer, ArticleType.STUDY);
-//        this.completed = false;
-//    }
-
     public void completion() {
         completed = true;
     }
@@ -41,5 +35,10 @@ public class Study extends Article {
     @Override
     public void update(String title, String content, List<String> requestHashtags) {
         super.update(title, content, requestHashtags);
+    }
+
+    @Override
+    public void checkWriter(Long writerId) {
+        super.checkWriter(writerId);
     }
 }
