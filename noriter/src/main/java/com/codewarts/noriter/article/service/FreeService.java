@@ -51,7 +51,11 @@ public class FreeService {
         free.update(request.getTitle(), request.getContent(), request.getHashtags());
     }
 
+    @Transactional
     public void delete(Long id, Long writerId) {
+        memberService.findMember(writerId);
+        Article free = findArticle(id);
+        free.checkWriter(writerId);
         articleRepository.deleteByIdAndWriterId(id, writerId);
     }
 

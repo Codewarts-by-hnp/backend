@@ -62,7 +62,11 @@ public class FreeController {
     }
 
     @DeleteMapping("/{id}")
-    public void freeRemove(@PathVariable Long id, HttpServletRequest request) {
+    public void freeRemove(
+        @PathVariable(required = false)
+        @NotNull(message = "ID가 비어있습니다.")
+        @Positive(message = "게시글 ID는 양수이어야 합니다.") Long id,
+        HttpServletRequest request) {
         Long memberId = getMemberId(request);
         freeService.delete(id, memberId);
     }
