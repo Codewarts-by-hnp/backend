@@ -7,8 +7,10 @@ import com.codewarts.noriter.article.domain.dto.free.FreeListResponse;
 import com.codewarts.noriter.article.domain.dto.free.FreePostRequest;
 import com.codewarts.noriter.article.domain.type.ArticleType;
 import com.codewarts.noriter.article.repository.ArticleRepository;
-import com.codewarts.noriter.common.domain.Member;
-import com.codewarts.noriter.common.repository.MemberRepository;
+import com.codewarts.noriter.exception.GlobalNoriterException;
+import com.codewarts.noriter.exception.type.ArticleExceptionType;
+import com.codewarts.noriter.member.domain.Member;
+import com.codewarts.noriter.member.service.MemberService;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -21,18 +23,18 @@ import org.springframework.transaction.annotation.Transactional;
 public class FreeService {
 
     private final ArticleRepository articleRepository;
-    private final MemberRepository memberRepository;
+    private final MemberService memberService;
 
     @Transactional
     public void create(FreePostRequest freePostRequest, Long writerId) {
-        Member member = memberRepository.findById(writerId).orElseThrow(RuntimeException::new);
+        Member member = memberService.findMember(writerId);
         Article free = freePostRequest.toEntity(member);
         free.addHashtags(freePostRequest.getHashtags());
         articleRepository.save(free);
     }
 
     public FreeDetailResponse findDetail(Long id) {
-        Article article = articleRepository.findById(id).orElseThrow(RuntimeException::new);
+        Article article = findArticle(id);
         return new FreeDetailResponse(article);
     }
 
@@ -43,11 +45,22 @@ public class FreeService {
 
     @Transactional
     public void update(Long id, FreeEditRequest request, Long writerId) {
-        Article free = articleRepository.findByIdAndWriterId(id, writerId);
+        memberService.findMember(writerId);
+        Article free = findArticle(id);
+        free.checkWriter(writerId);
         free.update(request.getTitle(), request.getContent(), request.getHashtags());
     }
 
+    @Transactional
     public void delete(Long id, Long writerId) {
+        memberService.findMember(writerId);
+        Article free = findArticle(id);
+        free.checkWriter(writerId);
         articleRepository.deleteByIdAndWriterId(id, writerId);
+    }
+
+    public Article findArticle(Long id) {
+        return articleRepository.findById(id)
+            .orElseThrow(() -> new GlobalNoriterException(ArticleExceptionType.ARTICLE_NOT_FOUND));
     }
 }

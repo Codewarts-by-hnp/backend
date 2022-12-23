@@ -37,6 +37,9 @@ dependencies {
 	// Query Log
 	implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.5.8'
 
+	// Validation
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
 	//TEST
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'io.rest-assured:rest-assured'
@@ -48,6 +51,7 @@ dependencies {
 	// 테스트 환경 lombok 사용
 	testCompileOnly 'org.projectlombok:lombok:1.18.24'
 	testAnnotationProcessor 'org.projectlombok:lombok:1.18.24'
+
 
 	// 인메모리 test 를 위한 h2 의존성 추가
 	runtimeOnly 'com.h2database:h2'

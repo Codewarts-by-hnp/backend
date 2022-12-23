@@ -1,7 +1,7 @@
 package com.codewarts.noriter.comment.domain.dto;
 
 import com.codewarts.noriter.comment.domain.Comment;
-import com.codewarts.noriter.common.domain.dto.WriterInfoResponse;
+import com.codewarts.noriter.member.domain.dto.WriterInfoResponse;
 import lombok.Getter;
 
 @Getter

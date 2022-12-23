@@ -1,7 +1,7 @@
 package com.codewarts.noriter.wish.domain;
 
 import com.codewarts.noriter.article.domain.Article;
-import com.codewarts.noriter.common.domain.Member;
+import com.codewarts.noriter.member.domain.Member;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;

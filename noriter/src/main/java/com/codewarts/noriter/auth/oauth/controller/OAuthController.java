@@ -8,7 +8,7 @@ import com.codewarts.noriter.auth.oauth.dto.OAuthAccessToken;
 import com.codewarts.noriter.auth.oauth.properties.OAuthPropertiesMapper;
 import com.codewarts.noriter.auth.oauth.service.OAuthService;
 import com.codewarts.noriter.auth.service.LoginService;
-import com.codewarts.noriter.common.domain.Member;
+import com.codewarts.noriter.member.domain.Member;
 import com.codewarts.noriter.exception.GlobalNoriterException;
 import com.codewarts.noriter.exception.type.AuthExceptionType;
 import java.io.IOException;

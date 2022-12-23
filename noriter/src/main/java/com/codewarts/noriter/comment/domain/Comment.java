@@ -1,7 +1,7 @@
 package com.codewarts.noriter.comment.domain;
 
 import com.codewarts.noriter.article.domain.Article;
-import com.codewarts.noriter.common.domain.Member;
+import com.codewarts.noriter.member.domain.Member;
 import java.time.LocalDateTime;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;

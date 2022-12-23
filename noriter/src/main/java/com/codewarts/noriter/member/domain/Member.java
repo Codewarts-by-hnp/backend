@@ -1,4 +1,4 @@
-package com.codewarts.noriter.common.domain;
+package com.codewarts.noriter.member.domain;
 
 import com.codewarts.noriter.article.domain.Article;
 import com.codewarts.noriter.auth.oauth.type.ResourceServer;

@@ -13,6 +13,8 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.re
 import static org.springframework.restdocs.restassured3.RestAssuredRestDocumentation.documentationConfiguration;
 
 import com.codewarts.noriter.auth.jwt.JwtProvider;
+import com.codewarts.noriter.exception.type.ArticleExceptionType;
+import com.codewarts.noriter.exception.type.CommonExceptionType;
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.specification.RequestSpecification;
@@ -36,7 +38,7 @@ import org.springframework.test.context.jdbc.Sql;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Profile({"test"})
 @Sql("classpath:/data.sql")
-public class FreeDetailTest {
+class FreeDetailTest {
 
     @LocalServerPort
     int port;
@@ -73,7 +75,7 @@ public class FreeDetailTest {
             .pathParam("id", 10)
 
             .when()
-            .get("/community/free/{id}")
+            .get("/community/playground/{id}")
 
             .then()
             .statusCode(HttpStatus.OK.value())
@@ -86,8 +88,6 @@ public class FreeDetailTest {
                 equalTo("https://avatars.githubusercontent.com/u/111111?v=4"))
             .body("hashtag[0]", equalTo("강남역"))
             .body("hashtag[1]", equalTo("붕어팥"))
-            .body("writtenTime", equalTo("2022-11-25T16:25:58.991061"))
-            .body("editedTime", equalTo("2022-11-25T16:25:58.991061"))
             .body("wishCount", equalTo(0))
             .body("comment[0].id", equalTo(5))
             .body("comment[0].content", equalTo("강남역 11번출구에서 팔아요"))
@@ -96,4 +96,51 @@ public class FreeDetailTest {
             .body("comment[0].writer.profileImage", equalTo("https://avatars.githubusercontent.com/u/222222?v=4"));
     }
 
+    @Test
+    void id가_유효하지_않는_경우_예외를_발생시킨다() {
+
+        given(documentationSpec)
+            .contentType(APPLICATION_JSON_VALUE)
+            .pathParam("id", -1)
+
+            .when()
+            .get("/community/playground/{id}")
+
+            .then()
+            .statusCode(CommonExceptionType.INVALID_REQUEST.getStatus().value())
+            .body("errorCode", equalTo(CommonExceptionType.INVALID_REQUEST.getErrorCode()))
+            .body("message", equalTo("freeDetail.id: 게시글 ID는 양수이어야 합니다."));
+    }
+
+    @Test
+    void Path_Variable이_없는_경우_예외를_발생시킨다() {
+
+        given(documentationSpec)
+            .contentType(APPLICATION_JSON_VALUE)
+            .pathParam("id", " ")
+
+            .when()
+            .get("/community/playground/{id}")
+
+            .then()
+            .statusCode(CommonExceptionType.INVALID_REQUEST.getStatus().value())
+            .body("errorCode", equalTo(CommonExceptionType.INVALID_REQUEST.getErrorCode()))
+            .body("message", equalTo("freeDetail.id: ID가 비어있습니다."));
+    }
+
+    @Test
+    void id가_존재하지_않는_경우_예외를_발생시킨다() {
+
+        given(documentationSpec)
+            .contentType(APPLICATION_JSON_VALUE)
+            .pathParam("id", 999999999)
+
+            .when()
+            .get("/community/playground/{id}")
+
+            .then()
+            .statusCode(ArticleExceptionType.ARTICLE_NOT_FOUND.getStatus().value())
+            .body("errorCode", equalTo(ArticleExceptionType.ARTICLE_NOT_FOUND.getErrorCode()))
+            .body("message", equalTo(ArticleExceptionType.ARTICLE_NOT_FOUND.getErrorMessage()));
+    }
 }
