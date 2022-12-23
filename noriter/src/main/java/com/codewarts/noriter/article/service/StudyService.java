@@ -59,6 +59,9 @@ public class StudyService {
 
     @Transactional
     public void delete(Long id, Long writerId) {
+        memberService.findMember(writerId);
+        Study study = findStudy(id);
+        study.checkWriter(writerId);
         articleRepository.deleteByIdAndWriterId(id, writerId);
     }
 
