@@ -36,6 +36,6 @@ public class WebConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new AuthVerificationInterceptor(jwtProvider)).order(1)
             .addPathPatterns("/community/playground", "/community/playground/{id}",
-                "/community/question", "/community/question/{id}");
+                "/community/gathering", "/community/gathering/{id}");
     }
 }
