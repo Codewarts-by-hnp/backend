@@ -7,6 +7,8 @@ import com.codewarts.noriter.article.domain.dto.question.QuestionResponse;
 import com.codewarts.noriter.article.domain.dto.question.QuestionUpdateRequest;
 import com.codewarts.noriter.article.repository.ArticleRepository;
 import com.codewarts.noriter.article.repository.QuestionRepository;
+import com.codewarts.noriter.exception.GlobalNoriterException;
+import com.codewarts.noriter.exception.type.ArticleExceptionType;
 import com.codewarts.noriter.member.domain.Member;
 import com.codewarts.noriter.member.service.MemberService;
 import java.util.List;
@@ -22,6 +24,7 @@ public class QuestionService {
 
     private final QuestionRepository questionRepository;
     private final ArticleRepository articleRepository;
+    private final FreeService freeService;
     private final MemberService memberService;
 
     // 질문 등록 기능
@@ -46,8 +49,7 @@ public class QuestionService {
 
     // 질문 상세 조회 기능
     public QuestionDetailResponse findDetail(Long id) {
-        Question question = questionRepository.findByQuestionId(id)
-            .orElseThrow(RuntimeException::new);
+        Question question = findQuestion(id);
         return QuestionDetailResponse.from(question);
     }
 
@@ -72,5 +74,10 @@ public class QuestionService {
             return;
         }
         findQuestion.changeCompletedFalse();
+    }
+
+    private Question findQuestion(Long id) {
+        return questionRepository.findById(id).orElseThrow(() -> new GlobalNoriterException(
+            ArticleExceptionType.ARTICLE_NOT_FOUND));
     }
 }

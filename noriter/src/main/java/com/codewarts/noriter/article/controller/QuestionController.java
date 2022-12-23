@@ -9,6 +9,8 @@ import com.codewarts.noriter.auth.jwt.JwtProvider;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -44,7 +46,10 @@ public class QuestionController {
     }
 
     @GetMapping("/{id}")
-    public QuestionDetailResponse questionDetail(@PathVariable Long id) {
+    public QuestionDetailResponse questionDetail(
+        @PathVariable(required = false)
+        @NotNull(message = "ID가 비어있습니다.")
+        @Positive(message = "게시글 ID는 양수이어야 합니다.") Long id) {
         return questionService.findDetail(id);
     }
 
