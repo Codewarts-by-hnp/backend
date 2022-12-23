@@ -113,7 +113,7 @@ class FreeDetailTest {
     }
 
     @Test
-    void id가_없는_경우_예외를_발생시킨다() {
+    void Path_Variable이_없는_경우_예외를_발생시킨다() {
 
         given(documentationSpec)
             .contentType(APPLICATION_JSON_VALUE)
