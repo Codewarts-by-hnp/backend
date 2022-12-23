@@ -10,7 +10,7 @@ import com.codewarts.noriter.article.domain.type.ArticleType;
 import com.codewarts.noriter.article.repository.ArticleRepository;
 import com.codewarts.noriter.article.repository.StudyRepository;
 import com.codewarts.noriter.member.domain.Member;
-import com.codewarts.noriter.member.repository.MemberRepository;
+import com.codewarts.noriter.member.service.MemberService;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -22,14 +22,13 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class StudyService {
 
-    private final MemberRepository memberRepository;
+    private final MemberService memberService;
     private final ArticleRepository articleRepository;
     private final StudyRepository studyRepository;
 
     @Transactional
     public void register(StudyPostRequest studyPostRequest, Long memberId) {
-        Member member = memberRepository.findById(memberId)
-            .orElseThrow(IllegalArgumentException::new);
+        Member member = memberService.findMember(memberId);
         Study study = studyPostRequest.toEntity(member);
         study.addHashtags(studyPostRequest.getHashtags());
         studyRepository.save(study);

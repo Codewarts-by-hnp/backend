@@ -5,11 +5,12 @@ import com.codewarts.noriter.article.domain.dto.study.StudyEditRequest;
 import com.codewarts.noriter.article.domain.dto.study.StudyListResponse;
 import com.codewarts.noriter.article.domain.dto.study.StudyPostRequest;
 import com.codewarts.noriter.article.service.StudyService;
-import com.codewarts.noriter.auth.jwt.JwtProvider;
 import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -24,15 +25,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/community/gathering")
+@Validated
 public class StudyController {
 
     private final StudyService studyService;
-    private final JwtProvider jwtProvider;
 
     @PostMapping
-    public void register(@RequestBody StudyPostRequest studyPostRequest,
+    public void register(@RequestBody @Valid StudyPostRequest studyPostRequest,
         HttpServletRequest request) {
-        Long memberId = jwtProvider.decode(request.getHeader("Authorization"));
+        Long memberId = getMemberId(request);
         studyService.register(studyPostRequest, memberId);
     }
 
@@ -49,21 +50,25 @@ public class StudyController {
 
     @DeleteMapping("/{id}")
     public void studyRemove(@PathVariable Long id, HttpServletRequest request) {
-        Long memberId = jwtProvider.decode(request.getHeader("Authorization"));
+        Long memberId = getMemberId(request);
         studyService.delete(id, memberId);
     }
 
     @PatchMapping("/{id}")
     public void recruitmentCompletionUpdate(@PathVariable Long id,
         @RequestBody Map<String, Boolean> map, HttpServletRequest request) {
-        Long memberId = jwtProvider.decode(request.getHeader("Authorization"));
+        Long memberId = getMemberId(request);
         studyService.updateCompletion(id, memberId, map.get("completion"));
     }
 
     @PutMapping("/{id}")
     public void postEdit(@PathVariable Long id, @RequestBody StudyEditRequest studyEditRequest,
         HttpServletRequest request) {
-        Long memberId = jwtProvider.decode(request.getHeader("Authorization"));
+        Long memberId = getMemberId(request);
         studyService.update(id, studyEditRequest, memberId);
+    }
+
+    private Long getMemberId(HttpServletRequest request) {
+        return (Long) request.getAttribute("memberId");
     }
 }
