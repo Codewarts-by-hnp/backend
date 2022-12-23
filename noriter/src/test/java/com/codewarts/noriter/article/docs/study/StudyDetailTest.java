@@ -13,6 +13,8 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.re
 import static org.springframework.restdocs.restassured3.RestAssuredRestDocumentation.documentationConfiguration;
 
 import com.codewarts.noriter.auth.jwt.JwtProvider;
+import com.codewarts.noriter.exception.type.ArticleExceptionType;
+import com.codewarts.noriter.exception.type.CommonExceptionType;
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.specification.RequestSpecification;
@@ -87,15 +89,62 @@ public class StudyDetailTest {
             .body("hashtag[0]", equalTo("SPRING"))
             .body("hashtag[1]", equalTo("JPA"))
             .body("hashtag[2]", equalTo("난자유야"))
-            .body("writtenTime", equalTo("2022-11-11T16:25:58.991061"))
-            .body("editedTime", equalTo("2022-11-11T16:25:58.991061"))
             .body("wishCount", equalTo(0))
             .body("completed", equalTo(false))
             .body("comment[0].id", equalTo(1))
             .body("comment[0].content", equalTo("우왕 잘봤어용"))
             .body("comment[0].writer.id", equalTo(2))
             .body("comment[0].writer.nickname", equalTo("admin2"))
-            .body("comment[0].writer.profileImage", equalTo("https://avatars.githubusercontent.com/u/222222?v=4"));
+            .body("comment[0].writer.profileImage",
+                equalTo("https://avatars.githubusercontent.com/u/222222?v=4"));
     }
 
+    @Test
+    void Path_Variable이_없는_경우_예외를_발생시킨다() {
+
+        given(documentationSpec)
+            .contentType(APPLICATION_JSON_VALUE)
+            .pathParam("id", " ")
+
+            .when()
+            .get("/community/gathering/{id}")
+
+            .then()
+            .statusCode(CommonExceptionType.INVALID_REQUEST.getStatus().value())
+            .body("errorCode", equalTo(CommonExceptionType.INVALID_REQUEST.getErrorCode()))
+            .body("message", equalTo("gatheringDetail.id: ID가 비어있습니다."));
+    }
+
+    @Test
+    void id가_유효하지_않는_경우_예외를_발생시킨다() {
+
+        given(documentationSpec)
+            .contentType(APPLICATION_JSON_VALUE)
+            .pathParam("id", -1)
+
+            .when()
+            .get("/community/gathering/{id}")
+
+            .then()
+            .statusCode(CommonExceptionType.INVALID_REQUEST.getStatus().value())
+            .body("errorCode", equalTo(CommonExceptionType.INVALID_REQUEST.getErrorCode()))
+            .body("message", equalTo("gatheringDetail.id: 게시글 ID는 양수이어야 합니다."));
+    }
+
+    @Test
+    void id가_존재하지_않는_경우_예외를_발생시킨다() {
+
+        given(documentationSpec)
+            .contentType(APPLICATION_JSON_VALUE)
+            .pathParam("id", 999999999)
+
+            .when()
+            .get("/community/gathering/{id}")
+
+            .then()
+            .statusCode(ArticleExceptionType.ARTICLE_NOT_FOUND.getStatus().value())
+            .body("errorCode", equalTo(ArticleExceptionType.ARTICLE_NOT_FOUND.getErrorCode()))
+            .body("message", equalTo(ArticleExceptionType.ARTICLE_NOT_FOUND.getErrorMessage()));
+
+    }
 }
