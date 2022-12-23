@@ -11,6 +11,6 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
 
     @Query("select a from Article a where a.articleType = :articleType")
     List<Article> findAllByArticleType(@Param("articleType") ArticleType articleType);
-    Article findByIdAndWriterId(Long id, Long memberId);
+
     void deleteByIdAndWriterId(Long id, Long writerId);
 }

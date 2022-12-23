@@ -2,11 +2,14 @@ package com.codewarts.noriter.article.domain;
 
 import com.codewarts.noriter.article.domain.type.ArticleType;
 import com.codewarts.noriter.comment.domain.Comment;
+import com.codewarts.noriter.exception.GlobalNoriterException;
+import com.codewarts.noriter.exception.type.ArticleExceptionType;
 import com.codewarts.noriter.member.domain.Member;
 import com.codewarts.noriter.wish.domain.Wish;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -89,5 +92,11 @@ public class Article {
         this.editedTime = LocalDateTime.now();
         this.hashtags.clear();
         addHashtags(requestHashtags);
+    }
+
+    public void checkWriter(Long writerId) {
+        if (!Objects.equals(this.writer.getId(), writerId)) {
+            throw new GlobalNoriterException(ArticleExceptionType.ARTICLE_NOT_MATCHED_WRITER);
+        }
     }
 }

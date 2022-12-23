@@ -51,7 +51,11 @@ public class FreeController {
     }
 
     @PutMapping("/{id}")
-    public void postEdit(@PathVariable Long id, @RequestBody FreeEditRequest freeEditRequest,
+    public void freeEdit(
+        @PathVariable(required = false)
+        @NotNull(message = "ID가 비어있습니다.")
+        @Positive(message = "게시글 ID는 양수이어야 합니다.") Long id,
+        @RequestBody @Valid FreeEditRequest freeEditRequest,
         HttpServletRequest request) {
         Long memberId = getMemberId(request);
         freeService.update(id, freeEditRequest, memberId);

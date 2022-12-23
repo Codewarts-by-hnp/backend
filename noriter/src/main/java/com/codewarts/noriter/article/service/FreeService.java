@@ -45,7 +45,9 @@ public class FreeService {
 
     @Transactional
     public void update(Long id, FreeEditRequest request, Long writerId) {
-        Article free = articleRepository.findByIdAndWriterId(id, writerId);
+        memberService.findMember(writerId);
+        Article free = findArticle(id);
+        free.checkWriter(writerId);
         free.update(request.getTitle(), request.getContent(), request.getHashtags());
     }
 
