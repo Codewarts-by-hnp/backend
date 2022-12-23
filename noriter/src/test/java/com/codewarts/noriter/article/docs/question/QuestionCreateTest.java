@@ -1,61 +1,50 @@
 package com.codewarts.noriter.article.docs.question;
 
+import static com.codewarts.noriter.exception.type.AuthExceptionType.EMPTY_ACCESS_TOKEN;
+import static com.codewarts.noriter.exception.type.AuthExceptionType.TAMPERED_ACCESS_TOKEN;
+import static com.codewarts.noriter.exception.type.CommonExceptionType.INVALID_REQUEST;
+import static com.codewarts.noriter.exception.type.MemberExceptionType.MEMBER_NOT_FOUND;
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.equalTo;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpHeaders.CONNECTION;
 import static org.springframework.http.HttpHeaders.CONTENT_LENGTH;
 import static org.springframework.http.HttpHeaders.DATE;
 import static org.springframework.http.HttpHeaders.HOST;
 import static org.springframework.http.HttpHeaders.TRANSFER_ENCODING;
-import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.removeHeaders;
 import static org.springframework.restdocs.restassured3.RestAssuredRestDocumentation.documentationConfiguration;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.codewarts.noriter.article.domain.Question;
-import com.codewarts.noriter.article.domain.dto.question.QuestionPostRequest;
-import com.codewarts.noriter.article.repository.ArticleRepository;
-import com.codewarts.noriter.article.service.QuestionService;
 import com.codewarts.noriter.auth.jwt.JwtProvider;
-import com.codewarts.noriter.member.domain.Member;
-import com.codewarts.noriter.member.repository.MemberRepository;
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.specification.RequestSpecification;
-import org.hamcrest.Matchers;
+import java.util.List;
+import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.test.context.jdbc.Sql;
 
-@Transactional
 @DisplayNameGeneration(ReplaceUnderscores.class)
 @ExtendWith({RestDocumentationExtension.class})
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@AutoConfigureMockMvc
+@Profile({"test"})
+@Sql("classpath:/data.sql")
 class QuestionCreateTest {
 
-    @Autowired
-    private MockMvc mockMvc;
-    @Autowired
-    private ArticleRepository articleRepository;
-    @Autowired
-    private QuestionService questionService;
-    @Autowired
-    private MemberRepository memberRepository;
 
     @LocalServerPort
     int port;
@@ -85,77 +74,110 @@ class QuestionCreateTest {
     }
 
     @Test
-    @DisplayName("미해결 질문 글 조회")
-    void findIncompleteQuestion() throws Exception {
-        // given
-        Member member = Member.builder().nickname("phil").build();
-        Member savedMember = memberRepository.save(member);
-        QuestionPostRequest request1 = new QuestionPostRequest("안녕 나는 질문1", "해결되지 못했지", null);
-        QuestionPostRequest request2 = new QuestionPostRequest("안녕 나는 질문2", "해결했지", null);
-        QuestionPostRequest request3 = new QuestionPostRequest("안녕 나는 질문3", "해결되지 못했지", null);
-        Long questionId1 = questionService.add(request1, savedMember.getId());
-        Long questionId2 = questionService.add(request2, savedMember.getId());
-        Long questionId3 = questionService.add(request3, savedMember.getId());
-        Question question2 = (Question) articleRepository.findById(questionId2).get();
-        question2.changeStatus(true);
+    void 글을_등록한다() {
+        String accessToken = jwtProvider.issueAccessToken(1L);
 
-        // when
-        mockMvc.perform(get("/community/question?completion=false")
-                .contentType(APPLICATION_JSON))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.size()", Matchers.is(4)))
-            .andExpect(jsonPath("$[2].id").value(questionId1))
-            .andExpect(jsonPath("$[3].id").value(questionId3))
-            .andDo(print());
+        Map<String, Object> requestBody = Map.of("title", "질문있어요",
+            "content", "스프링 어려워요", "hashtags",
+            List.of("질문게시판", "고수가 되고싶어요", "코린이"));
+
+        given(documentationSpec)
+            .contentType(APPLICATION_JSON_VALUE)
+            .header(AUTHORIZATION, accessToken)
+            .body(requestBody)
+
+            .when()
+            .post("/community/question")
+
+            .then()
+            .statusCode(HttpStatus.OK.value());
     }
 
     @Test
-    @DisplayName("해결된 질문 글 조회")
-    void findCompleteQuestion() throws Exception {
-        // given
-        Member member = Member.builder().nickname("phil").build();
-        Member savedMember = memberRepository.save(member);
-        QuestionPostRequest request1 = new QuestionPostRequest("안녕 나는 질문1", "해결되지 못했지", null);
-        QuestionPostRequest request2 = new QuestionPostRequest("안녕 나는 질문2", "해결했지", null);
-        QuestionPostRequest request3 = new QuestionPostRequest("안녕 나는 질문3", "해결되지 못했지", null);
-        questionService.add(request1, savedMember.getId());
-        questionService.add(request3, savedMember.getId());
-        Long questionId2 = questionService.add(request2, savedMember.getId());
-        Question question2 = (Question) articleRepository.findById(questionId2).get();
-        question2.changeStatus(true);
+    void Access_Token이_비어있는_경우_예외_발생() {
+        String accessToken = " ";
 
-        // expected
-        mockMvc.perform(get("/community/question?completion=true")
-                .contentType(APPLICATION_JSON))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.size()", Matchers.is(2)))
-            .andExpect(jsonPath("$[1].id").value(questionId2))
-            .andDo(print());
+        Map<String, Object> requestBody = Map.of("title", "질문있어요",
+            "content", "스프링 어려워요", "hashtags",
+            List.of("질문게시판", "고수가 되고싶어요", "코린이"));
+
+        given(documentationSpec)
+            .contentType(APPLICATION_JSON_VALUE)
+            .header(AUTHORIZATION, accessToken)
+            .body(requestBody)
+
+            .when()
+            .post("/community/question")
+
+            .then()
+            .statusCode(EMPTY_ACCESS_TOKEN.getStatus().value())
+            .body("errorCode", equalTo(EMPTY_ACCESS_TOKEN.getErrorCode()))
+            .body("message", equalTo(EMPTY_ACCESS_TOKEN.getErrorMessage()));
     }
 
     @Test
-    @DisplayName("모든 질문 글 조회")
-    void findAllQuestion() throws Exception {
-        // given
-        Member member = Member.builder().nickname("phil").build();
-        Member savedMember = memberRepository.save(member);
-        QuestionPostRequest request1 = new QuestionPostRequest("안녕 나는 질문1", "해결되지 못했지", null);
-        QuestionPostRequest request2 = new QuestionPostRequest("안녕 나는 질문2", "해결했지", null);
-        QuestionPostRequest request3 = new QuestionPostRequest("안녕 나는 질문3", "해결되지 못했지", null);
-        Long questionId1 = questionService.add(request1, savedMember.getId());
-        Long questionId2 = questionService.add(request2, savedMember.getId());
-        Long questionId3 = questionService.add(request3, savedMember.getId());
-        Question question2 = (Question) articleRepository.findById(questionId2).get();
-        question2.changeStatus(true);
+    void Access_Token이_변조된_경우_예외_발생() {
+        String accessToken = jwtProvider.issueAccessToken(1L) + "123";
 
-        // expected
-        mockMvc.perform(get("/community/question")
-                .contentType(APPLICATION_JSON))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.size()", Matchers.is(6)))
-            .andExpect(jsonPath("$[3].id").value(questionId1))
-            .andExpect(jsonPath("$[4].id").value(questionId2))
-            .andExpect(jsonPath("$[5].id").value(questionId3))
-            .andDo(print());
+        Map<String, Object> requestBody = Map.of("title", "질문있어요",
+            "content", "스프링 어려워요", "hashtags",
+            List.of("질문게시판", "고수가 되고싶어요", "코린이"));
+
+        given(documentationSpec)
+            .contentType(APPLICATION_JSON_VALUE)
+            .header(AUTHORIZATION, accessToken)
+            .body(requestBody)
+
+            .when()
+            .post("/community/question")
+
+            .then()
+            .statusCode(TAMPERED_ACCESS_TOKEN.getStatus().value())
+            .body("errorCode", equalTo(TAMPERED_ACCESS_TOKEN.getErrorCode()))
+            .body("message", equalTo(TAMPERED_ACCESS_TOKEN.getErrorMessage()));
+    }
+
+    @Test
+    void 존재하지_않는_회원인_경우_예외가_발생한다() {
+        String accessToken = jwtProvider.issueAccessToken(99999999L);
+
+        Map<String, Object> requestBody = Map.of("title", "질문있어요",
+            "content", "스프링 어려워요", "hashtags",
+            List.of("질문게시판", "고수가 되고싶어요", "코린이"));
+
+        given(documentationSpec)
+            .contentType(APPLICATION_JSON_VALUE)
+            .header(AUTHORIZATION, accessToken)
+            .body(requestBody)
+
+            .when()
+            .post("/community/question")
+
+            .then()
+            .statusCode(MEMBER_NOT_FOUND.getStatus().value())
+            .body("errorCode", equalTo(MEMBER_NOT_FOUND.getErrorCode()))
+            .body("message", equalTo(MEMBER_NOT_FOUND.getErrorMessage()));
+    }
+
+    @Test
+    void 필수값이_비어있을_경우_예외가_발생한다() {
+        String accessToken = jwtProvider.issueAccessToken(1L);
+
+        Map<String, Object> requestBody = Map.of("content", "스프링 어려워요",
+            "hashtags", List.of("질문게시판", "고수가 되고싶어요", "코린이"));
+
+        given(documentationSpec)
+            .contentType(APPLICATION_JSON_VALUE)
+            .header(AUTHORIZATION, accessToken)
+            .body(requestBody)
+
+            .when()
+            .post("/community/question")
+
+            .then()
+            .statusCode(INVALID_REQUEST.getStatus().value())
+            .body("errorCode", equalTo(INVALID_REQUEST.getErrorCode()))
+            .body("message", equalTo(INVALID_REQUEST.getErrorMessage()))
+            .body("detail.title", equalTo("제목은 필수입니다."));
     }
 }
