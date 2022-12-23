@@ -9,6 +9,8 @@ import com.codewarts.noriter.article.domain.dto.study.StudyPostRequest;
 import com.codewarts.noriter.article.domain.type.ArticleType;
 import com.codewarts.noriter.article.repository.ArticleRepository;
 import com.codewarts.noriter.article.repository.StudyRepository;
+import com.codewarts.noriter.exception.GlobalNoriterException;
+import com.codewarts.noriter.exception.type.ArticleExceptionType;
 import com.codewarts.noriter.member.domain.Member;
 import com.codewarts.noriter.member.service.MemberService;
 import java.util.List;
@@ -51,7 +53,7 @@ public class StudyService {
     }
 
     public StudyDetailResponse findDetail(Long id) {
-        Study study = studyRepository.findByStudyId(id).orElseThrow(RuntimeException::new);
+        Study study = findStudy(id);
         return new StudyDetailResponse(study);
     }
 
@@ -65,7 +67,8 @@ public class StudyService {
         Study study = studyRepository.findByStudyIdAndWriterId(id, writerId)
             .orElseThrow(RuntimeException::new);
 
-        if (completion) {study.completion();
+        if (completion) {
+            study.completion();
         } else {
             study.incomplete();
         }
@@ -76,5 +79,10 @@ public class StudyService {
         Study study = studyRepository.findByStudyIdAndWriterId(id, writerId)
             .orElseThrow(RuntimeException::new);
         study.update(request.getTitle(), request.getContent(), request.getHashtags());
+    }
+
+    public Study findStudy(Long id) {
+        return studyRepository.findById(id).
+            orElseThrow(() -> new GlobalNoriterException(ArticleExceptionType.ARTICLE_NOT_FOUND));
     }
 }

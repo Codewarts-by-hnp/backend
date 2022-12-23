@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -44,12 +46,14 @@ public class StudyController {
     }
 
     @GetMapping("/{id}")
-    public StudyDetailResponse gatheringDetail(@PathVariable Long id) {
+    public StudyDetailResponse gatheringDetail(@PathVariable(required = false)
+    @NotNull(message = "ID가 비어있습니다.")
+    @Positive(message = "게시글 ID는 양수이어야 합니다.") Long id) {
         return studyService.findDetail(id);
     }
 
     @DeleteMapping("/{id}")
-    public void studyRemove(@PathVariable Long id, HttpServletRequest request) {
+    public void gatheringRemove(@PathVariable Long id, HttpServletRequest request) {
         Long memberId = getMemberId(request);
         studyService.delete(id, memberId);
     }
@@ -62,7 +66,7 @@ public class StudyController {
     }
 
     @PutMapping("/{id}")
-    public void postEdit(@PathVariable Long id, @RequestBody StudyEditRequest studyEditRequest,
+    public void gatheringEdit(@PathVariable Long id, @RequestBody StudyEditRequest studyEditRequest,
         HttpServletRequest request) {
         Long memberId = getMemberId(request);
         studyService.update(id, studyEditRequest, memberId);
