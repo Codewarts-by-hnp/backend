@@ -8,7 +8,9 @@ import com.codewarts.noriter.article.service.QuestionService;
 import com.codewarts.noriter.auth.jwt.JwtProvider;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -23,15 +25,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/community/question")
+@Validated
 public class QuestionController {
 
     private final QuestionService questionService;
     private final JwtProvider jwtProvider;
 
     @PostMapping
-    public void create(@RequestBody QuestionPostRequest postRequest,
+    public void create(@RequestBody @Valid QuestionPostRequest postRequest,
         HttpServletRequest request) {
-        Long memberId = jwtProvider.decode(request.getHeader("Authorization"));
+        Long memberId = getMemberId(request);
         questionService.add(postRequest, memberId);
     }
 
@@ -61,5 +64,9 @@ public class QuestionController {
     public void questionEditCompleted(@PathVariable Long id, boolean completed, HttpServletRequest request) {
         Long memberId = jwtProvider.decode(request.getHeader("Authorization"));
         questionService.updateComplete(id, memberId, completed);
+    }
+
+    private Long getMemberId(HttpServletRequest request) {
+        return (Long) request.getAttribute("memberId");
     }
 }

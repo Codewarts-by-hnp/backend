@@ -8,7 +8,7 @@ import com.codewarts.noriter.article.domain.dto.question.QuestionUpdateRequest;
 import com.codewarts.noriter.article.repository.ArticleRepository;
 import com.codewarts.noriter.article.repository.QuestionRepository;
 import com.codewarts.noriter.member.domain.Member;
-import com.codewarts.noriter.member.repository.MemberRepository;
+import com.codewarts.noriter.member.service.MemberService;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -22,12 +22,12 @@ public class QuestionService {
 
     private final QuestionRepository questionRepository;
     private final ArticleRepository articleRepository;
-    private final MemberRepository memberRepository;
+    private final MemberService memberService;
 
     // 질문 등록 기능
     @Transactional
     public Long add(QuestionPostRequest request, Long memberId) {
-        Member writer = memberRepository.findById(memberId).orElseThrow(RuntimeException::new);
+        Member writer = memberService.findMember(memberId);
         Question question = request.toEntity(writer);
         question.addHashtags(request.getHashtag());
         Question savedQuestion = questionRepository.save(question);
