@@ -9,6 +9,7 @@ import com.codewarts.noriter.article.service.FreeService;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
@@ -30,13 +31,17 @@ public class FreeController {
     private final FreeService freeService;
 
     @PostMapping
-    public void register(@RequestBody @Valid FreePostRequest freePostRequest, HttpServletRequest request) {
+    public void register(@RequestBody @Valid FreePostRequest freePostRequest,
+        HttpServletRequest request) {
         Long memberId = getMemberId(request);
         freeService.create(freePostRequest, memberId);
     }
 
     @GetMapping("/{id}")
-    public FreeDetailResponse freeDetail(@PathVariable(required = false) @Positive(message = "게시글 ID는 양수이어야 합니다.") Long id) {
+    public FreeDetailResponse freeDetail(
+        @PathVariable(required = false)
+        @NotNull(message = "ID가 비어있습니다.")
+        @Positive(message = "게시글 ID는 양수이어야 합니다.") Long id) {
         return freeService.findDetail(id);
     }
 
@@ -59,6 +64,6 @@ public class FreeController {
     }
 
     private Long getMemberId(HttpServletRequest request) {
-        return (Long)request.getAttribute("memberId");
+        return (Long) request.getAttribute("memberId");
     }
 }
