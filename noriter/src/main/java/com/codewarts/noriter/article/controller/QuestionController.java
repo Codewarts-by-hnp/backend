@@ -6,7 +6,10 @@ import com.codewarts.noriter.article.domain.dto.question.QuestionListResponse;
 import com.codewarts.noriter.article.domain.dto.question.QuestionUpdateRequest;
 import com.codewarts.noriter.article.service.QuestionService;
 import com.codewarts.noriter.auth.jwt.JwtProvider;
+import com.codewarts.noriter.exception.GlobalNoriterException;
+import com.codewarts.noriter.exception.type.CommonExceptionType;
 import java.util.List;
+import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -75,9 +78,17 @@ public class QuestionController {
     }
 
     @PatchMapping("/{id}")
-    public void questionEditCompleted(@PathVariable Long id, boolean completed, HttpServletRequest request) {
-        Long memberId = jwtProvider.decode(request.getHeader("Authorization"));
-        questionService.updateComplete(id, memberId, completed);
+    public void questionEditCompleted(
+        @PathVariable(required = false)
+        @NotNull(message = "ID가 비어있습니다.")
+        @Positive(message = "게시글 ID는 양수이어야 합니다.") Long id,
+        @RequestBody Map<String, Boolean> map,
+        HttpServletRequest request) {
+        Long memberId = getMemberId(request);
+        if (!map.containsKey("completed")) {
+            throw new GlobalNoriterException(CommonExceptionType.INVALID_REQUEST);
+        }
+        questionService.updateComplete(id, memberId, map.get("completed"));
     }
 
     private Long getMemberId(HttpServletRequest request) {

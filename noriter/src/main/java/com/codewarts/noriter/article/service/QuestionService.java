@@ -69,15 +69,16 @@ public class QuestionService {
     }
 
     @Transactional
-    public void updateComplete(Long id, Long writerId, boolean completed) {
-        Question findQuestion = questionRepository.findByQuestionIdAndWriterId(id, writerId)
-            .orElseThrow(RuntimeException::new);
+    public void updateComplete(Long questionId, Long writerId, boolean completed) {
+        memberService.findMember(writerId);
+        Question question = findQuestion(questionId);
+        question.checkWriter(writerId);
 
         if (completed) {
-            findQuestion.changeCompletedTrue();
+            question.changeCompletedTrue();
             return;
         }
-        findQuestion.changeCompletedFalse();
+        question.changeCompletedFalse();
     }
 
     private Question findQuestion(Long id) {
