@@ -24,7 +24,6 @@ public class QuestionService {
 
     private final QuestionRepository questionRepository;
     private final ArticleRepository articleRepository;
-    private final FreeService freeService;
     private final MemberService memberService;
 
     // 질문 등록 기능
@@ -55,6 +54,9 @@ public class QuestionService {
 
     @Transactional
     public void delete(Long questionId, Long writerId) {
+        memberService.findMember(writerId);
+        Question question = findQuestion(questionId);
+        question.checkWriter(writerId);
         articleRepository.deleteByIdAndWriterId(questionId, writerId);
     }
 
@@ -65,6 +67,7 @@ public class QuestionService {
         findQuestion.update(request.getTitle(), request.getContent(), request.getHashtag());
     }
 
+    @Transactional
     public void updateComplete(Long id, Long writerId, boolean completed) {
         Question findQuestion = questionRepository.findByQuestionIdAndWriterId(id, writerId)
             .orElseThrow(RuntimeException::new);
