@@ -3,7 +3,7 @@ package com.codewarts.noriter.article.service;
 import com.codewarts.noriter.article.domain.Question;
 import com.codewarts.noriter.article.domain.dto.question.QuestionDetailResponse;
 import com.codewarts.noriter.article.domain.dto.question.QuestionPostRequest;
-import com.codewarts.noriter.article.domain.dto.question.QuestionResponse;
+import com.codewarts.noriter.article.domain.dto.question.QuestionListResponse;
 import com.codewarts.noriter.article.domain.dto.question.QuestionUpdateRequest;
 import com.codewarts.noriter.article.repository.ArticleRepository;
 import com.codewarts.noriter.article.repository.QuestionRepository;
@@ -37,13 +37,13 @@ public class QuestionService {
     }
 
     // 질문 조회 기능
-    public List<QuestionResponse> findList(Boolean status) {
+    public List<QuestionListResponse> findList(Boolean status) {
         if (status == null) {
-            return questionRepository.findAllQuestion().stream().map(QuestionResponse::new)
+            return questionRepository.findAllQuestion().stream().map(QuestionListResponse::new)
                 .collect(Collectors.toList());
         }
         return questionRepository.findQuestionByCompleted(status).stream()
-            .map(QuestionResponse::new).collect(Collectors.toList());
+            .map(QuestionListResponse::new).collect(Collectors.toList());
     }
 
     // 질문 상세 조회 기능
@@ -61,10 +61,11 @@ public class QuestionService {
     }
 
     @Transactional
-    public void update(Long id, Long writerId, QuestionUpdateRequest request) {
-        Question findQuestion = questionRepository.findByQuestionIdAndWriterId(id, writerId)
-            .orElseThrow(RuntimeException::new);
-        findQuestion.update(request.getTitle(), request.getContent(), request.getHashtag());
+    public void update(Long questionId, Long writerId, QuestionUpdateRequest request) {
+        memberService.findMember(writerId);
+        Question question = findQuestion(questionId);
+        question.checkWriter(writerId);
+        question.update(request.getTitle(), request.getContent(), request.getHashtag());
     }
 
     @Transactional

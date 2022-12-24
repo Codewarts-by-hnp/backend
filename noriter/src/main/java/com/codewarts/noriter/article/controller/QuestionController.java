@@ -2,7 +2,7 @@ package com.codewarts.noriter.article.controller;
 
 import com.codewarts.noriter.article.domain.dto.question.QuestionDetailResponse;
 import com.codewarts.noriter.article.domain.dto.question.QuestionPostRequest;
-import com.codewarts.noriter.article.domain.dto.question.QuestionResponse;
+import com.codewarts.noriter.article.domain.dto.question.QuestionListResponse;
 import com.codewarts.noriter.article.domain.dto.question.QuestionUpdateRequest;
 import com.codewarts.noriter.article.service.QuestionService;
 import com.codewarts.noriter.auth.jwt.JwtProvider;
@@ -41,7 +41,7 @@ public class QuestionController {
     }
 
     @GetMapping
-    public List<QuestionResponse> questionList(@RequestParam(value = "completion", required = false) Boolean status) {
+    public List<QuestionListResponse> questionList(@RequestParam(value = "completion", required = false) Boolean status) {
         return questionService.findList(status);
     }
 
@@ -64,8 +64,13 @@ public class QuestionController {
     }
 
     @PutMapping("/{id}")
-    public void questionEdit(@PathVariable Long id, @RequestBody QuestionUpdateRequest updateRequest, HttpServletRequest request) {
-        Long memberId = jwtProvider.decode(request.getHeader("Authorization"));
+    public void questionEdit(
+        @PathVariable(required = false)
+        @NotNull(message = "ID가 비어있습니다.")
+        @Positive(message = "게시글 ID는 양수이어야 합니다.") Long id,
+        @RequestBody @Valid QuestionUpdateRequest updateRequest,
+        HttpServletRequest request) {
+        Long memberId = getMemberId(request);
         questionService.update(id, memberId, updateRequest);
     }
 

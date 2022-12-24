@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 import lombok.Getter;
 
 @Getter
-public class QuestionResponse {
+public class QuestionListResponse {
 
     Long id;
     String title;
@@ -20,7 +20,7 @@ public class QuestionResponse {
     int commentCount;
     boolean completed;
 
-    public QuestionResponse(Question question) {
+    public QuestionListResponse(Question question) {
         this.id = question.getId();
         this.title = question.getTitle();
         this.writerName = question.getWriter().getNickname();
