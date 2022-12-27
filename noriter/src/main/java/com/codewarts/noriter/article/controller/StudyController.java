@@ -41,8 +41,8 @@ public class StudyController {
 
     @GetMapping
     public List<StudyListResponse> gatheringList(
-        @RequestParam(required = false) Boolean completed) {
-        return studyService.findList(completed);
+        @RequestParam(required = false, name = "completion") Boolean status) {
+        return studyService.findList(status);
     }
 
     @GetMapping("/{id}")
