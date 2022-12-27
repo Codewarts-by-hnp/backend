@@ -3,12 +3,14 @@ package com.codewarts.noriter.article.service;
 import com.codewarts.noriter.article.domain.Question;
 import com.codewarts.noriter.article.domain.dto.question.QuestionDetailResponse;
 import com.codewarts.noriter.article.domain.dto.question.QuestionPostRequest;
-import com.codewarts.noriter.article.domain.dto.question.QuestionResponse;
+import com.codewarts.noriter.article.domain.dto.question.QuestionListResponse;
 import com.codewarts.noriter.article.domain.dto.question.QuestionUpdateRequest;
 import com.codewarts.noriter.article.repository.ArticleRepository;
 import com.codewarts.noriter.article.repository.QuestionRepository;
+import com.codewarts.noriter.exception.GlobalNoriterException;
+import com.codewarts.noriter.exception.type.ArticleExceptionType;
 import com.codewarts.noriter.member.domain.Member;
-import com.codewarts.noriter.member.repository.MemberRepository;
+import com.codewarts.noriter.member.service.MemberService;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -22,12 +24,12 @@ public class QuestionService {
 
     private final QuestionRepository questionRepository;
     private final ArticleRepository articleRepository;
-    private final MemberRepository memberRepository;
+    private final MemberService memberService;
 
     // 질문 등록 기능
     @Transactional
     public Long add(QuestionPostRequest request, Long memberId) {
-        Member writer = memberRepository.findById(memberId).orElseThrow(RuntimeException::new);
+        Member writer = memberService.findMember(memberId);
         Question question = request.toEntity(writer);
         question.addHashtags(request.getHashtag());
         Question savedQuestion = questionRepository.save(question);
@@ -35,42 +37,52 @@ public class QuestionService {
     }
 
     // 질문 조회 기능
-    public List<QuestionResponse> findList(Boolean status) {
+    public List<QuestionListResponse> findList(Boolean status) {
         if (status == null) {
-            return questionRepository.findAllQuestion().stream().map(QuestionResponse::new)
+            return questionRepository.findAllQuestion().stream().map(QuestionListResponse::new)
                 .collect(Collectors.toList());
         }
         return questionRepository.findQuestionByCompleted(status).stream()
-            .map(QuestionResponse::new).collect(Collectors.toList());
+            .map(QuestionListResponse::new).collect(Collectors.toList());
     }
 
     // 질문 상세 조회 기능
     public QuestionDetailResponse findDetail(Long id) {
-        Question question = questionRepository.findByQuestionId(id)
-            .orElseThrow(RuntimeException::new);
+        Question question = findQuestion(id);
         return QuestionDetailResponse.from(question);
     }
 
     @Transactional
     public void delete(Long questionId, Long writerId) {
+        memberService.findMember(writerId);
+        Question question = findQuestion(questionId);
+        question.checkWriter(writerId);
         articleRepository.deleteByIdAndWriterId(questionId, writerId);
     }
 
     @Transactional
-    public void update(Long id, Long writerId, QuestionUpdateRequest request) {
-        Question findQuestion = questionRepository.findByQuestionIdAndWriterId(id, writerId)
-            .orElseThrow(RuntimeException::new);
-        findQuestion.update(request.getTitle(), request.getContent(), request.getHashtag());
+    public void update(Long questionId, Long writerId, QuestionUpdateRequest request) {
+        memberService.findMember(writerId);
+        Question question = findQuestion(questionId);
+        question.checkWriter(writerId);
+        question.update(request.getTitle(), request.getContent(), request.getHashtag());
     }
 
-    public void updateComplete(Long id, Long writerId, boolean completed) {
-        Question findQuestion = questionRepository.findByQuestionIdAndWriterId(id, writerId)
-            .orElseThrow(RuntimeException::new);
+    @Transactional
+    public void updateComplete(Long questionId, Long writerId, boolean completed) {
+        memberService.findMember(writerId);
+        Question question = findQuestion(questionId);
+        question.checkWriter(writerId);
 
         if (completed) {
-            findQuestion.changeCompletedTrue();
+            question.changeCompletedTrue();
             return;
         }
-        findQuestion.changeCompletedFalse();
+        question.changeCompletedFalse();
+    }
+
+    private Question findQuestion(Long id) {
+        return questionRepository.findById(id).orElseThrow(() -> new GlobalNoriterException(
+            ArticleExceptionType.ARTICLE_NOT_FOUND));
     }
 }
