@@ -40,10 +40,19 @@ public class GlobalExceptionHandler {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(ConstraintViolationException.class)
-    public ErrorResponse invalidRequestHandler(ConstraintViolationException exception) {
+    public ErrorResponse invalidRequestHandler(Exception exception) {
         return ErrorResponse.builder()
             .errorCode(CommonExceptionType.INVALID_REQUEST.getErrorCode())
             .message(exception.getMessage())
+            .build();
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ErrorResponse runtimeExceptionHandler() {
+        return ErrorResponse.builder()
+            .errorCode(CommonExceptionType.INVALID_REQUEST.getErrorCode())
+            .message(CommonExceptionType.INVALID_REQUEST.getErrorMessage())
             .build();
     }
 }
