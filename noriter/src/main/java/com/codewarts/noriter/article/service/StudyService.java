@@ -1,12 +1,10 @@
 package com.codewarts.noriter.article.service;
 
-import com.codewarts.noriter.article.domain.Article;
 import com.codewarts.noriter.article.domain.Study;
 import com.codewarts.noriter.article.domain.dto.study.StudyDetailResponse;
 import com.codewarts.noriter.article.domain.dto.study.StudyEditRequest;
 import com.codewarts.noriter.article.domain.dto.study.StudyListResponse;
 import com.codewarts.noriter.article.domain.dto.study.StudyPostRequest;
-import com.codewarts.noriter.article.domain.type.ArticleType;
 import com.codewarts.noriter.article.repository.ArticleRepository;
 import com.codewarts.noriter.article.repository.StudyRepository;
 import com.codewarts.noriter.exception.GlobalNoriterException;
@@ -36,20 +34,14 @@ public class StudyService {
         studyRepository.save(study);
     }
 
-    public List<StudyListResponse> findList(Boolean completed) {
+    public List<StudyListResponse> findList(Boolean status) {
 
-        if (completed == null) {
-            List<Article> allByArticleType = articleRepository.findAllByArticleType(
-                ArticleType.STUDY);
-            return allByArticleType.stream()
-                .map(StudyListResponse::new)
-                .collect(Collectors.toList());
+        if (status == null) {
+            return studyRepository.findAllStudy().stream()
+                .map(StudyListResponse::new).collect(Collectors.toList());
         }
-
-        List<Study> allStudy = studyRepository.findStudyByCompleted(completed);
-        return allStudy.stream()
-            .map(StudyListResponse::new)
-            .collect(Collectors.toList());
+        return studyRepository.findStudyByCompleted(status).stream()
+            .map(StudyListResponse::new).collect(Collectors.toList());
     }
 
     public StudyDetailResponse findDetail(Long id) {
@@ -70,7 +62,8 @@ public class StudyService {
         Study study = studyRepository.findByStudyIdAndWriterId(id, writerId)
             .orElseThrow(RuntimeException::new);
 
-        if (completion) {study.completion();
+        if (completion) {
+            study.completion();
         } else {
             study.incomplete();
         }
@@ -85,7 +78,7 @@ public class StudyService {
     }
 
     public Study findStudy(Long id) {
-       return studyRepository.findById(id).
+        return studyRepository.findById(id).
             orElseThrow(() -> new GlobalNoriterException(ArticleExceptionType.ARTICLE_NOT_FOUND));
     }
 }
