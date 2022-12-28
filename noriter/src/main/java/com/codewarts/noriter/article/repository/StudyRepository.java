@@ -9,8 +9,8 @@ import org.springframework.data.repository.query.Param;
 
 public interface StudyRepository extends JpaRepository<Study, Long> {
 
-    @Query("select s from Study s where s.completed = :status")
-    List<Study> findStudyByCompleted(@Param("status") boolean status);
+    @Query("select s from Study s where s.status = :status")
+    List<Study> findStudyByCompleted(@Param("status") String status);
 
     @Query("select s from Study s where s.id =:id and s.writer.id =:writerId")
     Optional<Study> findByStudyIdAndWriterId(@Param("id") Long id, @Param("writerId") Long writerId);

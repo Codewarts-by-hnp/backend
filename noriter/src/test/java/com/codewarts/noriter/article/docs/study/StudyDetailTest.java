@@ -90,7 +90,7 @@ public class StudyDetailTest {
             .body("hashtag[1]", equalTo("JPA"))
             .body("hashtag[2]", equalTo("난자유야"))
             .body("wishCount", equalTo(0))
-            .body("completed", equalTo(false))
+            .body("status", equalTo("INCOMPLETE"))
             .body("comment[0].id", equalTo(1))
             .body("comment[0].content", equalTo("우왕 잘봤어용"))
             .body("comment[0].writer.id", equalTo(2))

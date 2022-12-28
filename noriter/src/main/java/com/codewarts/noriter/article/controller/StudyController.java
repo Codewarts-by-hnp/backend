@@ -4,7 +4,10 @@ import com.codewarts.noriter.article.domain.dto.study.StudyDetailResponse;
 import com.codewarts.noriter.article.domain.dto.study.StudyEditRequest;
 import com.codewarts.noriter.article.domain.dto.study.StudyListResponse;
 import com.codewarts.noriter.article.domain.dto.study.StudyPostRequest;
+import com.codewarts.noriter.article.domain.type.StatusType;
 import com.codewarts.noriter.article.service.StudyService;
+import com.codewarts.noriter.exception.GlobalNoriterException;
+import com.codewarts.noriter.exception.type.CommonExceptionType;
 import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
@@ -41,7 +44,20 @@ public class StudyController {
 
     @GetMapping
     public List<StudyListResponse> gatheringList(
-        @RequestParam(required = false, name = "completion") Boolean status) {
+        @RequestParam(required = false)  Map<String, String> paramMap) {
+
+        if (paramMap.isEmpty()) {
+            return studyService.findList(null);
+        }
+        String status = paramMap.get("status");
+        paramMap.remove("status");
+        if (!paramMap.isEmpty()) {
+            throw new GlobalNoriterException(CommonExceptionType.INCORRECT_REQUEST_PARAM);
+        }
+        if (!(status.equals(
+            StatusType.INCOMPLETE.toString()) || status.equals(StatusType.COMPLETE.toString()))) {
+            throw new GlobalNoriterException(CommonExceptionType.INCORRECT_REQUEST_PARAM_TYPE);
+        }
         return studyService.findList(status);
     }
 
@@ -61,10 +77,12 @@ public class StudyController {
     }
 
     @PatchMapping("/{id}")
-    public void recruitmentCompletionUpdate(@PathVariable Long id,
-        @RequestBody Map<String, Boolean> map, HttpServletRequest request) {
+    public void recruitmentCompletionUpdate(@PathVariable(required = false)
+    @NotNull(message = "ID가 비어있습니다.")
+    @Positive(message = "게시글 ID는 양수이어야 합니다.") Long id,
+        @RequestBody @Valid Map<String, String> map, HttpServletRequest request) {
         Long memberId = getMemberId(request);
-        studyService.updateCompletion(id, memberId, map.get("completion"));
+        studyService.updateCompletion(id, memberId, map.get("status"));
     }
 
     @PutMapping("/{id}")

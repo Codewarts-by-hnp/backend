@@ -47,12 +47,12 @@ public class GlobalExceptionHandler {
             .build();
     }
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ErrorResponse runtimeExceptionHandler() {
-        return ErrorResponse.builder()
-            .errorCode(CommonExceptionType.INVALID_REQUEST.getErrorCode())
-            .message(CommonExceptionType.INVALID_REQUEST.getErrorMessage())
-            .build();
-    }
+//    @ResponseStatus(HttpStatus.BAD_REQUEST)
+//    @ExceptionHandler(ClassCastException.class)
+//    public ErrorResponse runtimeExceptionHandler() {
+//        return ErrorResponse.builder()
+//            .errorCode(CommonExceptionType.INCORRECT_REQUEST_PARAM_TYPE.getErrorCode())
+//            .message(CommonExceptionType.INCORRECT_REQUEST_PARAM_TYPE.getErrorMessage())
+//            .build();
+//    }
 }

@@ -2,6 +2,7 @@ package com.codewarts.noriter.article.domain.dto.study;
 
 import com.codewarts.noriter.article.domain.Study;
 import com.codewarts.noriter.article.domain.type.ArticleType;
+import com.codewarts.noriter.article.domain.type.StatusType;
 import com.codewarts.noriter.member.domain.Member;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -27,6 +28,7 @@ public class StudyPostRequest {
             .writtenTime(LocalDateTime.now())
             .editedTime(LocalDateTime.now())
             .articleType(ArticleType.STUDY)
+            .status(StatusType.INCOMPLETE)
             .build();
     }
 }

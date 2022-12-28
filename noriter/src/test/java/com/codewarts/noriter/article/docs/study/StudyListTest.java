@@ -71,7 +71,7 @@ class StudyListTest {
 
         given(documentationSpec)
             .contentType(APPLICATION_JSON_VALUE)
-            .param("completion", false)
+            .param("status", "INCOMPLETE")
 
             .when()
             .get("/community/gathering")
@@ -89,19 +89,34 @@ class StudyListTest {
     }
 
     @Test
-    void 잘못된_completion_값인_경우_예외를_발생시킨다() {
+    void 잘못된_requestParam_값인_경우_예외를_발생시킨다() {
 
         given(documentationSpec)
             .contentType(APPLICATION_JSON_VALUE)
-            .param("completion", "dd")
+            .param("comp", "INCOMPLETE")
 
             .when()
             .get("/community/gathering")
 
             .then()
             .statusCode(CommonExceptionType.INVALID_REQUEST.getStatus().value())
-            .body("errorCode", equalTo(CommonExceptionType.INVALID_REQUEST.getErrorCode()))
-            .body("message", equalTo(CommonExceptionType.INVALID_REQUEST.getErrorMessage()));
+            .body("errorCode", equalTo(CommonExceptionType.INCORRECT_REQUEST_PARAM.getErrorCode()))
+            .body("message", equalTo(CommonExceptionType.INCORRECT_REQUEST_PARAM.getErrorMessage()));
+    }
+    @Test
+    void 잘못된_requestParam_타입인_경우_예외를_발생시킨다() {
+
+        given(documentationSpec)
+            .contentType(APPLICATION_JSON_VALUE)
+            .param("status", "dd")
+
+            .when()
+            .get("/community/gathering")
+
+            .then()
+            .statusCode(CommonExceptionType.INVALID_REQUEST.getStatus().value())
+            .body("errorCode", equalTo(CommonExceptionType.INCORRECT_REQUEST_PARAM_TYPE.getErrorCode()))
+            .body("message", equalTo(CommonExceptionType.INCORRECT_REQUEST_PARAM_TYPE.getErrorMessage()));
     }
 
 }
