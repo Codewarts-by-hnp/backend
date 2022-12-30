@@ -59,13 +59,17 @@ public class StudyService {
     }
 
     @Transactional
-    public void updateCompletion(Long id, Long writerId, String status) {
-        Study study = studyRepository.findByStudyIdAndWriterId(id, writerId)
-            .orElseThrow(RuntimeException::new);
+    public void updateCompletion(Long id, Long writerId, StatusType status) {
+        memberService.findMember(writerId);
+        Study study = findStudy(id);
+        study.checkWriter(writerId);
 
-        if (status.equals(StatusType.COMPLETE.toString())) {
+        if (study.getStatus() == status) {
+            throw new GlobalNoriterException(ArticleExceptionType.ALREADY_CHANGED_STATUS);
+        }
+        if (status == StatusType.COMPLETE) {
             study.completion();
-        } else if (status.equals(StatusType.INCOMPLETE.toString())){
+        } else {
             study.incomplete();
         }
     }

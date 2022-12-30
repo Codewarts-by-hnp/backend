@@ -115,8 +115,8 @@ class StudyListTest {
 
             .then()
             .statusCode(CommonExceptionType.INVALID_REQUEST.getStatus().value())
-            .body("errorCode", equalTo(CommonExceptionType.INCORRECT_REQUEST_PARAM_TYPE.getErrorCode()))
-            .body("message", equalTo(CommonExceptionType.INCORRECT_REQUEST_PARAM_TYPE.getErrorMessage()));
+            .body("errorCode", equalTo(CommonExceptionType.INCORRECT_REQUEST_VALUE.getErrorCode()))
+            .body("message", equalTo(CommonExceptionType.INCORRECT_REQUEST_VALUE.getErrorMessage()));
     }
 
 }

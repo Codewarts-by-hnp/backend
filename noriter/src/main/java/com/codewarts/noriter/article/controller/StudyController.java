@@ -76,7 +76,8 @@ public class StudyController {
     public void recruitmentCompletionUpdate(@PathVariable(required = false)
     @NotNull(message = "ID가 비어있습니다.")
     @Positive(message = "게시글 ID는 양수이어야 합니다.") Long id,
-        @RequestBody @Valid Map<String, String> map, HttpServletRequest request) {
+        @RequestBody Map<String, StatusType> map,
+        HttpServletRequest request) {
         Long memberId = getMemberId(request);
         studyService.updateCompletion(id, memberId, map.get("status"));
     }
