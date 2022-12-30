@@ -36,13 +36,13 @@ VALUES
 
 
 INSERT INTO study
-    (id, completed)
+    (id, status)
 VALUES
-    (1, false),
-    (2, true),
-    (3, false),
-    (4, true),
-    (5, false);
+    (1, 'INCOMPLETE'),
+    (2, 'COMPLETE'),
+    (3, 'INCOMPLETE'),
+    (4, 'COMPLETE'),
+    (5, 'INCOMPLETE');
 
 
 INSERT INTO question

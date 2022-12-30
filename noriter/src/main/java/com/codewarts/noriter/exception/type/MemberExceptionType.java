@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 @RequiredArgsConstructor
 public enum MemberExceptionType implements ExceptionType {
 
-    MEMBER_NOT_FOUND("MEMBER001", "존재하지 않는 회원입니다.", HttpStatus.UNAUTHORIZED);
+    MEMBER_NOT_FOUND("MEMBER001", "존재하지 않는 회원입니다.", HttpStatus.NOT_FOUND);
 
     private final String errorCode;
     private final String message;

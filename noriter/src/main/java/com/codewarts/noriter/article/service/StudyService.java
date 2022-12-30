@@ -1,16 +1,17 @@
 package com.codewarts.noriter.article.service;
 
-import com.codewarts.noriter.article.domain.Article;
 import com.codewarts.noriter.article.domain.Study;
 import com.codewarts.noriter.article.domain.dto.study.StudyDetailResponse;
 import com.codewarts.noriter.article.domain.dto.study.StudyEditRequest;
 import com.codewarts.noriter.article.domain.dto.study.StudyListResponse;
 import com.codewarts.noriter.article.domain.dto.study.StudyPostRequest;
-import com.codewarts.noriter.article.domain.type.ArticleType;
+import com.codewarts.noriter.article.domain.type.StatusType;
 import com.codewarts.noriter.article.repository.ArticleRepository;
 import com.codewarts.noriter.article.repository.StudyRepository;
+import com.codewarts.noriter.exception.GlobalNoriterException;
+import com.codewarts.noriter.exception.type.ArticleExceptionType;
 import com.codewarts.noriter.member.domain.Member;
-import com.codewarts.noriter.member.repository.MemberRepository;
+import com.codewarts.noriter.member.service.MemberService;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -22,51 +23,52 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class StudyService {
 
-    private final MemberRepository memberRepository;
+    private final MemberService memberService;
     private final ArticleRepository articleRepository;
     private final StudyRepository studyRepository;
 
     @Transactional
     public void register(StudyPostRequest studyPostRequest, Long memberId) {
-        Member member = memberRepository.findById(memberId)
-            .orElseThrow(IllegalArgumentException::new);
+        Member member = memberService.findMember(memberId);
         Study study = studyPostRequest.toEntity(member);
         study.addHashtags(studyPostRequest.getHashtags());
         studyRepository.save(study);
     }
 
-    public List<StudyListResponse> findList(Boolean completed) {
+    public List<StudyListResponse> findList(StatusType status) {
 
-        if (completed == null) {
-            List<Article> allByArticleType = articleRepository.findAllByArticleType(
-                ArticleType.STUDY);
-            return allByArticleType.stream()
-                .map(StudyListResponse::new)
-                .collect(Collectors.toList());
+        if (status == null) {
+            return studyRepository.findAllStudy().stream()
+                .map(StudyListResponse::new).collect(Collectors.toList());
         }
-
-        List<Study> allStudy = studyRepository.findStudyByCompleted(completed);
-        return allStudy.stream()
-            .map(StudyListResponse::new)
-            .collect(Collectors.toList());
+        return studyRepository.findStudyByCompleted(status).stream()
+            .map(StudyListResponse::new).collect(Collectors.toList());
     }
 
     public StudyDetailResponse findDetail(Long id) {
-        Study study = studyRepository.findByStudyId(id).orElseThrow(RuntimeException::new);
+        Study study = findStudy(id);
         return new StudyDetailResponse(study);
     }
 
     @Transactional
     public void delete(Long id, Long writerId) {
+        memberService.findMember(writerId);
+        Study study = findStudy(id);
+        study.checkWriter(writerId);
         articleRepository.deleteByIdAndWriterId(id, writerId);
     }
 
     @Transactional
-    public void updateCompletion(Long id, Long writerId, boolean completion) {
-        Study study = studyRepository.findByStudyIdAndWriterId(id, writerId)
-            .orElseThrow(RuntimeException::new);
+    public void updateCompletion(Long id, Long writerId, StatusType status) {
+        memberService.findMember(writerId);
+        Study study = findStudy(id);
+        study.checkWriter(writerId);
 
-        if (completion) {study.completion();
+        if (study.getStatus() == status) {
+            throw new GlobalNoriterException(ArticleExceptionType.ALREADY_CHANGED_STATUS);
+        }
+        if (status == StatusType.COMPLETE) {
+            study.completion();
         } else {
             study.incomplete();
         }
@@ -74,8 +76,14 @@ public class StudyService {
 
     @Transactional
     public void update(Long id, StudyEditRequest request, Long writerId) {
-        Study study = studyRepository.findByStudyIdAndWriterId(id, writerId)
-            .orElseThrow(RuntimeException::new);
+        memberService.findMember(writerId);
+        Study study = findStudy(id);
+        study.checkWriter(writerId);
         study.update(request.getTitle(), request.getContent(), request.getHashtags());
+    }
+
+    public Study findStudy(Long id) {
+        return studyRepository.findById(id).
+            orElseThrow(() -> new GlobalNoriterException(ArticleExceptionType.ARTICLE_NOT_FOUND));
     }
 }
