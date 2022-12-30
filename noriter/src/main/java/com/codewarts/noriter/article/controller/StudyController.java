@@ -15,6 +15,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.convert.ConversionService;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,6 +35,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class StudyController {
 
     private final StudyService studyService;
+    private final ConversionService conversionService;
 
     @PostMapping
     public void register(@RequestBody @Valid StudyPostRequest studyPostRequest,
@@ -45,20 +47,14 @@ public class StudyController {
     @GetMapping
     public List<StudyListResponse> gatheringList(
         @RequestParam(required = false)  Map<String, String> paramMap) {
-
         if (paramMap.isEmpty()) {
             return studyService.findList(null);
         }
-        String status = paramMap.get("status");
-        paramMap.remove("status");
-        if (!paramMap.isEmpty()) {
-            throw new GlobalNoriterException(CommonExceptionType.INCORRECT_REQUEST_PARAM);
+        if (paramMap.size() == 1 && paramMap.containsKey("status")) {
+            StatusType status = conversionService.convert(paramMap.get("status"), StatusType.class);
+            return studyService.findList(status);
         }
-        if (!(status.equals(
-            StatusType.INCOMPLETE.toString()) || status.equals(StatusType.COMPLETE.toString()))) {
-            throw new GlobalNoriterException(CommonExceptionType.INCORRECT_REQUEST_PARAM_TYPE);
-        }
-        return studyService.findList(status);
+        throw new GlobalNoriterException(CommonExceptionType.INCORRECT_REQUEST_PARAM);
     }
 
     @GetMapping("/{id}")

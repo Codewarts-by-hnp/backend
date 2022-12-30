@@ -35,7 +35,7 @@ public class StudyService {
         studyRepository.save(study);
     }
 
-    public List<StudyListResponse> findList(String status) {
+    public List<StudyListResponse> findList(StatusType status) {
 
         if (status == null) {
             return studyRepository.findAllStudy().stream()
