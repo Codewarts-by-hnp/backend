@@ -50,7 +50,7 @@ import org.springframework.transaction.annotation.Transactional;
 @DisplayNameGeneration(ReplaceUnderscores.class)
 @ExtendWith({RestDocumentationExtension.class})
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class QuestionUpdateCompletionTest {
+class QuestionUpdateStatusTest {
 
     @LocalServerPort
     int port;
@@ -81,14 +81,14 @@ class QuestionUpdateCompletionTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"true", "false"})
-    void 해결_여부를_변경한다(String completed) {
+    @ValueSource(strings = {"complete", "incomplete"})
+    void 해결_여부를_변경한다(String status) {
 
         Question question = questionRepository.findQuestionById(6L)
             .orElseThrow(() -> new GlobalNoriterException(ArticleExceptionType.ARTICLE_NOT_FOUND));
         String accessToken = jwtProvider.issueAccessToken(question.getWriter().getId());
 
-        Map<String, String> map = Collections.singletonMap("completed", completed);
+        Map<String, String> map = Collections.singletonMap("status", status);
 
         given(documentationSpec)
             .contentType(APPLICATION_JSON_VALUE)
@@ -106,7 +106,7 @@ class QuestionUpdateCompletionTest {
     void Access_Token이_비어있는_경우_예외_발생() {
         String accessToken = " ";
 
-        Map<String, Object> requestBody = Collections.singletonMap("completed", false);
+        Map<String, Object> requestBody = Collections.singletonMap("status", "incomplete");
 
         given(documentationSpec)
             .contentType(APPLICATION_JSON_VALUE)
@@ -127,7 +127,7 @@ class QuestionUpdateCompletionTest {
     void Access_Token이_변조된_경우_예외_발생() {
         String accessToken = jwtProvider.issueAccessToken(1L) + "123";
 
-        Map<String, Object> requestBody = Collections.singletonMap("completed", false);
+        Map<String, Object> requestBody = Collections.singletonMap("status", "incomplete");
 
         given(documentationSpec)
             .contentType(APPLICATION_JSON_VALUE)
@@ -148,7 +148,7 @@ class QuestionUpdateCompletionTest {
     void Path_Variable이_없는_경우_예외를_발생시킨다() {
         String accessToken = jwtProvider.issueAccessToken(1L);
 
-        Map<String, Object> requestBody = Collections.singletonMap("completed", false);
+        Map<String, Object> requestBody = Collections.singletonMap("status", "incomplete");
 
         given(documentationSpec)
             .contentType(APPLICATION_JSON_VALUE)
@@ -162,14 +162,14 @@ class QuestionUpdateCompletionTest {
             .then()
             .statusCode(CommonExceptionType.INVALID_REQUEST.getStatus().value())
             .body("errorCode", equalTo(CommonExceptionType.INVALID_REQUEST.getErrorCode()))
-            .body("message", equalTo("questionEditCompleted.id: ID가 비어있습니다."));
+            .body("message", equalTo("questionChangeStatus.id: ID가 비어있습니다."));
     }
 
     @Test
     void id가_유효하지_않는_경우_예외를_발생시킨다() {
         String accessToken = jwtProvider.issueAccessToken(1L);
 
-        Map<String, Object> requestBody = Collections.singletonMap("completed", false);
+        Map<String, Object> requestBody = Collections.singletonMap("status", "incomplete");
 
         given(documentationSpec)
             .contentType(APPLICATION_JSON_VALUE)
@@ -183,14 +183,14 @@ class QuestionUpdateCompletionTest {
             .then()
             .statusCode(CommonExceptionType.INVALID_REQUEST.getStatus().value())
             .body("errorCode", equalTo(CommonExceptionType.INVALID_REQUEST.getErrorCode()))
-            .body("message", equalTo("questionEditCompleted.id: 게시글 ID는 양수이어야 합니다."));
+            .body("message", equalTo("questionChangeStatus.id: 게시글 ID는 양수이어야 합니다."));
     }
 
     @Test
     void id가_존재하지_않는_경우_예외를_발생시킨다() {
         String accessToken = jwtProvider.issueAccessToken(1L);
 
-        Map<String, Object> requestBody = Collections.singletonMap("completed", false);
+        Map<String, Object> requestBody = Collections.singletonMap("status", "incomplete");
 
 
         given(documentationSpec)
@@ -212,7 +212,7 @@ class QuestionUpdateCompletionTest {
     void 필수값이_비어있을_경우_예외가_발생한다() {
         String accessToken = jwtProvider.issueAccessToken(1L);
 
-        Map<String, Object> requestBody = Collections.singletonMap("key", true);
+        Map<String, Object> requestBody = Collections.singletonMap("key", "incomplete");
 
         given(documentationSpec)
             .contentType(APPLICATION_JSON_VALUE)
@@ -233,7 +233,7 @@ class QuestionUpdateCompletionTest {
     void 존재하지_않는_회원인_경우_예외가_발생한다() {
         String accessToken = jwtProvider.issueAccessToken(99999999L);
 
-        Map<String, Object> requestBody = Collections.singletonMap("completed", false);
+        Map<String, Object> requestBody = Collections.singletonMap("status", "incomplete");
 
 
         given(documentationSpec)
@@ -255,7 +255,7 @@ class QuestionUpdateCompletionTest {
     void 작성자가_일치하지_않는_경우_예외가_발생한다() {
         String accessToken = jwtProvider.issueAccessToken(2L);
 
-        Map<String, Object> requestBody = Collections.singletonMap("completed", false);
+        Map<String, Object> requestBody = Collections.singletonMap("status", "incomplete");
 
 
         given(documentationSpec)
