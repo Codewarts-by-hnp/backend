@@ -5,6 +5,7 @@ import com.codewarts.noriter.article.domain.dto.question.QuestionDetailResponse;
 import com.codewarts.noriter.article.domain.dto.question.QuestionPostRequest;
 import com.codewarts.noriter.article.domain.dto.question.QuestionListResponse;
 import com.codewarts.noriter.article.domain.dto.question.QuestionUpdateRequest;
+import com.codewarts.noriter.article.domain.type.StatusType;
 import com.codewarts.noriter.article.repository.ArticleRepository;
 import com.codewarts.noriter.article.repository.QuestionRepository;
 import com.codewarts.noriter.exception.GlobalNoriterException;
@@ -37,7 +38,7 @@ public class QuestionService {
     }
 
     // 질문 조회 기능
-    public List<QuestionListResponse> findList(Boolean status) {
+    public List<QuestionListResponse> findList(StatusType status) {
         if (status == null) {
             return questionRepository.findAllQuestion().stream().map(QuestionListResponse::new)
                 .collect(Collectors.toList());
@@ -56,7 +57,7 @@ public class QuestionService {
     public void delete(Long questionId, Long writerId) {
         memberService.findMember(writerId);
         Question question = findQuestion(questionId);
-        question.checkWriter(writerId);
+        question.validateWriterOrThrow(writerId);
         articleRepository.deleteByIdAndWriterId(questionId, writerId);
     }
 
@@ -64,21 +65,21 @@ public class QuestionService {
     public void update(Long questionId, Long writerId, QuestionUpdateRequest request) {
         memberService.findMember(writerId);
         Question question = findQuestion(questionId);
-        question.checkWriter(writerId);
+        question.validateWriterOrThrow(writerId);
         question.update(request.getTitle(), request.getContent(), request.getHashtag());
     }
 
     @Transactional
-    public void updateComplete(Long questionId, Long writerId, boolean completed) {
+    public void updateStatus(Long questionId, Long writerId, StatusType status) {
         memberService.findMember(writerId);
         Question question = findQuestion(questionId);
-        question.checkWriter(writerId);
+        question.validateWriterOrThrow(writerId);
 
-        if (completed) {
-            question.changeCompletedTrue();
+        if (status.equals(StatusType.COMPLETE)) {
+            question.changeStatusToComplete();
             return;
         }
-        question.changeCompletedFalse();
+        question.changeStatusToIncomplete();
     }
 
     private Question findQuestion(Long id) {

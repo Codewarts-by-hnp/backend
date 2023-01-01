@@ -1,11 +1,11 @@
 package com.codewarts.noriter.article.controller;
 
 import com.codewarts.noriter.article.domain.dto.question.QuestionDetailResponse;
-import com.codewarts.noriter.article.domain.dto.question.QuestionPostRequest;
 import com.codewarts.noriter.article.domain.dto.question.QuestionListResponse;
+import com.codewarts.noriter.article.domain.dto.question.QuestionPostRequest;
 import com.codewarts.noriter.article.domain.dto.question.QuestionUpdateRequest;
+import com.codewarts.noriter.article.domain.type.StatusType;
 import com.codewarts.noriter.article.service.QuestionService;
-import com.codewarts.noriter.auth.jwt.JwtProvider;
 import com.codewarts.noriter.exception.GlobalNoriterException;
 import com.codewarts.noriter.exception.type.CommonExceptionType;
 import java.util.List;
@@ -15,6 +15,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.convert.ConversionService;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,7 +35,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class QuestionController {
 
     private final QuestionService questionService;
-    private final JwtProvider jwtProvider;
+    private final ConversionService conversionService;
 
     @PostMapping
     public void create(@RequestBody @Valid QuestionPostRequest postRequest,
@@ -44,8 +45,15 @@ public class QuestionController {
     }
 
     @GetMapping
-    public List<QuestionListResponse> questionList(@RequestParam(value = "completion", required = false) Boolean status) {
-        return questionService.findList(status);
+    public List<QuestionListResponse> questionList(@RequestParam Map<String, String> paramMap) {
+        if (paramMap.isEmpty()) {
+            return questionService.findList(null);
+        }
+        if (paramMap.size() == 1 && paramMap.containsKey("status")) {
+            StatusType status = conversionService.convert(paramMap.get("status"), StatusType.class);
+            return questionService.findList(status);
+        }
+        throw new GlobalNoriterException(CommonExceptionType.INCORRECT_REQUEST_PARAM);
     }
 
     @GetMapping("/{id}")
@@ -78,17 +86,18 @@ public class QuestionController {
     }
 
     @PatchMapping("/{id}")
-    public void questionEditCompleted(
+    public void questionChangeStatus(
         @PathVariable(required = false)
         @NotNull(message = "ID가 비어있습니다.")
         @Positive(message = "게시글 ID는 양수이어야 합니다.") Long id,
-        @RequestBody Map<String, Boolean> map,
+        @RequestBody Map<String, String> map,
         HttpServletRequest request) {
         Long memberId = getMemberId(request);
-        if (!map.containsKey("completed")) {
+        if (!map.containsKey("status")) {
             throw new GlobalNoriterException(CommonExceptionType.INVALID_REQUEST);
         }
-        questionService.updateComplete(id, memberId, map.get("completed"));
+        StatusType status = conversionService.convert(map.get("status"), StatusType.class);
+        questionService.updateStatus(id, memberId, status);
     }
 
     private Long getMemberId(HttpServletRequest request) {

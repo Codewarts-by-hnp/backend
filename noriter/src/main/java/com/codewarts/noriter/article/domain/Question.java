@@ -1,10 +1,12 @@
 package com.codewarts.noriter.article.domain;
 
 import com.codewarts.noriter.article.domain.type.ArticleType;
+import com.codewarts.noriter.article.domain.type.StatusType;
 import com.codewarts.noriter.member.domain.Member;
 import java.time.LocalDateTime;
-import java.util.List;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,27 +18,20 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Question extends Article {
 
-    private boolean completed;
+    @Enumerated(EnumType.STRING)
+    private StatusType status;
 
     public Question(String title, String content, Member writer, LocalDateTime writtenTime,
-        LocalDateTime editedTime, ArticleType articleType, boolean completed) {
+        LocalDateTime editedTime, ArticleType articleType, StatusType status) {
         super(title, content, writer, writtenTime, editedTime, articleType);
-        this.completed = completed;
+        this.status = status;
     }
 
-    public void changeStatus(boolean status) {
-        completed = status;
+    public void changeStatusToComplete() {
+        this.status = StatusType.COMPLETE;
     }
 
-    @Override
-    public void update(String newTitle, String newContent, List<String> newHashTags) {
-        super.update(newTitle, newContent, newHashTags);
-    }
-    public void changeCompletedTrue() {
-        this.completed = true;
-    }
-
-    public void changeCompletedFalse() {
-        this.completed = false;
+    public void changeStatusToIncomplete() {
+        this.status = StatusType.INCOMPLETE;
     }
 }

@@ -2,6 +2,7 @@ package com.codewarts.noriter.article.domain.dto.question;
 
 import com.codewarts.noriter.article.domain.Hashtag;
 import com.codewarts.noriter.article.domain.Question;
+import com.codewarts.noriter.article.domain.type.StatusType;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -10,15 +11,15 @@ import lombok.Getter;
 @Getter
 public class QuestionListResponse {
 
-    Long id;
-    String title;
-    String writerName;
-    List<String> hashtag;
-    LocalDateTime writtenTime;
-    LocalDateTime editedTime;
-    int wishCount;
-    int commentCount;
-    boolean completed;
+    private final Long id;
+    private final String title;
+    private final String writerName;
+    private final List<String> hashtag;
+    private final LocalDateTime writtenTime;
+    private final LocalDateTime editedTime;
+    private final int wishCount;
+    private final int commentCount;
+    private final StatusType status;
 
     public QuestionListResponse(Question question) {
         this.id = question.getId();
@@ -29,6 +30,6 @@ public class QuestionListResponse {
         this.editedTime = question.getEditedTime();
         this.wishCount = question.getWishList().size();
         this.commentCount = question.getComments().size();
-        this.completed = question.isCompleted();
+        this.status = question.getStatus();
     }
 }

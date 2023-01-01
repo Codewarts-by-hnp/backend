@@ -46,11 +46,12 @@ VALUES
 
 
 INSERT INTO question
-(id, completed)
+    (id, status)
 VALUES
-    (6, false),
-    (7, true),
-    (8, false);
+    (6, 'INCOMPLETE'),
+    (7, 'COMPLETE'),
+    (8, 'INCOMPLETE'),
+    (9, 'COMPLETE');
 
 
 INSERT INTO hashtag
