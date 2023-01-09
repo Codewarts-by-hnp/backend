@@ -16,6 +16,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.convert.ConversionService;
+import org.springframework.http.HttpHeaders;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -45,13 +46,15 @@ public class QuestionController {
     }
 
     @GetMapping
-    public List<QuestionListResponse> questionList(@RequestParam Map<String, String> paramMap) {
+    public List<QuestionListResponse> questionList(@RequestParam Map<String, String> paramMap,
+        HttpServletRequest request) {
+        String accessToken = request.getHeader(HttpHeaders.AUTHORIZATION);
         if (paramMap.isEmpty()) {
-            return questionService.findList(null);
+            return questionService.findList(null, accessToken);
         }
         if (paramMap.size() == 1 && paramMap.containsKey("status")) {
             StatusType status = conversionService.convert(paramMap.get("status"), StatusType.class);
-            return questionService.findList(status);
+            return questionService.findList(status, accessToken);
         }
         throw new GlobalNoriterException(CommonExceptionType.INCORRECT_REQUEST_PARAM);
     }
@@ -60,8 +63,9 @@ public class QuestionController {
     public QuestionDetailResponse questionDetail(
         @PathVariable(required = false)
         @NotNull(message = "ID가 비어있습니다.")
-        @Positive(message = "게시글 ID는 양수이어야 합니다.") Long id) {
-        return questionService.findDetail(id);
+        @Positive(message = "게시글 ID는 양수이어야 합니다.") Long id, HttpServletRequest request) {
+        String accessToken = request.getHeader(HttpHeaders.AUTHORIZATION);
+        return questionService.findDetail(id, accessToken);
     }
 
     @DeleteMapping("/{id}")

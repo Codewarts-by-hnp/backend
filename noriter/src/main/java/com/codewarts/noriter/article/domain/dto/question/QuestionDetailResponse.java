@@ -17,6 +17,7 @@ public class QuestionDetailResponse {
     private final String title;
     private final String content;
     private final WriterInfoResponse writer;
+    private final boolean sameWriter;
     private final List<String> hashtag;
     private final LocalDateTime writtenTime;
     private final LocalDateTime editedTime;
@@ -24,11 +25,12 @@ public class QuestionDetailResponse {
     private final List<CommentResponse> comment;
     private final StatusType status;
 
-    public QuestionDetailResponse(Question question) {
+    public QuestionDetailResponse(Question question, boolean sameWriter) {
         this.id = question.getId();
         this.title = question.getTitle();
         this.content = question.getContent();
         this.writer = WriterInfoResponse.from(question.getWriter());
+        this.sameWriter = sameWriter;
         this.hashtag = question.getHashtags().stream()
             .map(Hashtag::getContent)
             .collect(Collectors.toList());
@@ -41,7 +43,7 @@ public class QuestionDetailResponse {
         this.status = question.getStatus();
     }
 
-    public static QuestionDetailResponse from(Question question) {
-        return new QuestionDetailResponse(question);
+    public static QuestionDetailResponse from(Question question, boolean sameWriter) {
+        return new QuestionDetailResponse(question, sameWriter);
     }
 }

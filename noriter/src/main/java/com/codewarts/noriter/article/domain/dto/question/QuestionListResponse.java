@@ -14,6 +14,7 @@ public class QuestionListResponse {
     private final Long id;
     private final String title;
     private final String writerName;
+    private final boolean sameWriter;
     private final List<String> hashtag;
     private final LocalDateTime writtenTime;
     private final LocalDateTime editedTime;
@@ -21,10 +22,11 @@ public class QuestionListResponse {
     private final int commentCount;
     private final StatusType status;
 
-    public QuestionListResponse(Question question) {
+    public QuestionListResponse(Question question, boolean sameWriter) {
         this.id = question.getId();
         this.title = question.getTitle();
         this.writerName = question.getWriter().getNickname();
+        this.sameWriter = sameWriter;
         this.hashtag = question.getHashtags().stream().map(Hashtag::getContent).collect(Collectors.toList());
         this.writtenTime = question.getWrittenTime();
         this.editedTime = question.getEditedTime();

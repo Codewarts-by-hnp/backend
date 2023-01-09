@@ -12,10 +12,7 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.pr
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.removeHeaders;
 import static org.springframework.restdocs.restassured3.RestAssuredRestDocumentation.documentationConfiguration;
 
-import com.codewarts.noriter.article.repository.ArticleRepository;
-import com.codewarts.noriter.article.service.QuestionService;
 import com.codewarts.noriter.auth.jwt.JwtProvider;
-import com.codewarts.noriter.member.repository.MemberRepository;
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.specification.RequestSpecification;
@@ -37,13 +34,6 @@ import org.springframework.restdocs.RestDocumentationExtension;
 @ExtendWith({RestDocumentationExtension.class})
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class QuestionListTest {
-
-    @Autowired
-    private ArticleRepository articleRepository;
-    @Autowired
-    private QuestionService questionService;
-    @Autowired
-    private MemberRepository memberRepository;
 
     @LocalServerPort
     int port;
