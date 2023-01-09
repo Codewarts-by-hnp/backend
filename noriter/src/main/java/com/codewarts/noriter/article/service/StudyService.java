@@ -54,7 +54,7 @@ public class StudyService {
     public void delete(Long id, Long writerId) {
         memberService.findMember(writerId);
         Study study = findStudy(id);
-        study.checkWriter(writerId);
+        study.validateWriterOrThrow(writerId);
         articleRepository.deleteByIdAndWriterId(id, writerId);
     }
 
@@ -62,7 +62,7 @@ public class StudyService {
     public void updateCompletion(Long id, Long writerId, StatusType status) {
         memberService.findMember(writerId);
         Study study = findStudy(id);
-        study.checkWriter(writerId);
+        study.validateWriterOrThrow(writerId);
 
         if (study.getStatus() == status) {
             throw new GlobalNoriterException(ArticleExceptionType.ALREADY_CHANGED_STATUS);
@@ -78,7 +78,7 @@ public class StudyService {
     public void update(Long id, StudyEditRequest request, Long writerId) {
         memberService.findMember(writerId);
         Study study = findStudy(id);
-        study.checkWriter(writerId);
+        study.validateWriterOrThrow(writerId);
         study.update(request.getTitle(), request.getContent(), request.getHashtags());
     }
 
