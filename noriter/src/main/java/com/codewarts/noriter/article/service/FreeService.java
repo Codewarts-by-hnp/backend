@@ -24,6 +24,7 @@ public class FreeService {
 
     private final ArticleRepository articleRepository;
     private final MemberService memberService;
+    private final ArticleUtils articleUtils;
 
     @Transactional
     public void create(FreePostRequest freePostRequest, Long writerId) {
@@ -33,14 +34,18 @@ public class FreeService {
         articleRepository.save(free);
     }
 
-    public FreeDetailResponse findDetail(Long id) {
+    public FreeDetailResponse findDetail(Long id, String accessToken) {
         Article article = findArticle(id);
-        return new FreeDetailResponse(article);
+        Long writerId = article.getWriter().getId();
+        return new FreeDetailResponse(article, articleUtils.isSameWriter(writerId, accessToken));
     }
 
-    public List<FreeListResponse> findList() {
+    public List<FreeListResponse> findList(String accessToken) {
         List<Article> freeTypeArticle = articleRepository.findAllByArticleType(ArticleType.FREE);
-        return freeTypeArticle.stream().map(FreeListResponse::new).collect(Collectors.toList());
+        return freeTypeArticle.stream()
+            .map(article -> new FreeListResponse(article,
+                articleUtils.isSameWriter(article.getWriter().getId(), accessToken)))
+                .collect(Collectors.toList());
     }
 
     @Transactional

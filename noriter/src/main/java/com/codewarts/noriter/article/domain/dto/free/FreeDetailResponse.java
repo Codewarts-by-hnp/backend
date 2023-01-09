@@ -18,17 +18,20 @@ public class FreeDetailResponse {
     private String title;
     private String content;
     private WriterInfoResponse writer;
+
+    private boolean sameWriter;
     private List<String> hashtag;
     private LocalDateTime writtenTime;
     private LocalDateTime editedTime;
     private int wishCount;
     private List<CommentResponse> comment;
 
-    public FreeDetailResponse(Article article) {
+    public FreeDetailResponse(Article article, boolean sameWriter) {
         this.id = article.getId();
         this.title = article.getTitle();
         this.content = article.getContent();
         this.writer = new WriterInfoResponse(article.getWriter());
+        this.sameWriter = sameWriter;
         this.hashtag = article.getHashtags().stream()
             .map(Hashtag::getContent)
             .collect(Collectors.toList());

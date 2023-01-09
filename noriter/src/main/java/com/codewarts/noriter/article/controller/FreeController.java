@@ -12,6 +12,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -41,13 +42,15 @@ public class FreeController {
     public FreeDetailResponse freeDetail(
         @PathVariable(required = false)
         @NotNull(message = "ID가 비어있습니다.")
-        @Positive(message = "게시글 ID는 양수이어야 합니다.") Long id) {
-        return freeService.findDetail(id);
+        @Positive(message = "게시글 ID는 양수이어야 합니다.") Long id, HttpServletRequest request) {
+        String accessToken = request.getHeader(HttpHeaders.AUTHORIZATION);
+        return freeService.findDetail(id, accessToken);
     }
 
     @GetMapping
-    public List<FreeListResponse> freeDetail() {
-        return freeService.findList();
+    public List<FreeListResponse> freeList(HttpServletRequest request) {
+        String accessToken = request.getHeader(HttpHeaders.AUTHORIZATION);
+        return freeService.findList(accessToken);
     }
 
     @PutMapping("/{id}")
