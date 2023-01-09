@@ -41,8 +41,4 @@ public class Study extends Article {
         super.update(title, content, requestHashtags);
     }
 
-    @Override
-    public void checkWriter(Long writerId) {
-        super.checkWriter(writerId);
-    }
 }

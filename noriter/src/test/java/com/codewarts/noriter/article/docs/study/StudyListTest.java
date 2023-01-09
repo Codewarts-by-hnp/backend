@@ -82,6 +82,7 @@ class StudyListTest {
             .body("[0].title", equalTo("테스트를 해볼것이당"))
             .body("[0].content", equalTo("안녕하냐고오옹"))
             .body("[0].writerNickname", equalTo("admin1"))
+            .body("[0].sameWriter", equalTo(false))
             .body("[0].hashtag[0]", equalTo("SPRING"))
             .body("[0].hashtag[1]", equalTo("JPA"))
             .body("[0].wishCount", equalTo(0))

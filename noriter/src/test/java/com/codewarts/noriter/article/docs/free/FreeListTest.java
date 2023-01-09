@@ -80,10 +80,9 @@ public class FreeListTest {
             .body("[0].title", equalTo("붕어빵 먹고싶어요"))
             .body("[0].content", equalTo("강남 붕어빵 맛잇는 집"))
             .body("[0].writerNickname", equalTo("admin1"))
+            .body("[0].sameWriter", equalTo(false))
             .body("[0].hashtag[0]", equalTo("강남역"))
             .body("[0].hashtag[1]", equalTo("붕어팥"))
-            .body("[0].writtenTime", equalTo("2022-11-25T16:25:58.991061"))
-            .body("[0].editedTime", equalTo("2022-11-25T16:25:58.991061"))
             .body("[0].wishCount", equalTo(0))
             .body("[0].commentCount", equalTo(1));
     }

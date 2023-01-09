@@ -26,6 +26,7 @@ public class StudyService {
     private final MemberService memberService;
     private final ArticleRepository articleRepository;
     private final StudyRepository studyRepository;
+    private final ArticleUtils articleUtils;
 
     @Transactional
     public void register(StudyPostRequest studyPostRequest, Long memberId) {
@@ -35,26 +36,30 @@ public class StudyService {
         studyRepository.save(study);
     }
 
-    public List<StudyListResponse> findList(StatusType status) {
-
+    public List<StudyListResponse> findList(StatusType status, String accessToken) {
         if (status == null) {
             return studyRepository.findAllStudy().stream()
-                .map(StudyListResponse::new).collect(Collectors.toList());
+                .map(study -> new StudyListResponse(study,
+                    articleUtils.isSameWriter(study.getWriter().getId(), accessToken)))
+                .collect(Collectors.toList());
         }
         return studyRepository.findStudyByCompleted(status).stream()
-            .map(StudyListResponse::new).collect(Collectors.toList());
+            .map(study -> new StudyListResponse(study,
+                articleUtils.isSameWriter(study.getWriter().getId(), accessToken)))
+            .collect(Collectors.toList());
     }
 
-    public StudyDetailResponse findDetail(Long id) {
+    public StudyDetailResponse findDetail(Long id, String accessToken) {
         Study study = findStudy(id);
-        return new StudyDetailResponse(study);
+        boolean sameWriter = articleUtils.isSameWriter(study.getWriter().getId(), accessToken);
+        return new StudyDetailResponse(study, sameWriter);
     }
 
     @Transactional
     public void delete(Long id, Long writerId) {
         memberService.findMember(writerId);
         Study study = findStudy(id);
-        study.checkWriter(writerId);
+        study.validateWriterOrThrow(writerId);
         articleRepository.deleteByIdAndWriterId(id, writerId);
     }
 
@@ -62,7 +67,7 @@ public class StudyService {
     public void updateCompletion(Long id, Long writerId, StatusType status) {
         memberService.findMember(writerId);
         Study study = findStudy(id);
-        study.checkWriter(writerId);
+        study.validateWriterOrThrow(writerId);
 
         if (study.getStatus() == status) {
             throw new GlobalNoriterException(ArticleExceptionType.ALREADY_CHANGED_STATUS);
@@ -78,7 +83,7 @@ public class StudyService {
     public void update(Long id, StudyEditRequest request, Long writerId) {
         memberService.findMember(writerId);
         Study study = findStudy(id);
-        study.checkWriter(writerId);
+        study.validateWriterOrThrow(writerId);
         study.update(request.getTitle(), request.getContent(), request.getHashtags());
     }
 

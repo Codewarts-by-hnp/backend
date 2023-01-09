@@ -86,6 +86,7 @@ class FreeDetailTest {
             .body("writer.nickname", equalTo("admin1"))
             .body("writer.profileImage",
                 equalTo("https://avatars.githubusercontent.com/u/111111?v=4"))
+            .body("sameWriter", equalTo(false))
             .body("hashtag[0]", equalTo("강남역"))
             .body("hashtag[1]", equalTo("붕어팥"))
             .body("wishCount", equalTo(0))

@@ -26,6 +26,7 @@ public class QuestionService {
     private final QuestionRepository questionRepository;
     private final ArticleRepository articleRepository;
     private final MemberService memberService;
+    private final ArticleUtils articleUtils;
 
     // 질문 등록 기능
     @Transactional
@@ -38,19 +39,24 @@ public class QuestionService {
     }
 
     // 질문 조회 기능
-    public List<QuestionListResponse> findList(StatusType status) {
+    public List<QuestionListResponse> findList(StatusType status, String accessToken) {
         if (status == null) {
-            return questionRepository.findAllQuestion().stream().map(QuestionListResponse::new)
+            return questionRepository.findAllQuestion().stream()
+                .map(question -> new QuestionListResponse(question,
+                    articleUtils.isSameWriter(question.getWriter().getId(), accessToken)))
                 .collect(Collectors.toList());
         }
         return questionRepository.findQuestionByCompleted(status).stream()
-            .map(QuestionListResponse::new).collect(Collectors.toList());
+            .map(question -> new QuestionListResponse(question,
+                articleUtils.isSameWriter(question.getWriter().getId(), accessToken)))
+            .collect(Collectors.toList());
     }
 
     // 질문 상세 조회 기능
-    public QuestionDetailResponse findDetail(Long id) {
+    public QuestionDetailResponse findDetail(Long id, String accessToken) {
         Question question = findQuestion(id);
-        return QuestionDetailResponse.from(question);
+        boolean sameWriter = articleUtils.isSameWriter(question.getWriter().getId(), accessToken);
+        return QuestionDetailResponse.from(question, sameWriter);
     }
 
     @Transactional
