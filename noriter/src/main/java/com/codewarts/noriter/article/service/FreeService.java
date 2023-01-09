@@ -47,7 +47,7 @@ public class FreeService {
     public void update(Long id, FreeEditRequest request, Long writerId) {
         memberService.findMember(writerId);
         Article free = findArticle(id);
-        free.checkWriter(writerId);
+        free.validateWriterOrThrow(writerId);
         free.update(request.getTitle(), request.getContent(), request.getHashtags());
     }
 
@@ -55,7 +55,7 @@ public class FreeService {
     public void delete(Long id, Long writerId) {
         memberService.findMember(writerId);
         Article free = findArticle(id);
-        free.checkWriter(writerId);
+        free.validateWriterOrThrow(writerId);
         articleRepository.deleteByIdAndWriterId(id, writerId);
     }
 

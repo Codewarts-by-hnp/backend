@@ -92,15 +92,10 @@ class QuestionDeleteTest {
     void Access_Token이_비어있는_경우_예외_발생() {
         String accessToken = " ";
 
-        Map<String, Object> requestBody = Map.of("title", "질문있어요",
-            "content", "스프링 어려워요", "hashtags",
-            List.of("질문게시판", "고수가 되고싶어요", "코린이"));
-
         given(documentationSpec)
             .contentType(APPLICATION_JSON_VALUE)
             .header(AUTHORIZATION, accessToken)
-            .pathParam("id", 1)
-            .body(requestBody)
+            .pathParam("id", 6)
 
             .when()
             .delete("/community/question/{id}")
@@ -122,7 +117,7 @@ class QuestionDeleteTest {
         given(documentationSpec)
             .contentType(APPLICATION_JSON_VALUE)
             .header(AUTHORIZATION, accessToken)
-            .pathParam("id", 1)
+            .pathParam("id", 6)
             .body(requestBody)
 
             .when()
@@ -141,7 +136,7 @@ class QuestionDeleteTest {
         given(documentationSpec)
             .contentType(APPLICATION_JSON_VALUE)
             .header(AUTHORIZATION, accessToken)
-            .pathParam("id", 1)
+            .pathParam("id", 6)
 
             .when()
             .delete("/community/question/{id}")

@@ -2,6 +2,7 @@ package com.codewarts.noriter.article.domain.dto.question;
 
 import com.codewarts.noriter.article.domain.Hashtag;
 import com.codewarts.noriter.article.domain.Question;
+import com.codewarts.noriter.article.domain.type.StatusType;
 import com.codewarts.noriter.comment.domain.dto.CommentResponse;
 import com.codewarts.noriter.member.domain.dto.WriterInfoResponse;
 import java.time.LocalDateTime;
@@ -21,7 +22,7 @@ public class QuestionDetailResponse {
     private final LocalDateTime editedTime;
     private final int wishCount;
     private final List<CommentResponse> comment;
-    private final boolean completed;
+    private final StatusType status;
 
     public QuestionDetailResponse(Question question) {
         this.id = question.getId();
@@ -37,7 +38,7 @@ public class QuestionDetailResponse {
         this.comment = question.getComments().stream()
             .map(CommentResponse::new)
             .collect(Collectors.toList());
-        this.completed = question.isCompleted();
+        this.status = question.getStatus();
     }
 
     public static QuestionDetailResponse from(Question question) {
