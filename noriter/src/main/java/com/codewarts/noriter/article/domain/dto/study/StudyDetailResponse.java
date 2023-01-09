@@ -19,6 +19,7 @@ public class StudyDetailResponse {
     private String title;
     private String content;
     private WriterInfoResponse writer;
+    private boolean sameWriter;
     private List<String> hashtag;
     private LocalDateTime writtenTime;
     private LocalDateTime editedTime;
@@ -26,11 +27,12 @@ public class StudyDetailResponse {
     private StatusType status;
     private List<CommentResponse> comment;
 
-    public StudyDetailResponse(Study study) {
+    public StudyDetailResponse(Study study, boolean sameWriter) {
         this.id = study.getId();
         this.title = study.getTitle();
         this.content = study.getContent();
         this.writer = new WriterInfoResponse(study.getWriter());
+        this.sameWriter = sameWriter;
         this.hashtag = study.getHashtags().stream()
             .map(Hashtag::getContent)
             .collect(Collectors.toList());

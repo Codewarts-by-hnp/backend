@@ -86,6 +86,7 @@ public class StudyDetailTest {
             .body("writer.nickname", equalTo("admin1"))
             .body("writer.profileImage",
                 equalTo("https://avatars.githubusercontent.com/u/111111?v=4"))
+            .body("sameWriter", equalTo(false))
             .body("hashtag[0]", equalTo("SPRING"))
             .body("hashtag[1]", equalTo("JPA"))
             .body("hashtag[2]", equalTo("난자유야"))

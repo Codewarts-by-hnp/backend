@@ -16,8 +16,8 @@ public class StudyListResponse {
     private Long id;
     private String title;
     private String content;
-
     private String writerNickname;
+    private boolean sameWriter;
     private List<String> hashtag;
     private LocalDateTime writtenTime;
     private LocalDateTime editedTime;
@@ -25,11 +25,12 @@ public class StudyListResponse {
     private int commentCount;
     private StatusType status;
 
-    public StudyListResponse(Study study) {
+    public StudyListResponse(Study study, boolean sameWriter) {
         this.id = study.getId();
         this.title = study.getTitle();
         this.content = study.getContent();
         this.writerNickname = study.getWriter().getNickname();
+        this.sameWriter = sameWriter;
         this.hashtag = study.getHashtags().stream().map(Hashtag::getContent)
             .collect(Collectors.toList());
         this.writtenTime = study.getWrittenTime();
