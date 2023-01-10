@@ -3,6 +3,7 @@ package com.codewarts.noriter.article.domain.dto.question;
 import com.codewarts.noriter.article.domain.Hashtag;
 import com.codewarts.noriter.article.domain.Question;
 import com.codewarts.noriter.article.domain.type.StatusType;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -13,10 +14,13 @@ public class QuestionListResponse {
 
     private final Long id;
     private final String title;
-    private final String writerName;
+    private final String content;
+    private final String writerNickname;
     private final boolean sameWriter;
     private final List<String> hashtags;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private final LocalDateTime writtenTime;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private final LocalDateTime editedTime;
     private final int wishCount;
     private final int commentCount;
@@ -25,7 +29,8 @@ public class QuestionListResponse {
     public QuestionListResponse(Question question, boolean sameWriter) {
         this.id = question.getId();
         this.title = question.getTitle();
-        this.writerName = question.getWriter().getNickname();
+        this.content = question.getContent();
+        this.writerNickname = question.getWriter().getNickname();
         this.sameWriter = sameWriter;
         this.hashtags = question.getHashtags().stream().map(Hashtag::getContent).collect(Collectors.toList());
         this.writtenTime = question.getWrittenTime();

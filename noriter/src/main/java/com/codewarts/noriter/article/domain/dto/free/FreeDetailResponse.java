@@ -4,6 +4,7 @@ import com.codewarts.noriter.article.domain.Article;
 import com.codewarts.noriter.article.domain.Hashtag;
 import com.codewarts.noriter.comment.domain.dto.CommentResponse;
 import com.codewarts.noriter.member.domain.dto.WriterInfoResponse;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,10 +19,11 @@ public class FreeDetailResponse {
     private String title;
     private String content;
     private WriterInfoResponse writer;
-
     private boolean sameWriter;
     private List<String> hashtags;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime writtenTime;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime editedTime;
     private int wishCount;
     private List<CommentResponse> comment;
