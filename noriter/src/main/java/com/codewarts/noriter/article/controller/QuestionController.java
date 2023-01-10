@@ -39,10 +39,10 @@ public class QuestionController {
     private final ConversionService conversionService;
 
     @PostMapping
-    public void create(@RequestBody @Valid QuestionPostRequest postRequest,
+    public Long register(@RequestBody @Valid QuestionPostRequest postRequest,
         HttpServletRequest request) {
         Long memberId = getMemberId(request);
-        questionService.add(postRequest, memberId);
+        return questionService.create(postRequest, memberId);
     }
 
     @GetMapping

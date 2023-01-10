@@ -32,10 +32,10 @@ public class FreeController {
     private final FreeService freeService;
 
     @PostMapping
-    public void register(@RequestBody @Valid FreePostRequest freePostRequest,
+    public Long register(@RequestBody @Valid FreePostRequest freePostRequest,
         HttpServletRequest request) {
         Long memberId = getMemberId(request);
-        freeService.create(freePostRequest, memberId);
+        return freeService.create(freePostRequest, memberId);
     }
 
     @GetMapping("/{id}")
