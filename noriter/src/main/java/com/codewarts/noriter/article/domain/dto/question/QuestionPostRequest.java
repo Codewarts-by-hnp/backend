@@ -21,7 +21,7 @@ public class QuestionPostRequest {
     @NotBlank(message = "내용은 필수입니다.")
     private String content;
 
-    private List<String> hashtag;
+    private List<String> hashtags;
 
     public Question toEntity(Member writer) {
         return Question.builder()

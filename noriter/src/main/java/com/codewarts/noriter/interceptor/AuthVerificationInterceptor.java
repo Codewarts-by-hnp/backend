@@ -22,6 +22,10 @@ public class AuthVerificationInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response,
         Object handler) {
 
+        if (request.getMethod().equals(HttpMethod.OPTIONS.name())) {
+            return true;
+        }
+
         String method = request.getMethod();
         if (method.equals(HttpMethod.GET.name())) {
             return true;

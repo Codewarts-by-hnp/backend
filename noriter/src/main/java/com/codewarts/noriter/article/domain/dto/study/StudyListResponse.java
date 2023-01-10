@@ -18,7 +18,7 @@ public class StudyListResponse {
     private String content;
     private String writerNickname;
     private boolean sameWriter;
-    private List<String> hashtag;
+    private List<String> hashtags;
     private LocalDateTime writtenTime;
     private LocalDateTime editedTime;
     private int wishCount;
@@ -31,7 +31,7 @@ public class StudyListResponse {
         this.content = study.getContent();
         this.writerNickname = study.getWriter().getNickname();
         this.sameWriter = sameWriter;
-        this.hashtag = study.getHashtags().stream().map(Hashtag::getContent)
+        this.hashtags = study.getHashtags().stream().map(Hashtag::getContent)
             .collect(Collectors.toList());
         this.writtenTime = study.getWrittenTime();
         this.editedTime = study.getEditedTime();

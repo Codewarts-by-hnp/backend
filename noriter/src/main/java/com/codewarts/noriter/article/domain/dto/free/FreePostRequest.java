@@ -19,7 +19,6 @@ public class FreePostRequest {
     private String content;
     private List<String> hashtags;
 
-
     public Article toEntity(Member writer) {
         return Article.builder()
             .title(title)

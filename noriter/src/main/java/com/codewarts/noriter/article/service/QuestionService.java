@@ -33,7 +33,7 @@ public class QuestionService {
     public Long add(QuestionPostRequest request, Long memberId) {
         Member writer = memberService.findMember(memberId);
         Question question = request.toEntity(writer);
-        question.addHashtags(request.getHashtag());
+        question.addHashtags(request.getHashtags());
         Question savedQuestion = questionRepository.save(question);
         return savedQuestion.getId();
     }
@@ -72,7 +72,7 @@ public class QuestionService {
         memberService.findMember(writerId);
         Question question = findQuestion(questionId);
         question.validateWriterOrThrow(writerId);
-        question.update(request.getTitle(), request.getContent(), request.getHashtag());
+        question.update(request.getTitle(), request.getContent(), request.getHashtags());
     }
 
     @Transactional

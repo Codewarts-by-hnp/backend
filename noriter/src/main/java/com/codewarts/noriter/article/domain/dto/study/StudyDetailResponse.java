@@ -20,7 +20,7 @@ public class StudyDetailResponse {
     private String content;
     private WriterInfoResponse writer;
     private boolean sameWriter;
-    private List<String> hashtag;
+    private List<String> hashtags;
     private LocalDateTime writtenTime;
     private LocalDateTime editedTime;
     private int wishCount;
@@ -33,7 +33,7 @@ public class StudyDetailResponse {
         this.content = study.getContent();
         this.writer = new WriterInfoResponse(study.getWriter());
         this.sameWriter = sameWriter;
-        this.hashtag = study.getHashtags().stream()
+        this.hashtags = study.getHashtags().stream()
             .map(Hashtag::getContent)
             .collect(Collectors.toList());
         this.writtenTime = study.getWrittenTime();
