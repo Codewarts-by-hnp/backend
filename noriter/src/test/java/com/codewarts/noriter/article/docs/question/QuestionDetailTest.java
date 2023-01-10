@@ -87,9 +87,9 @@ class QuestionDetailTest {
             .body("writer.profileImage",
                 equalTo("https://avatars.githubusercontent.com/u/111111?v=4"))
             .body("sameWriter", equalTo(false))
-            .body("hashtag[0]", equalTo("스프링"))
-            .body("hashtag[1]", equalTo("코린이"))
-            .body("hashtag[2]", equalTo("도와줘요"));
+            .body("hashtags[0]", equalTo("스프링"))
+            .body("hashtags[1]", equalTo("코린이"))
+            .body("hashtags[2]", equalTo("도와줘요"));
     }
 
     @Test

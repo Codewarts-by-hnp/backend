@@ -83,8 +83,10 @@ class StudyListTest {
             .body("[0].content", equalTo("안녕하냐고오옹"))
             .body("[0].writerNickname", equalTo("admin1"))
             .body("[0].sameWriter", equalTo(false))
-            .body("[0].hashtag[0]", equalTo("SPRING"))
-            .body("[0].hashtag[1]", equalTo("JPA"))
+            .body("[0].writtenTime", equalTo("2022-11-11 16:25:58"))
+            .body("[0].editedTime", equalTo("2022-11-11 16:25:58"))
+            .body("[0].hashtags[0]", equalTo("SPRING"))
+            .body("[0].hashtags[1]", equalTo("JPA"))
             .body("[0].wishCount", equalTo(0))
             .body("[0].commentCount", equalTo(4));
     }

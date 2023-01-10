@@ -1,6 +1,7 @@
 package com.codewarts.noriter.article.docs.question;
 
 import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.http.HttpHeaders.CONNECTION;
 import static org.springframework.http.HttpHeaders.CONTENT_LENGTH;
@@ -105,6 +106,18 @@ class QuestionListTest {
 
             .then()
             .statusCode(HttpStatus.OK.value())
-            .body("size()", is(4));
+            .body("size()", is(4))
+            .body("[0].id", equalTo(6))
+            .body("[0].title", equalTo("질문1"))
+            .body("[0].content", equalTo("궁금1"))
+            .body("[0].writerNickname", equalTo("admin1"))
+            .body("[0].sameWriter", equalTo(false))
+            .body("[0].writtenTime", equalTo("2022-11-11 16:25:58"))
+            .body("[0].editedTime", equalTo("2022-11-11 16:25:58"))
+            .body("[0].hashtags[0]", equalTo("스프링"))
+            .body("[0].hashtags[1]", equalTo("코린이"))
+            .body("[0].hashtags[2]", equalTo("도와줘요"))
+            .body("[0].wishCount", equalTo(0))
+            .body("[0].commentCount", equalTo(0));
     }
 }
