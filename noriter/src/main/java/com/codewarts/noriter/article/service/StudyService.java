@@ -29,11 +29,11 @@ public class StudyService {
     private final ArticleUtils articleUtils;
 
     @Transactional
-    public void register(StudyPostRequest studyPostRequest, Long memberId) {
+    public Long create(StudyPostRequest studyPostRequest, Long memberId) {
         Member member = memberService.findMember(memberId);
         Study study = studyPostRequest.toEntity(member);
         study.addHashtags(studyPostRequest.getHashtags());
-        studyRepository.save(study);
+        return studyRepository.save(study).getId();
     }
 
     public List<StudyListResponse> findList(StatusType status, String accessToken) {

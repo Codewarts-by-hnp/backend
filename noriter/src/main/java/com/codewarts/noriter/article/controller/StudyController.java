@@ -39,10 +39,10 @@ public class StudyController {
     private final ConversionService conversionService;
 
     @PostMapping
-    public void register(@RequestBody @Valid StudyPostRequest studyPostRequest,
+    public Long register(@RequestBody @Valid StudyPostRequest studyPostRequest,
         HttpServletRequest request) {
         Long memberId = getMemberId(request);
-        studyService.register(studyPostRequest, memberId);
+        return studyService.create(studyPostRequest, memberId);
     }
 
     @GetMapping

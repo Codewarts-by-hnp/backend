@@ -2,6 +2,7 @@ package com.codewarts.noriter.article.domain.dto.free;
 
 import com.codewarts.noriter.article.domain.Article;
 import com.codewarts.noriter.article.domain.Hashtag;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,7 +21,9 @@ public class FreeListResponse {
 
     private boolean sameWriter;
     private List<String> hashtags;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime writtenTime;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime editedTime;
     private int wishCount;
     private int commentCount;

@@ -5,6 +5,7 @@ import com.codewarts.noriter.article.domain.Study;
 import com.codewarts.noriter.article.domain.type.StatusType;
 import com.codewarts.noriter.comment.domain.dto.CommentResponse;
 import com.codewarts.noriter.member.domain.dto.WriterInfoResponse;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,7 +22,9 @@ public class StudyDetailResponse {
     private WriterInfoResponse writer;
     private boolean sameWriter;
     private List<String> hashtags;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime writtenTime;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime editedTime;
     private int wishCount;
     private StatusType status;

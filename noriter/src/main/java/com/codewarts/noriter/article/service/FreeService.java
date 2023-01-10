@@ -27,11 +27,11 @@ public class FreeService {
     private final ArticleUtils articleUtils;
 
     @Transactional
-    public void create(FreePostRequest freePostRequest, Long writerId) {
+    public Long create(FreePostRequest freePostRequest, Long writerId) {
         Member member = memberService.findMember(writerId);
         Article free = freePostRequest.toEntity(member);
         free.addHashtags(freePostRequest.getHashtags());
-        articleRepository.save(free);
+        return articleRepository.save(free).getId();
     }
 
     public FreeDetailResponse findDetail(Long id, String accessToken) {

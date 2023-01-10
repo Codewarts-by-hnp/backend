@@ -30,12 +30,11 @@ public class QuestionService {
 
     // 질문 등록 기능
     @Transactional
-    public Long add(QuestionPostRequest request, Long memberId) {
+    public Long create(QuestionPostRequest request, Long memberId) {
         Member writer = memberService.findMember(memberId);
         Question question = request.toEntity(writer);
         question.addHashtags(request.getHashtags());
-        Question savedQuestion = questionRepository.save(question);
-        return savedQuestion.getId();
+        return questionRepository.save(question).getId();
     }
 
     // 질문 조회 기능
