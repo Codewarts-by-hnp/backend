@@ -17,5 +17,5 @@ public class QuestionUpdateRequest {
     @NotBlank(message = "내용은 필수입니다.")
     private  String content;
 
-    private  List<String> hashtag;
+    private  List<String> hashtags;
 }

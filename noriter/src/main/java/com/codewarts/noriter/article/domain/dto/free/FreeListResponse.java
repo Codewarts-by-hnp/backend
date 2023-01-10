@@ -19,7 +19,7 @@ public class FreeListResponse {
     private String writerNickname;
 
     private boolean sameWriter;
-    private List<String> hashtag;
+    private List<String> hashtags;
     private LocalDateTime writtenTime;
     private LocalDateTime editedTime;
     private int wishCount;
@@ -32,7 +32,7 @@ public class FreeListResponse {
         this.content = article.getContent();
         this.writerNickname = article.getWriter().getNickname();
         this.sameWriter = sameWriter;
-        this.hashtag = article.getHashtags().stream()
+        this.hashtags = article.getHashtags().stream()
             .map(Hashtag::getContent)
             .collect(Collectors.toList());
         this.writtenTime = article.getWrittenTime();

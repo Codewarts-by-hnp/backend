@@ -18,7 +18,7 @@ public class QuestionDetailResponse {
     private final String content;
     private final WriterInfoResponse writer;
     private final boolean sameWriter;
-    private final List<String> hashtag;
+    private final List<String> hashtags;
     private final LocalDateTime writtenTime;
     private final LocalDateTime editedTime;
     private final int wishCount;
@@ -31,7 +31,7 @@ public class QuestionDetailResponse {
         this.content = question.getContent();
         this.writer = WriterInfoResponse.from(question.getWriter());
         this.sameWriter = sameWriter;
-        this.hashtag = question.getHashtags().stream()
+        this.hashtags = question.getHashtags().stream()
             .map(Hashtag::getContent)
             .collect(Collectors.toList());
         this.writtenTime = question.getWrittenTime();
