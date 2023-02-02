@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: ${NORITER_PROFILE}
+#    active: ${NORITER_PROFILE}
 
   datasource:
     url: ${DATASOURCE_URL}
