@@ -1,6 +1,6 @@
 spring:
   profiles:
-#    active: ${NORITER_PROFILE}
+    active: ${NORITER_PROFILE}
 
   datasource:
     url: ${DATASOURCE_URL}
@@ -11,7 +11,7 @@ spring:
   jpa:
     properties:
       hibernate:
-        ddl-auto: create
+#        ddl-auto: create
         format_sql: true
 
   config:
