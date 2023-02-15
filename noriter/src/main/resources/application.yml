@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: deploy
+    active: ${NORITER_PROFILE}
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
