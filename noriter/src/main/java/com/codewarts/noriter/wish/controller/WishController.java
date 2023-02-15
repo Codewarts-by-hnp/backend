@@ -10,6 +10,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,6 +34,18 @@ public class WishController {
         Long memberId = getMemberId(request);
         wishService.create(memberId, map.get("articleId"));
     }
+
+    @DeleteMapping
+    public void remove(@RequestBody Map<String,
+        @Valid @NotNull(message = "ID가 비어있습니다.") @Positive(message = "게시글 ID는 양수이어야 합니다.") Long> map,
+        HttpServletRequest request) {
+        if (!map.containsKey("articleId")) {
+            throw new GlobalNoriterException(CommonExceptionType.INVALID_REQUEST);
+        }
+        Long memberId = getMemberId(request);
+        wishService.delete(memberId, map.get("articleId"));
+    }
+
 
     private Long getMemberId(HttpServletRequest request) {
         return (Long) request.getAttribute("memberId");

@@ -26,10 +26,24 @@ public class WishService {
             .orElseThrow(() -> new GlobalNoriterException(
                 ArticleExceptionType.ARTICLE_NOT_FOUND));
 
-        boolean existsWish = wishRepository.existsWishByArticleAndAndMember(article, member);
+        boolean existsWish = wishRepository.existsByArticleAndMember(article, member);
         if (existsWish) {
             throw new GlobalNoriterException(WishExceptionType.WISH_ALREADY_EXIST);
         }
         wishRepository.save(new Wish(member, article));
+    }
+
+    public void delete(Long memberId, Long articleId) {
+        Member member = memberService.findMember(memberId);
+        Article article = articleRepository.findById(articleId)
+            .orElseThrow(() -> new GlobalNoriterException(
+                ArticleExceptionType.ARTICLE_NOT_FOUND));
+
+        Wish wish = wishRepository.findByArticleAndMember(article, member)
+            .orElseThrow(() -> new GlobalNoriterException(
+                WishExceptionType.CANNOT_CANCEL_NOT_EXIST_WISH
+            ));
+
+        wishRepository.delete(wish);
     }
 }
