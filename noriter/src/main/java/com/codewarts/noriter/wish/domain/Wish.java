@@ -28,6 +28,8 @@ public class Wish {
   @JoinColumn
   private Article article;
 
-  private boolean deleted;
-
+  public Wish(Member member, Article article) {
+    this.member = member;
+    this.article = article;
+  }
 }
