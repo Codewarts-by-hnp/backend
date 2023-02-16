@@ -24,11 +24,12 @@ public class QuestionDetailResponse {
     private final LocalDateTime writtenTime;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private final LocalDateTime editedTime;
+    private final boolean wish;
     private final int wishCount;
     private final List<CommentResponse> comment;
     private final StatusType status;
 
-    public QuestionDetailResponse(Question question, boolean sameWriter) {
+    public QuestionDetailResponse(Question question, boolean sameWriter, boolean wish) {
         this.id = question.getId();
         this.title = question.getTitle();
         this.content = question.getContent();
@@ -39,6 +40,7 @@ public class QuestionDetailResponse {
             .collect(Collectors.toList());
         this.writtenTime = question.getWrittenTime();
         this.editedTime = question.getEditedTime();
+        this.wish = wish;
         this.wishCount = question.getWishList().size();
         this.comment = question.getComments().stream()
             .map(CommentResponse::new)
@@ -46,7 +48,7 @@ public class QuestionDetailResponse {
         this.status = question.getStatus();
     }
 
-    public static QuestionDetailResponse from(Question question, boolean sameWriter) {
-        return new QuestionDetailResponse(question, sameWriter);
+    public static QuestionDetailResponse from(Question question, boolean sameWriter, boolean wish) {
+        return new QuestionDetailResponse(question, sameWriter, wish);
     }
 }
