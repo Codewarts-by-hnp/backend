@@ -91,4 +91,5 @@ VALUES
 INSERT INTO wish
     (id, article_id, member_id)
 VALUES
-    (1, 3, 2)
+    (1, 3, 2),
+    (2, 10, 2);
