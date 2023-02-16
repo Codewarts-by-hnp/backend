@@ -48,12 +48,20 @@ public class FreeService {
         return new FreeDetailResponse(article, sameWriter, wish);
     }
 
-    public List<FreeListResponse> findList(String accessToken) {
+    public List<FreeListResponse> findList(Long memberId) {
         List<Article> freeTypeArticle = articleRepository.findAllByArticleType(ArticleType.FREE);
+        if (memberId == null) {
+            return freeTypeArticle.stream()
+                .map(article -> new FreeListResponse(article, false, false))
+                    .collect(Collectors.toList());
+        }
+        Member member = memberService.findMember(memberId);
+        // Todo -> N+1 해결하기
         return freeTypeArticle.stream()
             .map(article -> new FreeListResponse(article,
-                articleUtils.isSameWriter(article.getWriter().getId(), accessToken)))
-                .collect(Collectors.toList());
+                article.getWriter().getId().equals(memberId),
+                wishRepository.existsByArticleAndMember(article, member)))
+            .collect(Collectors.toList());
     }
 
     @Transactional

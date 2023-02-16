@@ -49,8 +49,8 @@ public class FreeController {
 
     @GetMapping
     public List<FreeListResponse> freeList(HttpServletRequest request) {
-        String accessToken = request.getHeader(HttpHeaders.AUTHORIZATION);
-        return freeService.findList(accessToken);
+        Long memberId = getMemberId(request);
+        return freeService.findList(memberId);
     }
 
     @PutMapping("/{id}")

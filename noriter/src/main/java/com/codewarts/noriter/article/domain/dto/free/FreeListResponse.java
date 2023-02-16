@@ -25,11 +25,12 @@ public class FreeListResponse {
     private LocalDateTime writtenTime;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime editedTime;
+    private boolean wish;
     private int wishCount;
     private int commentCount;
     private boolean completed;
 
-    public FreeListResponse(Article article, boolean sameWriter) {
+    public FreeListResponse(Article article, boolean sameWriter, boolean wish) {
         this.id = article.getId();
         this.title = article.getTitle();
         this.content = article.getContent();
@@ -40,6 +41,7 @@ public class FreeListResponse {
             .collect(Collectors.toList());
         this.writtenTime = article.getWrittenTime();
         this.editedTime = article.getWrittenTime();
+        this.wish = wish;
         this.wishCount = article.getWishList().size();
         this.commentCount = article.getComments().size();
         this.completed = isCompleted();
