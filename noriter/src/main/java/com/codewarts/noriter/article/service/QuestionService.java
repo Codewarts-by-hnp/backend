@@ -2,8 +2,8 @@ package com.codewarts.noriter.article.service;
 
 import com.codewarts.noriter.article.domain.Question;
 import com.codewarts.noriter.article.domain.dto.question.QuestionDetailResponse;
-import com.codewarts.noriter.article.domain.dto.question.QuestionPostRequest;
 import com.codewarts.noriter.article.domain.dto.question.QuestionListResponse;
+import com.codewarts.noriter.article.domain.dto.question.QuestionPostRequest;
 import com.codewarts.noriter.article.domain.dto.question.QuestionUpdateRequest;
 import com.codewarts.noriter.article.domain.type.StatusType;
 import com.codewarts.noriter.article.repository.ArticleRepository;
@@ -12,6 +12,7 @@ import com.codewarts.noriter.exception.GlobalNoriterException;
 import com.codewarts.noriter.exception.type.ArticleExceptionType;
 import com.codewarts.noriter.member.domain.Member;
 import com.codewarts.noriter.member.service.MemberService;
+import com.codewarts.noriter.wish.repository.WishRepository;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,7 @@ public class QuestionService {
 
     private final QuestionRepository questionRepository;
     private final ArticleRepository articleRepository;
+    private final WishRepository wishRepository;
     private final MemberService memberService;
     private final ArticleUtils articleUtils;
 
@@ -38,24 +40,44 @@ public class QuestionService {
     }
 
     // 질문 조회 기능
-    public List<QuestionListResponse> findList(StatusType status, String accessToken) {
+    public List<QuestionListResponse> findList(StatusType status, Long memberId) {
+        if (memberId == null && status == null) {
+            return questionRepository.findAllQuestion().stream()
+                .map(question -> new QuestionListResponse(question, false, false))
+                .collect(Collectors.toList());
+        }
+        if (memberId == null) {
+            return questionRepository.findQuestionByCompleted(status).stream()
+                .map(question -> new QuestionListResponse(question, false, false))
+                .collect(Collectors.toList());
+        }
+        Member member = memberService.findMember(memberId);
         if (status == null) {
             return questionRepository.findAllQuestion().stream()
                 .map(question -> new QuestionListResponse(question,
-                    articleUtils.isSameWriter(question.getWriter().getId(), accessToken)))
+                    question.getWriter().getId().equals(memberId),
+                    wishRepository.existsByArticleAndMember(question, member)))
                 .collect(Collectors.toList());
         }
         return questionRepository.findQuestionByCompleted(status).stream()
             .map(question -> new QuestionListResponse(question,
-                articleUtils.isSameWriter(question.getWriter().getId(), accessToken)))
+                question.getWriter().getId().equals(memberId),
+                wishRepository.existsByArticleAndMember(question, member)))
             .collect(Collectors.toList());
     }
 
     // 질문 상세 조회 기능
-    public QuestionDetailResponse findDetail(Long id, String accessToken) {
+    public QuestionDetailResponse findDetail(Long id, Long memberId) {
         Question question = findQuestion(id);
-        boolean sameWriter = articleUtils.isSameWriter(question.getWriter().getId(), accessToken);
-        return QuestionDetailResponse.from(question, sameWriter);
+        boolean sameWriter = question.getWriter().getId().equals(memberId);
+
+        if (memberId == null) {
+            return QuestionDetailResponse.from(question, false, false);
+        }
+        Member member = memberService.findMember(memberId);
+        boolean wish = wishRepository.existsByArticleAndMember(question, member);
+
+        return QuestionDetailResponse.from(question, sameWriter, wish);
     }
 
     @Transactional

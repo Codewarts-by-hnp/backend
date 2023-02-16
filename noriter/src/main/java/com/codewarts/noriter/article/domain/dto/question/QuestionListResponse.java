@@ -22,11 +22,12 @@ public class QuestionListResponse {
     private final LocalDateTime writtenTime;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private final LocalDateTime editedTime;
+    private final boolean wish;
     private final int wishCount;
     private final int commentCount;
     private final StatusType status;
 
-    public QuestionListResponse(Question question, boolean sameWriter) {
+    public QuestionListResponse(Question question, boolean sameWriter, boolean wish) {
         this.id = question.getId();
         this.title = question.getTitle();
         this.content = question.getContent();
@@ -35,6 +36,7 @@ public class QuestionListResponse {
         this.hashtags = question.getHashtags().stream().map(Hashtag::getContent).collect(Collectors.toList());
         this.writtenTime = question.getWrittenTime();
         this.editedTime = question.getEditedTime();
+        this.wish = wish;
         this.wishCount = question.getWishList().size();
         this.commentCount = question.getComments().size();
         this.status = question.getStatus();

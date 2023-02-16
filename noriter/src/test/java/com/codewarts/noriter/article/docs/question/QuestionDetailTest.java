@@ -2,6 +2,7 @@ package com.codewarts.noriter.article.docs.question;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpHeaders.CONNECTION;
 import static org.springframework.http.HttpHeaders.CONTENT_LENGTH;
 import static org.springframework.http.HttpHeaders.DATE;
@@ -87,10 +88,40 @@ class QuestionDetailTest {
             .body("writer.profileImage",
                 equalTo("https://avatars.githubusercontent.com/u/111111?v=4"))
             .body("sameWriter", equalTo(false))
+            .body("wish", equalTo(false))
             .body("hashtags[0]", equalTo("스프링"))
             .body("hashtags[1]", equalTo("코린이"))
             .body("hashtags[2]", equalTo("도와줘요"));
     }
+
+    @Test
+    void 로그인_후_상세조회를_한다() {
+        String accessToken = jwtProvider.issueAccessToken(2L);
+
+        given(documentationSpec)
+            .contentType(APPLICATION_JSON_VALUE)
+            .header(AUTHORIZATION, accessToken)
+            .pathParam("id", 6)
+
+            .when()
+            .get("/community/question/{id}")
+
+            .then()
+            .statusCode(HttpStatus.OK.value())
+            .body("id", equalTo(6))
+            .body("title", equalTo("질문1"))
+            .body("content", equalTo("궁금1"))
+            .body("writer.id", equalTo(1))
+            .body("writer.nickname", equalTo("admin1"))
+            .body("writer.profileImage",
+                equalTo("https://avatars.githubusercontent.com/u/111111?v=4"))
+            .body("sameWriter", equalTo(false))
+            .body("wish", equalTo(true))
+            .body("hashtags[0]", equalTo("스프링"))
+            .body("hashtags[1]", equalTo("코린이"))
+            .body("hashtags[2]", equalTo("도와줘요"));
+    }
+
 
     @Test
     void id가_유효하지_않는_경우_예외를_발생시킨다() {
