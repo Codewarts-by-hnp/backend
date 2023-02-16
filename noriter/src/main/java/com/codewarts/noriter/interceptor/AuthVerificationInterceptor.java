@@ -26,13 +26,14 @@ public class AuthVerificationInterceptor implements HandlerInterceptor {
             return true;
         }
 
+        String accessToken = request.getHeader(HttpHeaders.AUTHORIZATION);
         String method = request.getMethod();
-        if (method.equals(HttpMethod.GET.name())) {
+        boolean hasAccessToken = StringUtils.hasText(accessToken);
+
+        if (!hasAccessToken && method.equals(HttpMethod.GET.name())) {
             return true;
         }
-
-        String accessToken = request.getHeader(HttpHeaders.AUTHORIZATION);
-        if (!StringUtils.hasText(accessToken)) {
+        if (!hasAccessToken) {
             throw new GlobalNoriterException(AuthExceptionType.EMPTY_ACCESS_TOKEN);
         }
         try {
