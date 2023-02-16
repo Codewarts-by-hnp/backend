@@ -25,6 +25,7 @@ public class FreeDetailResponse {
     private LocalDateTime writtenTime;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime editedTime;
+    private boolean wish;
     private int wishCount;
     private List<CommentResponse> comment;
 
@@ -39,6 +40,24 @@ public class FreeDetailResponse {
             .collect(Collectors.toList());
         this.writtenTime = article.getWrittenTime();
         this.editedTime = article.getEditedTime();
+        this.wishCount = article.getWishList().size();
+        this.comment = article.getComments().stream()
+            .map(CommentResponse::new)
+            .collect(Collectors.toList());
+    }
+
+    public FreeDetailResponse(Article article, boolean sameWriter, boolean wish) {
+        this.id = article.getId();
+        this.title = article.getTitle();
+        this.content = article.getContent();
+        this.writer = new WriterInfoResponse(article.getWriter());
+        this.sameWriter = sameWriter;
+        this.hashtags = article.getHashtags().stream()
+            .map(Hashtag::getContent)
+            .collect(Collectors.toList());
+        this.writtenTime = article.getWrittenTime();
+        this.editedTime = article.getEditedTime();
+        this.wish = wish;
         this.wishCount = article.getWishList().size();
         this.comment = article.getComments().stream()
             .map(CommentResponse::new)

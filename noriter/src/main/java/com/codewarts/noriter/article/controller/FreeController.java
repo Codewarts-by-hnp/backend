@@ -43,14 +43,14 @@ public class FreeController {
         @PathVariable(required = false)
         @NotNull(message = "ID가 비어있습니다.")
         @Positive(message = "게시글 ID는 양수이어야 합니다.") Long id, HttpServletRequest request) {
-        String accessToken = request.getHeader(HttpHeaders.AUTHORIZATION);
-        return freeService.findDetail(id, accessToken);
+        Long memberId = getMemberId(request);
+        return freeService.findDetail(id, memberId);
     }
 
     @GetMapping
     public List<FreeListResponse> freeList(HttpServletRequest request) {
-        String accessToken = request.getHeader(HttpHeaders.AUTHORIZATION);
-        return freeService.findList(accessToken);
+        Long memberId = getMemberId(request);
+        return freeService.findList(memberId);
     }
 
     @PutMapping("/{id}")

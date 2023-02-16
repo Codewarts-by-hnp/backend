@@ -11,6 +11,7 @@ import com.codewarts.noriter.exception.GlobalNoriterException;
 import com.codewarts.noriter.exception.type.ArticleExceptionType;
 import com.codewarts.noriter.member.domain.Member;
 import com.codewarts.noriter.member.service.MemberService;
+import com.codewarts.noriter.wish.repository.WishRepository;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class FreeService {
 
     private final ArticleRepository articleRepository;
+    private final WishRepository wishRepository;
     private final MemberService memberService;
     private final ArticleUtils articleUtils;
 
@@ -34,18 +36,32 @@ public class FreeService {
         return articleRepository.save(free).getId();
     }
 
-    public FreeDetailResponse findDetail(Long id, String accessToken) {
+    public FreeDetailResponse findDetail(Long id, Long memberId) {
         Article article = findArticle(id);
         Long writerId = article.getWriter().getId();
-        return new FreeDetailResponse(article, articleUtils.isSameWriter(writerId, accessToken));
+        boolean sameWriter = writerId.equals(memberId);
+        if (memberId == null) {
+            return new FreeDetailResponse(article, sameWriter, false);
+        }
+        Member member = memberService.findMember(memberId);
+        boolean wish = wishRepository.existsByArticleAndMember(article, member);
+        return new FreeDetailResponse(article, sameWriter, wish);
     }
 
-    public List<FreeListResponse> findList(String accessToken) {
+    public List<FreeListResponse> findList(Long memberId) {
         List<Article> freeTypeArticle = articleRepository.findAllByArticleType(ArticleType.FREE);
+        if (memberId == null) {
+            return freeTypeArticle.stream()
+                .map(article -> new FreeListResponse(article, false, false))
+                    .collect(Collectors.toList());
+        }
+        Member member = memberService.findMember(memberId);
+        // Todo -> N+1 해결하기
         return freeTypeArticle.stream()
             .map(article -> new FreeListResponse(article,
-                articleUtils.isSameWriter(article.getWriter().getId(), accessToken)))
-                .collect(Collectors.toList());
+                article.getWriter().getId().equals(memberId),
+                wishRepository.existsByArticleAndMember(article, member)))
+            .collect(Collectors.toList());
     }
 
     @Transactional

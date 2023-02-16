@@ -2,6 +2,7 @@ package com.codewarts.noriter.article.docs.free;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpHeaders.CONNECTION;
 import static org.springframework.http.HttpHeaders.CONTENT_LENGTH;
 import static org.springframework.http.HttpHeaders.DATE;
@@ -89,7 +90,41 @@ class FreeDetailTest {
             .body("sameWriter", equalTo(false))
             .body("hashtags[0]", equalTo("강남역"))
             .body("hashtags[1]", equalTo("붕어팥"))
-            .body("wishCount", equalTo(0))
+            .body("wish", equalTo(false))
+            .body("wishCount", equalTo(1))
+            .body("comment[0].id", equalTo(5))
+            .body("comment[0].content", equalTo("강남역 11번출구에서 팔아요"))
+            .body("comment[0].writer.id", equalTo(2))
+            .body("comment[0].writer.nickname", equalTo("admin2"))
+            .body("comment[0].writer.profileImage", equalTo("https://avatars.githubusercontent.com/u/222222?v=4"));
+    }
+
+    @Test
+    void 로그인_후_상세조회를_한다() {
+        String accessToken = jwtProvider.issueAccessToken(2L);
+
+        given(documentationSpec)
+            .contentType(APPLICATION_JSON_VALUE)
+            .header(AUTHORIZATION, accessToken)
+            .pathParam("id", 10)
+
+            .when()
+            .get("/community/playground/{id}")
+
+            .then()
+            .statusCode(HttpStatus.OK.value())
+            .body("id", equalTo(10))
+            .body("title", equalTo("붕어빵 먹고싶어요"))
+            .body("content", equalTo("강남 붕어빵 맛잇는 집"))
+            .body("writer.id", equalTo(1))
+            .body("writer.nickname", equalTo("admin1"))
+            .body("writer.profileImage",
+                equalTo("https://avatars.githubusercontent.com/u/111111?v=4"))
+            .body("sameWriter", equalTo(false))
+            .body("hashtags[0]", equalTo("강남역"))
+            .body("hashtags[1]", equalTo("붕어팥"))
+            .body("wish", equalTo(true))
+            .body("wishCount", equalTo(1))
             .body("comment[0].id", equalTo(5))
             .body("comment[0].content", equalTo("강남역 11번출구에서 팔아요"))
             .body("comment[0].writer.id", equalTo(2))

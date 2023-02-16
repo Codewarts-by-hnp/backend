@@ -2,6 +2,7 @@ package com.codewarts.noriter.article.docs.free;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpHeaders.CONNECTION;
 import static org.springframework.http.HttpHeaders.CONTENT_LENGTH;
 import static org.springframework.http.HttpHeaders.DATE;
@@ -36,7 +37,7 @@ import org.springframework.test.context.jdbc.Sql;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Profile({"test"})
 @Sql("classpath:/data.sql")
-public class FreeListTest {
+class FreeListTest {
 
     @LocalServerPort
     int port;
@@ -85,8 +86,35 @@ public class FreeListTest {
             .body("[0].editedTime", equalTo("2022-11-25 16:25:58"))
             .body("[0].hashtags[0]", equalTo("강남역"))
             .body("[0].hashtags[1]", equalTo("붕어팥"))
-            .body("[0].wishCount", equalTo(0))
+            .body("[0].wish", equalTo(false))
+            .body("[0].wishCount", equalTo(1))
             .body("[0].commentCount", equalTo(1));
     }
 
+    @Test
+    void 로그인_후_리스트를_조회한다() {
+        String accessToken = jwtProvider.issueAccessToken(2L);
+
+        given(documentationSpec)
+            .contentType(APPLICATION_JSON_VALUE)
+            .header(AUTHORIZATION, accessToken)
+
+            .when()
+            .get("/community/playground")
+
+            .then()
+            .statusCode(HttpStatus.OK.value())
+            .body("[0].id", equalTo(10))
+            .body("[0].title", equalTo("붕어빵 먹고싶어요"))
+            .body("[0].content", equalTo("강남 붕어빵 맛잇는 집"))
+            .body("[0].writerNickname", equalTo("admin1"))
+            .body("[0].sameWriter", equalTo(false))
+            .body("[0].writtenTime", equalTo("2022-11-25 16:25:58"))
+            .body("[0].editedTime", equalTo("2022-11-25 16:25:58"))
+            .body("[0].hashtags[0]", equalTo("강남역"))
+            .body("[0].hashtags[1]", equalTo("붕어팥"))
+            .body("[0].wish", equalTo(true))
+            .body("[0].wishCount", equalTo(1))
+            .body("[0].commentCount", equalTo(1));
+    }
 }
