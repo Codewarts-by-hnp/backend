@@ -40,16 +40,29 @@ public class QuestionService {
     }
 
     // 질문 조회 기능
-    public List<QuestionListResponse> findList(StatusType status, String accessToken) {
+    public List<QuestionListResponse> findList(StatusType status, Long memberId) {
+        if (memberId == null && status == null) {
+            return questionRepository.findAllQuestion().stream()
+                .map(question -> new QuestionListResponse(question, false, false))
+                .collect(Collectors.toList());
+        }
+        if (memberId == null) {
+            return questionRepository.findQuestionByCompleted(status).stream()
+                .map(question -> new QuestionListResponse(question, false, false))
+                .collect(Collectors.toList());
+        }
+        Member member = memberService.findMember(memberId);
         if (status == null) {
             return questionRepository.findAllQuestion().stream()
                 .map(question -> new QuestionListResponse(question,
-                    articleUtils.isSameWriter(question.getWriter().getId(), accessToken)))
+                    question.getWriter().getId().equals(memberId),
+                    wishRepository.existsByArticleAndMember(question, member)))
                 .collect(Collectors.toList());
         }
         return questionRepository.findQuestionByCompleted(status).stream()
             .map(question -> new QuestionListResponse(question,
-                articleUtils.isSameWriter(question.getWriter().getId(), accessToken)))
+                question.getWriter().getId().equals(memberId),
+                wishRepository.existsByArticleAndMember(question, member)))
             .collect(Collectors.toList());
     }
 

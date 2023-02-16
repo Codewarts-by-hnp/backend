@@ -48,13 +48,13 @@ public class QuestionController {
     @GetMapping
     public List<QuestionListResponse> questionList(@RequestParam Map<String, String> paramMap,
         HttpServletRequest request) {
-        String accessToken = request.getHeader(HttpHeaders.AUTHORIZATION);
+        Long memberId = getMemberId(request);
         if (paramMap.isEmpty()) {
-            return questionService.findList(null, accessToken);
+            return questionService.findList(null, memberId);
         }
         if (paramMap.size() == 1 && paramMap.containsKey("status")) {
             StatusType status = conversionService.convert(paramMap.get("status"), StatusType.class);
-            return questionService.findList(status, accessToken);
+            return questionService.findList(status, memberId);
         }
         throw new GlobalNoriterException(CommonExceptionType.INCORRECT_REQUEST_PARAM);
     }
