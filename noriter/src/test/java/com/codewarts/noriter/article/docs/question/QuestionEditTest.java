@@ -20,7 +20,7 @@ import static org.springframework.restdocs.restassured3.RestAssuredRestDocumenta
 
 import com.codewarts.noriter.article.domain.Hashtag;
 import com.codewarts.noriter.article.domain.Question;
-import com.codewarts.noriter.article.domain.dto.question.QuestionUpdateRequest;
+import com.codewarts.noriter.article.dto.question.QuestionUpdateRequest;
 import com.codewarts.noriter.article.repository.QuestionRepository;
 import com.codewarts.noriter.auth.jwt.JwtProvider;
 import com.codewarts.noriter.exception.GlobalNoriterException;
@@ -84,7 +84,7 @@ class QuestionEditTest {
     @Test
     void 제목을_수정한다() {
 
-        Question question = questionRepository.findQuestionById(6L)
+        Question question = questionRepository.findById(6L)
             .orElseThrow(() -> new GlobalNoriterException(ArticleExceptionType.ARTICLE_NOT_FOUND));
         String accessToken = jwtProvider.issueAccessToken(question.getWriter().getId());
         List<String> hashtag = question.getHashtags().stream().map(Hashtag::getContent)
@@ -106,7 +106,7 @@ class QuestionEditTest {
     @Test
     void 내용을_수정한다() {
 
-        Question question = questionRepository.findQuestionById(6L)
+        Question question = questionRepository.findById(6L)
             .orElseThrow(() -> new GlobalNoriterException(ArticleExceptionType.ARTICLE_NOT_FOUND));
         String accessToken = jwtProvider.issueAccessToken(question.getWriter().getId());
         List<String> hashtag = question.getHashtags().stream().map(Hashtag::getContent)
@@ -130,7 +130,7 @@ class QuestionEditTest {
     @Test
     void 해시태그를_수정한다() {
 
-        Question question = questionRepository.findQuestionById(6L)
+        Question question = questionRepository.findById(6L)
             .orElseThrow(RuntimeException::new);
         String accessToken = jwtProvider.issueAccessToken(question.getWriter().getId());
 
@@ -152,7 +152,7 @@ class QuestionEditTest {
     @Test
     void 전부_수정한다() {
 
-        Question question = questionRepository.findQuestionById(6L)
+        Question question = questionRepository.findById(6L)
             .orElseThrow(RuntimeException::new);
         String accessToken = jwtProvider.issueAccessToken(question.getWriter().getId());
 

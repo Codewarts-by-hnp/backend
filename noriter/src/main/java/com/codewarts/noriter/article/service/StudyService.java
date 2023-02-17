@@ -1,10 +1,10 @@
 package com.codewarts.noriter.article.service;
 
 import com.codewarts.noriter.article.domain.Study;
-import com.codewarts.noriter.article.domain.dto.study.StudyDetailResponse;
-import com.codewarts.noriter.article.domain.dto.study.StudyEditRequest;
-import com.codewarts.noriter.article.domain.dto.study.StudyListResponse;
-import com.codewarts.noriter.article.domain.dto.study.StudyPostRequest;
+import com.codewarts.noriter.article.dto.study.StudyDetailResponse;
+import com.codewarts.noriter.article.dto.study.StudyEditRequest;
+import com.codewarts.noriter.article.dto.study.StudyListResponse;
+import com.codewarts.noriter.article.dto.study.StudyPostRequest;
 import com.codewarts.noriter.article.domain.type.StatusType;
 import com.codewarts.noriter.article.repository.ArticleRepository;
 import com.codewarts.noriter.article.repository.StudyRepository;

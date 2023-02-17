@@ -1,10 +1,10 @@
 package com.codewarts.noriter.article.controller;
 
 
-import com.codewarts.noriter.article.domain.dto.free.FreeDetailResponse;
-import com.codewarts.noriter.article.domain.dto.free.FreeEditRequest;
-import com.codewarts.noriter.article.domain.dto.free.FreeListResponse;
-import com.codewarts.noriter.article.domain.dto.free.FreePostRequest;
+import com.codewarts.noriter.article.dto.free.FreeDetailResponse;
+import com.codewarts.noriter.article.dto.free.FreeEditRequest;
+import com.codewarts.noriter.article.dto.free.FreeListResponse;
+import com.codewarts.noriter.article.dto.free.FreePostRequest;
 import com.codewarts.noriter.article.service.FreeService;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
@@ -12,7 +12,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;

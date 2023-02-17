@@ -1,4 +1,4 @@
-package com.codewarts.noriter.article.domain.dto.free;
+package com.codewarts.noriter.article.dto.free;
 
 import com.codewarts.noriter.article.domain.Article;
 import com.codewarts.noriter.article.domain.type.ArticleType;
@@ -29,6 +29,5 @@ public class FreePostRequest {
             .articleType(ArticleType.FREE)
             .build();
     }
-
 }
 

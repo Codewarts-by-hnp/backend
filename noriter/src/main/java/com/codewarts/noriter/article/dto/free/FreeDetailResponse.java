@@ -1,9 +1,9 @@
-package com.codewarts.noriter.article.domain.dto.free;
+package com.codewarts.noriter.article.dto.free;
 
 import com.codewarts.noriter.article.domain.Article;
 import com.codewarts.noriter.article.domain.Hashtag;
-import com.codewarts.noriter.comment.domain.dto.CommentResponse;
-import com.codewarts.noriter.member.domain.dto.WriterInfoResponse;
+import com.codewarts.noriter.comment.dto.CommentResponse;
+import com.codewarts.noriter.member.dto.WriterInfoResponse;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -28,23 +28,6 @@ public class FreeDetailResponse {
     private boolean wish;
     private int wishCount;
     private List<CommentResponse> comment;
-
-    public FreeDetailResponse(Article article, boolean sameWriter) {
-        this.id = article.getId();
-        this.title = article.getTitle();
-        this.content = article.getContent();
-        this.writer = new WriterInfoResponse(article.getWriter());
-        this.sameWriter = sameWriter;
-        this.hashtags = article.getHashtags().stream()
-            .map(Hashtag::getContent)
-            .collect(Collectors.toList());
-        this.writtenTime = article.getWrittenTime();
-        this.editedTime = article.getEditedTime();
-        this.wishCount = article.getWishList().size();
-        this.comment = article.getComments().stream()
-            .map(CommentResponse::new)
-            .collect(Collectors.toList());
-    }
 
     public FreeDetailResponse(Article article, boolean sameWriter, boolean wish) {
         this.id = article.getId();

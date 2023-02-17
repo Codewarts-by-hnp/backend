@@ -1,21 +1,18 @@
-package com.codewarts.noriter.article.domain.dto.question;
+package com.codewarts.noriter.article.dto.study;
 
 import java.util.List;
 import javax.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
-public class QuestionUpdateRequest {
+public class StudyEditRequest {
 
     @NotBlank(message = "제목은 필수입니다.")
-    private  String title;
-
+    private String title;
     @NotBlank(message = "내용은 필수입니다.")
-    private  String content;
+    private String content;
+    private List<String> hashtags;
 
-    private  List<String> hashtags;
 }

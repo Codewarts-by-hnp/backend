@@ -1,10 +1,10 @@
-package com.codewarts.noriter.article.domain.dto.study;
+package com.codewarts.noriter.article.dto.study;
 
 import com.codewarts.noriter.article.domain.Hashtag;
 import com.codewarts.noriter.article.domain.Study;
 import com.codewarts.noriter.article.domain.type.StatusType;
-import com.codewarts.noriter.comment.domain.dto.CommentResponse;
-import com.codewarts.noriter.member.domain.dto.WriterInfoResponse;
+import com.codewarts.noriter.comment.dto.CommentResponse;
+import com.codewarts.noriter.member.dto.WriterInfoResponse;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDateTime;
 import java.util.List;
