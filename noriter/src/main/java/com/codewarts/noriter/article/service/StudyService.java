@@ -37,16 +37,28 @@ public class StudyService {
         return studyRepository.save(study).getId();
     }
 
-    public List<StudyListResponse> findList(StatusType status, String accessToken) {
+    public List<StudyListResponse> findList(StatusType status, Long memberId) {
+        if (status == null && memberId == null) {
+            return studyRepository.findAllStudy().stream()
+                .map(study -> new StudyListResponse(study, false, false))
+                .collect(Collectors.toList());
+        }
+        if (memberId == null) {
+            return studyRepository.findStudyByCompleted(status).stream()
+                .map(study -> new StudyListResponse(study, false, false))
+                .collect(Collectors.toList());
+        }
+        Member member = memberService.findMember(memberId);
         if (status == null) {
             return studyRepository.findAllStudy().stream()
                 .map(study -> new StudyListResponse(study,
-                    articleUtils.isSameWriter(study.getWriter().getId(), accessToken)))
+                    study.getWriter().getId().equals(memberId),
+                    wishRepository.existsByArticleAndMember(study, member)))
                 .collect(Collectors.toList());
         }
         return studyRepository.findStudyByCompleted(status).stream()
-            .map(study -> new StudyListResponse(study,
-                articleUtils.isSameWriter(study.getWriter().getId(), accessToken)))
+            .map(study -> new StudyListResponse(study, study.getWriter().getId().equals(memberId),
+                wishRepository.existsByArticleAndMember(study, member)))
             .collect(Collectors.toList());
     }
 
