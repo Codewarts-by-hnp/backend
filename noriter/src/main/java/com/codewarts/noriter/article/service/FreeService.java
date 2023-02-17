@@ -1,10 +1,10 @@
 package com.codewarts.noriter.article.service;
 
 import com.codewarts.noriter.article.domain.Article;
-import com.codewarts.noriter.article.domain.dto.free.FreeDetailResponse;
-import com.codewarts.noriter.article.domain.dto.free.FreeEditRequest;
-import com.codewarts.noriter.article.domain.dto.free.FreeListResponse;
-import com.codewarts.noriter.article.domain.dto.free.FreePostRequest;
+import com.codewarts.noriter.article.dto.free.FreeDetailResponse;
+import com.codewarts.noriter.article.dto.free.FreeEditRequest;
+import com.codewarts.noriter.article.dto.free.FreeListResponse;
+import com.codewarts.noriter.article.dto.free.FreePostRequest;
 import com.codewarts.noriter.article.domain.type.ArticleType;
 import com.codewarts.noriter.article.repository.ArticleRepository;
 import com.codewarts.noriter.exception.GlobalNoriterException;

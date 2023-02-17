@@ -1,4 +1,4 @@
-package com.codewarts.noriter.article.domain.dto.study;
+package com.codewarts.noriter.article.dto.study;
 
 import com.codewarts.noriter.article.domain.Hashtag;
 import com.codewarts.noriter.article.domain.Study;

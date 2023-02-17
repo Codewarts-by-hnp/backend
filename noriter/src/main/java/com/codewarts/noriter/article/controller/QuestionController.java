@@ -1,9 +1,9 @@
 package com.codewarts.noriter.article.controller;
 
-import com.codewarts.noriter.article.domain.dto.question.QuestionDetailResponse;
-import com.codewarts.noriter.article.domain.dto.question.QuestionListResponse;
-import com.codewarts.noriter.article.domain.dto.question.QuestionPostRequest;
-import com.codewarts.noriter.article.domain.dto.question.QuestionUpdateRequest;
+import com.codewarts.noriter.article.dto.question.QuestionDetailResponse;
+import com.codewarts.noriter.article.dto.question.QuestionListResponse;
+import com.codewarts.noriter.article.dto.question.QuestionPostRequest;
+import com.codewarts.noriter.article.dto.question.QuestionUpdateRequest;
 import com.codewarts.noriter.article.domain.type.StatusType;
 import com.codewarts.noriter.article.service.QuestionService;
 import com.codewarts.noriter.exception.GlobalNoriterException;
@@ -16,7 +16,6 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.convert.ConversionService;
-import org.springframework.http.HttpHeaders;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;

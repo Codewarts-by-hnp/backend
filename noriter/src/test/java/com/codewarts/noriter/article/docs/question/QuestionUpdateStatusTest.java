@@ -84,7 +84,7 @@ class QuestionUpdateStatusTest {
     @ValueSource(strings = {"complete", "incomplete"})
     void 해결_여부를_변경한다(String status) {
 
-        Question question = questionRepository.findQuestionById(6L)
+        Question question = questionRepository.findById(6L)
             .orElseThrow(() -> new GlobalNoriterException(ArticleExceptionType.ARTICLE_NOT_FOUND));
         String accessToken = jwtProvider.issueAccessToken(question.getWriter().getId());
 
