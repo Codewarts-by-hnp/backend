@@ -26,7 +26,6 @@ public class FreeService {
     private final ArticleRepository articleRepository;
     private final WishRepository wishRepository;
     private final MemberService memberService;
-    private final ArticleUtils articleUtils;
 
     @Transactional
     public Long create(FreePostRequest freePostRequest, Long writerId) {

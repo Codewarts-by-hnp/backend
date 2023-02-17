@@ -28,7 +28,6 @@ public class QuestionService {
     private final ArticleRepository articleRepository;
     private final WishRepository wishRepository;
     private final MemberService memberService;
-    private final ArticleUtils articleUtils;
 
     // 질문 등록 기능
     @Transactional
