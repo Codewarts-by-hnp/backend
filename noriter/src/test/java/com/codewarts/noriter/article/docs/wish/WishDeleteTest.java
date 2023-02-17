@@ -111,7 +111,7 @@ class WishDeleteTest {
         given(documentationSpec)
             .contentType(APPLICATION_JSON_VALUE)
             .header(AUTHORIZATION, accessToken)
-            .body(Collections.singletonMap("articleId", 1))
+            .body(Collections.singletonMap("articleId", 2))
 
             .when()
             .delete("/wish")

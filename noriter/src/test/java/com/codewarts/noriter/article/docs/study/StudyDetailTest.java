@@ -2,6 +2,7 @@ package com.codewarts.noriter.article.docs.study;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpHeaders.CONNECTION;
 import static org.springframework.http.HttpHeaders.CONTENT_LENGTH;
 import static org.springframework.http.HttpHeaders.DATE;
@@ -90,7 +91,44 @@ public class StudyDetailTest {
             .body("hashtags[0]", equalTo("SPRING"))
             .body("hashtags[1]", equalTo("JPA"))
             .body("hashtags[2]", equalTo("난자유야"))
-            .body("wishCount", equalTo(0))
+            .body("wish", equalTo(false))
+            .body("wishCount", equalTo(1))
+            .body("status", equalTo("INCOMPLETE"))
+            .body("comment[0].id", equalTo(1))
+            .body("comment[0].content", equalTo("우왕 잘봤어용"))
+            .body("comment[0].writer.id", equalTo(2))
+            .body("comment[0].writer.nickname", equalTo("admin2"))
+            .body("comment[0].writer.profileImage",
+                equalTo("https://avatars.githubusercontent.com/u/222222?v=4"));
+    }
+
+    @Test
+    void 로그인_후_상세조회를_한다() {
+        String accessToken = jwtProvider.issueAccessToken(2L);
+
+        given(documentationSpec)
+            .contentType(APPLICATION_JSON_VALUE)
+            .header(AUTHORIZATION, accessToken)
+            .pathParam("id", 1)
+
+            .when()
+            .get("/community/gathering/{id}")
+
+            .then()
+            .statusCode(HttpStatus.OK.value())
+            .body("id", equalTo(1))
+            .body("title", equalTo("테스트를 해볼것이당"))
+            .body("content", equalTo("안녕하냐고오옹"))
+            .body("writer.id", equalTo(1))
+            .body("writer.nickname", equalTo("admin1"))
+            .body("writer.profileImage",
+                equalTo("https://avatars.githubusercontent.com/u/111111?v=4"))
+            .body("sameWriter", equalTo(false))
+            .body("hashtags[0]", equalTo("SPRING"))
+            .body("hashtags[1]", equalTo("JPA"))
+            .body("hashtags[2]", equalTo("난자유야"))
+            .body("wish", equalTo(true))
+            .body("wishCount", equalTo(1))
             .body("status", equalTo("INCOMPLETE"))
             .body("comment[0].id", equalTo(1))
             .body("comment[0].content", equalTo("우왕 잘봤어용"))

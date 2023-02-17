@@ -26,11 +26,12 @@ public class StudyDetailResponse {
     private LocalDateTime writtenTime;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime editedTime;
+    private boolean wish;
     private int wishCount;
     private StatusType status;
     private List<CommentResponse> comment;
 
-    public StudyDetailResponse(Study study, boolean sameWriter) {
+    public StudyDetailResponse(Study study, boolean sameWriter, boolean wish) {
         this.id = study.getId();
         this.title = study.getTitle();
         this.content = study.getContent();
@@ -41,6 +42,7 @@ public class StudyDetailResponse {
             .collect(Collectors.toList());
         this.writtenTime = study.getWrittenTime();
         this.editedTime = study.getEditedTime();
+        this.wish = wish;
         this.wishCount = study.getWishList().size();
         this.status = study.getStatus();
         this.comment = study.getComments().stream()
