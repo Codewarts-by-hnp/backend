@@ -2,6 +2,7 @@ package com.codewarts.noriter.article.docs.study;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpHeaders.CONNECTION;
 import static org.springframework.http.HttpHeaders.CONTENT_LENGTH;
 import static org.springframework.http.HttpHeaders.DATE;
@@ -87,7 +88,35 @@ class StudyListTest {
             .body("[0].editedTime", equalTo("2022-11-11 16:25:58"))
             .body("[0].hashtags[0]", equalTo("SPRING"))
             .body("[0].hashtags[1]", equalTo("JPA"))
-            .body("[0].wishCount", equalTo(0))
+            .body("[0].wish", equalTo(false))
+            .body("[0].wishCount", equalTo(1))
+            .body("[0].commentCount", equalTo(4));
+    }
+    @Test
+    void 로그인_후_리스트를_조회한다() {
+        String accessToken = jwtProvider.issueAccessToken(2L);
+
+        given(documentationSpec)
+            .contentType(APPLICATION_JSON_VALUE)
+            .header(AUTHORIZATION, accessToken)
+            .param("status", "INCOMPLETE")
+
+            .when()
+            .get("/community/gathering")
+
+            .then()
+            .statusCode(HttpStatus.OK.value())
+            .body("[0].id", equalTo(1))
+            .body("[0].title", equalTo("테스트를 해볼것이당"))
+            .body("[0].content", equalTo("안녕하냐고오옹"))
+            .body("[0].writerNickname", equalTo("admin1"))
+            .body("[0].sameWriter", equalTo(false))
+            .body("[0].writtenTime", equalTo("2022-11-11 16:25:58"))
+            .body("[0].editedTime", equalTo("2022-11-11 16:25:58"))
+            .body("[0].hashtags[0]", equalTo("SPRING"))
+            .body("[0].hashtags[1]", equalTo("JPA"))
+            .body("[0].wish", equalTo(true))
+            .body("[0].wishCount", equalTo(1))
             .body("[0].commentCount", equalTo(4));
     }
 
