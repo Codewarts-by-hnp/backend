@@ -12,6 +12,7 @@ import com.codewarts.noriter.exception.GlobalNoriterException;
 import com.codewarts.noriter.exception.type.ArticleExceptionType;
 import com.codewarts.noriter.member.domain.Member;
 import com.codewarts.noriter.member.service.MemberService;
+import com.codewarts.noriter.wish.repository.WishRepository;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +27,7 @@ public class StudyService {
     private final MemberService memberService;
     private final ArticleRepository articleRepository;
     private final StudyRepository studyRepository;
-    private final ArticleUtils articleUtils;
+    private final WishRepository wishRepository;
 
     @Transactional
     public Long create(StudyPostRequest studyPostRequest, Long memberId) {
@@ -49,10 +50,17 @@ public class StudyService {
             .collect(Collectors.toList());
     }
 
-    public StudyDetailResponse findDetail(Long id, String accessToken) {
+    public StudyDetailResponse findDetail(Long id, Long memberId) {
         Study study = findStudy(id);
-        boolean sameWriter = articleUtils.isSameWriter(study.getWriter().getId(), accessToken);
-        return new StudyDetailResponse(study, sameWriter);
+        boolean sameWriter = study.getWriter().getId().equals(memberId);
+
+        if (memberId == null) {
+            return new StudyDetailResponse(study, false, false);
+        }
+        Member member = memberService.findMember(memberId);
+        boolean wish = wishRepository.existsByArticleAndMember(study, member);
+
+        return new StudyDetailResponse(study, sameWriter, wish);
     }
 
     @Transactional

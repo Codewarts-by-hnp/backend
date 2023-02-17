@@ -16,7 +16,6 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.convert.ConversionService;
-import org.springframework.http.HttpHeaders;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -64,8 +63,8 @@ public class StudyController {
     public StudyDetailResponse gatheringDetail(@PathVariable(required = false)
     @NotNull(message = "ID가 비어있습니다.")
     @Positive(message = "게시글 ID는 양수이어야 합니다.") Long id, HttpServletRequest request) {
-        String accessToken = request.getHeader(HttpHeaders.AUTHORIZATION);
-        return studyService.findDetail(id, accessToken);
+        Long memberId = getMemberId(request);
+        return studyService.findDetail(id, memberId);
     }
 
     @DeleteMapping("/{id}")
