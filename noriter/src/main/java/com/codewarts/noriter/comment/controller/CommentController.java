@@ -36,7 +36,7 @@ public class CommentController {
         commentService.createReComment(articleId, commentId, memberId, reCommentRequest);
     }
 
-    private static Long getMemberId(HttpServletRequest request) {
+    private Long getMemberId(HttpServletRequest request) {
         return (Long) request.getAttribute("memberId");
     }
 
