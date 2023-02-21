@@ -75,7 +75,7 @@ class StudyDeleteTest {
         given(documentationSpec)
             .contentType(APPLICATION_JSON_VALUE)
             .header(AUTHORIZATION, accessToken)
-            .pathParam("id", 1)
+            .pathParam("id", 2)
 
             .when()
             .delete("/community/gathering/{id}")

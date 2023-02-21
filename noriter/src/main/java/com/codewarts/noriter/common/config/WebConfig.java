@@ -40,7 +40,7 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addInterceptor(new AuthVerificationInterceptor(jwtProvider)).order(1)
             .addPathPatterns("/community/playground", "/community/playground/{id}",
                 "/community/gathering", "/community/gathering/{id}", "/community/question",
-                "/community/question/{id}", "/wish");
+                "/community/question/{id}", "/wish", "/{articleId}/comment/{commentId}/recomment");
     }
 
     @Override
