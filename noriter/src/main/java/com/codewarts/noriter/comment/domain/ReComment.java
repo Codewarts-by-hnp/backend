@@ -35,4 +35,14 @@ public class ReComment {
     private boolean deleted;
     private LocalDateTime writtenTime;
     private LocalDateTime editedTime;
+
+    public ReComment(Comment comment, Member writer, String content, boolean secret) {
+        this.comment = comment;
+        this.writer = writer;
+        this.content = content;
+        this.secret = secret;
+        this.deleted = false;
+        this.writtenTime = LocalDateTime.now();
+        this.editedTime = LocalDateTime.now();
+    }
 }
