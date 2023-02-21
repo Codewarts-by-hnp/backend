@@ -4,6 +4,7 @@ import com.codewarts.noriter.article.domain.Article;
 import com.codewarts.noriter.article.repository.ArticleRepository;
 import com.codewarts.noriter.comment.domain.Comment;
 import com.codewarts.noriter.comment.domain.ReComment;
+import com.codewarts.noriter.comment.dto.CommentPostRequest;
 import com.codewarts.noriter.comment.dto.recomment.ReCommentRequest;
 import com.codewarts.noriter.comment.repository.CommentRepository;
 import com.codewarts.noriter.comment.repository.ReCommentRepository;
@@ -14,16 +15,26 @@ import com.codewarts.noriter.member.domain.Member;
 import com.codewarts.noriter.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class CommentService {
 
-    private final ReCommentRepository reCommentRepository;
     private final CommentRepository commentRepository;
+    private final ReCommentRepository reCommentRepository;
     private final ArticleRepository articleRepository;
     private final MemberService memberService;
 
+    @Transactional
+    public void createComment(Long memberId, Long articleId, CommentPostRequest request) {
+        Member member = memberService.findMember(memberId);
+        Article article = findArticle(articleId);
+        Comment comment = request.toEntity(article, member);
+        commentRepository.save(comment);
+    }
+    @Transactional
     public void createReComment(Long articleId, Long commentId, Long memberId,
         ReCommentRequest request) {
         Article article = articleRepository.findById(articleId)
@@ -40,5 +51,10 @@ public class CommentService {
 
         ReComment reComment = request.toEntity(comment, member);
         reCommentRepository.save(reComment);
+    }
+
+    public Article findArticle(Long id) {
+        return articleRepository.findById(id)
+            .orElseThrow(() -> new GlobalNoriterException(ArticleExceptionType.ARTICLE_NOT_FOUND));
     }
 }

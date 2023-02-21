@@ -1,5 +1,6 @@
 package com.codewarts.noriter.comment.controller;
 
+import com.codewarts.noriter.comment.dto.CommentPostRequest;
 import com.codewarts.noriter.comment.dto.recomment.ReCommentRequest;
 import com.codewarts.noriter.comment.service.CommentService;
 import javax.servlet.http.HttpServletRequest;
@@ -34,10 +35,14 @@ public class CommentController {
         Long memberId = getMemberId(request);
 
         commentService.createReComment(articleId, commentId, memberId, reCommentRequest);
+
+    @PostMapping
+    public void registerComment(@PathVariable Long articleId, @RequestBody CommentPostRequest commentRequest, HttpServletRequest request) {
+        Long memberId = getMemberId(request);
+        commentService.create(memberId, articleId, commentRequest);
     }
 
     private Long getMemberId(HttpServletRequest request) {
         return (Long) request.getAttribute("memberId");
     }
-
 }
