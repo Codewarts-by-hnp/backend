@@ -5,6 +5,7 @@ import com.codewarts.noriter.article.repository.ArticleRepository;
 import com.codewarts.noriter.comment.domain.Comment;
 import com.codewarts.noriter.comment.domain.ReComment;
 import com.codewarts.noriter.comment.dto.comment.CommentPostRequest;
+import com.codewarts.noriter.comment.dto.comment.CommentUpdateRequest;
 import com.codewarts.noriter.comment.dto.recomment.ReCommentRequest;
 import com.codewarts.noriter.comment.repository.CommentRepository;
 import com.codewarts.noriter.comment.repository.ReCommentRepository;
@@ -18,7 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional(readOnly = true)
+@Transactional
 @RequiredArgsConstructor
 public class CommentService {
 
@@ -27,28 +28,26 @@ public class CommentService {
     private final ArticleRepository articleRepository;
     private final MemberService memberService;
 
-    @Transactional
     public void createComment(Long memberId, Long articleId, CommentPostRequest request) {
         Member member = memberService.findMember(memberId);
         Article article = findNotDeletedArticle(articleId);
         Comment comment = request.toEntity(article, member);
         commentRepository.save(comment);
     }
-    @Transactional
+
+    public void updateComment(Long memberId, Long articleId, Long commentId, CommentUpdateRequest request) {
+        Article article = findNotDeletedArticle(articleId);
+        Member member = memberService.findMember(memberId);
+        Comment comment = findNotDeletedComment(commentId);
+        comment.validateOrThrow(member, article);
+        comment.update(request.getContent(), request.getSecret());
+    }
+
     public void createReComment(Long articleId, Long commentId, Long memberId,
         ReCommentRequest request) {
-        Article article = articleRepository.findById(articleId)
-            .orElseThrow(() -> new GlobalNoriterException(ArticleExceptionType.ARTICLE_NOT_FOUND));
-        if (article.isDeleted()) {
-            throw new GlobalNoriterException(ArticleExceptionType.ARTICLE_NOT_FOUND);
-        }
-        Comment comment = commentRepository.findById(commentId)
-            .orElseThrow(() -> new GlobalNoriterException(CommentExceptionType.COMMENT_NOT_FOUND));
-        if (comment.isDeleted()) {
-            throw new GlobalNoriterException(CommentExceptionType.COMMENT_NOT_FOUND);
-        }
+        findNotDeletedArticle(articleId);
+        Comment comment = findNotDeletedComment(commentId);
         Member member = memberService.findMember(memberId);
-
         ReComment reComment = request.toEntity(comment, member);
         reCommentRepository.save(reComment);
     }
@@ -60,5 +59,14 @@ public class CommentService {
             throw new GlobalNoriterException(ArticleExceptionType.ARTICLE_NOT_FOUND);
         }
         return article;
+    }
+
+    public Comment findNotDeletedComment(Long id) {
+        Comment comment = commentRepository.findById(id)
+            .orElseThrow(() -> new GlobalNoriterException(CommentExceptionType.COMMENT_NOT_FOUND));
+        if (comment.isDeleted()) {
+            throw new GlobalNoriterException(CommentExceptionType.DELETED_COMMENT);
+        }
+        return comment;
     }
 }
