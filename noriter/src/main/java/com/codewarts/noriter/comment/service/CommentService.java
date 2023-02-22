@@ -4,7 +4,7 @@ import com.codewarts.noriter.article.domain.Article;
 import com.codewarts.noriter.article.repository.ArticleRepository;
 import com.codewarts.noriter.comment.domain.Comment;
 import com.codewarts.noriter.comment.domain.ReComment;
-import com.codewarts.noriter.comment.dto.CommentPostRequest;
+import com.codewarts.noriter.comment.dto.comment.CommentPostRequest;
 import com.codewarts.noriter.comment.dto.recomment.ReCommentRequest;
 import com.codewarts.noriter.comment.repository.CommentRepository;
 import com.codewarts.noriter.comment.repository.ReCommentRepository;
@@ -30,7 +30,7 @@ public class CommentService {
     @Transactional
     public void createComment(Long memberId, Long articleId, CommentPostRequest request) {
         Member member = memberService.findMember(memberId);
-        Article article = findArticle(articleId);
+        Article article = findNotDeletedArticle(articleId);
         Comment comment = request.toEntity(article, member);
         commentRepository.save(comment);
     }
@@ -53,8 +53,12 @@ public class CommentService {
         reCommentRepository.save(reComment);
     }
 
-    public Article findArticle(Long id) {
-        return articleRepository.findById(id)
+    public Article findNotDeletedArticle(Long id) {
+        Article article = articleRepository.findById(id)
             .orElseThrow(() -> new GlobalNoriterException(ArticleExceptionType.ARTICLE_NOT_FOUND));
+        if (article.isDeleted()) {
+            throw new GlobalNoriterException(ArticleExceptionType.ARTICLE_NOT_FOUND);
+        }
+        return article;
     }
 }
