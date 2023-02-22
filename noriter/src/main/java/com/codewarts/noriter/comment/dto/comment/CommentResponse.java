@@ -1,4 +1,4 @@
-package com.codewarts.noriter.comment.dto;
+package com.codewarts.noriter.comment.dto.comment;
 
 import com.codewarts.noriter.comment.domain.Comment;
 import com.codewarts.noriter.member.dto.WriterInfoResponse;

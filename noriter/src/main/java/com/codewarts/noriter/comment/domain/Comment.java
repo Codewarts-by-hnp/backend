@@ -14,6 +14,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -42,4 +43,18 @@ public class Comment {
   private boolean deleted;
   private LocalDateTime writtenTime;
   private LocalDateTime editedTime;
+
+  @Builder
+  public Comment(Long id, Article article, List<ReComment> reComments, Member writer,
+      String content, boolean secret, boolean deleted, LocalDateTime writtenTime, LocalDateTime editedTime) {
+    this.id = id;
+    this.article = article;
+    this.reComments = reComments;
+    this.writer = writer;
+    this.content = content;
+    this.secret = secret;
+    this.deleted = deleted;
+    this.writtenTime = writtenTime;
+    this.editedTime = editedTime;
+  }
 }

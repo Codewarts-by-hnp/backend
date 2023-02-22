@@ -2,7 +2,7 @@ package com.codewarts.noriter.article.dto.free;
 
 import com.codewarts.noriter.article.domain.Article;
 import com.codewarts.noriter.article.domain.Hashtag;
-import com.codewarts.noriter.comment.dto.CommentResponse;
+import com.codewarts.noriter.comment.dto.comment.CommentResponse;
 import com.codewarts.noriter.member.dto.WriterInfoResponse;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDateTime;
