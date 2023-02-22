@@ -1,10 +1,13 @@
 package com.codewarts.noriter.comment.domain;
 
 import com.codewarts.noriter.article.domain.Article;
+import com.codewarts.noriter.exception.GlobalNoriterException;
+import com.codewarts.noriter.exception.type.CommentExceptionType;
 import com.codewarts.noriter.member.domain.Member;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -56,5 +59,26 @@ public class Comment {
     this.deleted = deleted;
     this.writtenTime = writtenTime;
     this.editedTime = editedTime;
+  }
+
+  public void update(String content, boolean secret) {
+    this.content = content;
+    this.secret = secret;
+  }
+
+  public void validateOrThrow(Member writer, Article article) {
+    validateWriterOrThrow(writer);
+    validateArticleOrThrow(article);
+  }
+  private void validateWriterOrThrow(Member writer) {
+    if (!Objects.equals(this.writer, writer)) {
+      throw new GlobalNoriterException(CommentExceptionType.NOT_MATCHED_WRITER);
+    }
+  }
+
+  private void validateArticleOrThrow(Article article) {
+    if (!Objects.equals(this.article, article)) {
+      throw new GlobalNoriterException(CommentExceptionType.NOT_MATCHED_ARTICLE);
+    }
   }
 }
