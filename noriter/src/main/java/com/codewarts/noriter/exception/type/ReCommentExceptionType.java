@@ -4,15 +4,17 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 
 @RequiredArgsConstructor
-public enum ArticleExceptionType implements ExceptionType {
-    ARTICLE_NOT_FOUND("ARTICLE001", "존재하지 않는 게시글입니다.", HttpStatus.NOT_FOUND),
-    ARTICLE_NOT_MATCHED_WRITER("ARTICLE002", "작성자만이 편집할 수 있습니다.", HttpStatus.UNAUTHORIZED),
-    ALREADY_CHANGED_STATUS("ARTICLE003", "이미 변경한 상태입니다.", HttpStatus.BAD_REQUEST),
-    DELETED_ARTICLE("ARTICLE004", "삭제된 게시글입니다.", HttpStatus.BAD_REQUEST);
+public enum ReCommentExceptionType implements ExceptionType{
+
+    RECOMMENT_NOT_FOUND("RECOMMENT001", "존재하지 않는 대댓글입니다.", HttpStatus.NOT_FOUND),
+    RECOMMENT_NOT_MATCHED_WRITER("RECOMMENT002", "작성자만이 편집할 수 있습니다.", HttpStatus.UNAUTHORIZED),
+    DELETED_RECOMMENT("RECOMMENT003", "삭제된 대댓글입니다.", HttpStatus.NOT_FOUND),
+    NOT_MATCHED_COMMENT("RECOMMENT004", "해당 댓글의 대댓글이 아닙니다.", HttpStatus.BAD_REQUEST);
 
     private final String errorCode;
     private final String message;
     private final HttpStatus httpStatus;
+
 
     @Override
     public String getErrorCode() {

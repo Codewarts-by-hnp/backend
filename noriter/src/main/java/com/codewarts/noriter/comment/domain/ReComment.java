@@ -1,7 +1,10 @@
 package com.codewarts.noriter.comment.domain;
 
+import com.codewarts.noriter.exception.GlobalNoriterException;
+import com.codewarts.noriter.exception.type.ReCommentExceptionType;
 import com.codewarts.noriter.member.domain.Member;
 import java.time.LocalDateTime;
+import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -44,5 +47,23 @@ public class ReComment {
         this.deleted = false;
         this.writtenTime = LocalDateTime.now();
         this.editedTime = LocalDateTime.now();
+    }
+
+    public void update(String content, Boolean secret) {
+        this.content = content;
+        this.secret = secret;
+        this.editedTime = LocalDateTime.now();
+    }
+
+    public void validateWriterOrThrow(Member writer) {
+        if (!Objects.equals(this.writer, writer)) {
+            throw new GlobalNoriterException(ReCommentExceptionType.RECOMMENT_NOT_MATCHED_WRITER);
+        }
+    }
+
+    public void validateCommentOrThrow(Comment comment) {
+        if (!Objects.equals(this.comment, comment)) {
+            throw new GlobalNoriterException(ReCommentExceptionType.NOT_MATCHED_COMMENT);
+        }
     }
 }
