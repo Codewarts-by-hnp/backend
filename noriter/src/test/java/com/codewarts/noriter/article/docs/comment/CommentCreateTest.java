@@ -1,6 +1,7 @@
 package com.codewarts.noriter.article.docs.comment;
 
 import static com.codewarts.noriter.exception.type.ArticleExceptionType.ARTICLE_NOT_FOUND;
+import static com.codewarts.noriter.exception.type.ArticleExceptionType.DELETED_ARTICLE;
 import static com.codewarts.noriter.exception.type.AuthExceptionType.EMPTY_ACCESS_TOKEN;
 import static com.codewarts.noriter.exception.type.AuthExceptionType.TAMPERED_ACCESS_TOKEN;
 import static com.codewarts.noriter.exception.type.CommonExceptionType.INVALID_REQUEST;
@@ -260,8 +261,8 @@ class CommentCreateTest {
             .when()
             .post("/{articleId}/comment")
             .then()
-            .statusCode(ARTICLE_NOT_FOUND.getStatus().value())
-            .body("errorCode", equalTo(ARTICLE_NOT_FOUND.getErrorCode()))
-            .body("message", equalTo(ARTICLE_NOT_FOUND.getErrorMessage()));
+            .statusCode(DELETED_ARTICLE.getStatus().value())
+            .body("errorCode", equalTo(DELETED_ARTICLE.getErrorCode()))
+            .body("message", equalTo(DELETED_ARTICLE.getErrorMessage()));
     }
 }

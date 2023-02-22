@@ -81,7 +81,7 @@ class FreeEditTest {
         given(documentationSpec)
             .contentType(APPLICATION_JSON_VALUE)
             .header(AUTHORIZATION, accessToken)
-            .pathParam("id", 10)
+            .pathParam("id", 2)
             .body(requestBody)
 
             .when()
@@ -205,7 +205,7 @@ class FreeEditTest {
 
     @Test
     void 작성자가_일치하지_않는_경우_예외가_발생한다() {
-        String accessToken = jwtProvider.issueAccessToken(2L);
+        String accessToken = jwtProvider.issueAccessToken(1L);
 
         Map<String, Object> requestBody = Map.of("title", "안녕하세용",
             "content", "헬륨가스를모곳지", "hashtags",

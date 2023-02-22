@@ -6,12 +6,14 @@ import com.codewarts.noriter.comment.domain.Comment;
 import com.codewarts.noriter.comment.domain.ReComment;
 import com.codewarts.noriter.comment.dto.comment.CommentPostRequest;
 import com.codewarts.noriter.comment.dto.comment.CommentUpdateRequest;
+import com.codewarts.noriter.comment.dto.recomment.ReCommentEditRequest;
 import com.codewarts.noriter.comment.dto.recomment.ReCommentRequest;
 import com.codewarts.noriter.comment.repository.CommentRepository;
 import com.codewarts.noriter.comment.repository.ReCommentRepository;
 import com.codewarts.noriter.exception.GlobalNoriterException;
 import com.codewarts.noriter.exception.type.ArticleExceptionType;
 import com.codewarts.noriter.exception.type.CommentExceptionType;
+import com.codewarts.noriter.exception.type.ReCommentExceptionType;
 import com.codewarts.noriter.member.domain.Member;
 import com.codewarts.noriter.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -19,8 +21,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
+@Transactional
 public class CommentService {
 
     private final CommentRepository commentRepository;
@@ -36,37 +38,65 @@ public class CommentService {
     }
 
     public void updateComment(Long memberId, Long articleId, Long commentId, CommentUpdateRequest request) {
-        Article article = findNotDeletedArticle(articleId);
         Member member = memberService.findMember(memberId);
+        Article article = findNotDeletedArticle(articleId);
         Comment comment = findNotDeletedComment(commentId);
-        comment.validateOrThrow(member, article);
+        comment.validateArticleOrThrow(article);
+        comment.validateWriterOrThrow(member);
         comment.update(request.getContent(), request.getSecret());
     }
 
     public void createReComment(Long articleId, Long commentId, Long memberId,
         ReCommentRequest request) {
-        findNotDeletedArticle(articleId);
-        Comment comment = findNotDeletedComment(commentId);
         Member member = memberService.findMember(memberId);
+        Article article = findNotDeletedArticle(articleId);
+
+        Comment comment = findNotDeletedComment(commentId);
+        comment.validateArticleOrThrow(article);
         ReComment reComment = request.toEntity(comment, member);
+
         reCommentRepository.save(reComment);
     }
 
-    public Article findNotDeletedArticle(Long id) {
+    public void updateReComment(Long articleId, Long commentId, Long recommentId, Long memberId,
+        ReCommentEditRequest request) {
+        Member member = memberService.findMember(memberId);
+        Article article = findNotDeletedArticle(articleId);
+
+        Comment comment = findNotDeletedComment(commentId);
+        comment.validateArticleOrThrow(article);
+
+        ReComment reComment = findNotDeletedReComment(recommentId);
+        reComment.validateCommentOrThrow(comment);
+        reComment.validateWriterOrThrow(member);
+        reComment.update(request.getContent(), request.getSecret());
+    }
+
+    private Article findNotDeletedArticle(Long id) {
         Article article = articleRepository.findById(id)
             .orElseThrow(() -> new GlobalNoriterException(ArticleExceptionType.ARTICLE_NOT_FOUND));
         if (article.isDeleted()) {
-            throw new GlobalNoriterException(ArticleExceptionType.ARTICLE_NOT_FOUND);
+            throw new GlobalNoriterException(ArticleExceptionType.DELETED_ARTICLE);
         }
         return article;
     }
 
-    public Comment findNotDeletedComment(Long id) {
+    private Comment findNotDeletedComment(Long id) {
         Comment comment = commentRepository.findById(id)
             .orElseThrow(() -> new GlobalNoriterException(CommentExceptionType.COMMENT_NOT_FOUND));
         if (comment.isDeleted()) {
             throw new GlobalNoriterException(CommentExceptionType.DELETED_COMMENT);
         }
         return comment;
+    }
+
+    private ReComment findNotDeletedReComment(Long id) {
+        ReComment reComment = reCommentRepository.findById(id)
+            .orElseThrow(
+                () -> new GlobalNoriterException(ReCommentExceptionType.RECOMMENT_NOT_FOUND));
+        if (reComment.isDeleted()) {
+            throw new GlobalNoriterException(ReCommentExceptionType.DELETED_RECOMMENT);
+        }
+        return reComment;
     }
 }

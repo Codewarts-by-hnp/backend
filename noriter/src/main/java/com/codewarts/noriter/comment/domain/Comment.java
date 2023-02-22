@@ -66,17 +66,13 @@ public class Comment {
     this.secret = secret;
   }
 
-  public void validateOrThrow(Member writer, Article article) {
-    validateWriterOrThrow(writer);
-    validateArticleOrThrow(article);
-  }
-  private void validateWriterOrThrow(Member writer) {
+  public void validateWriterOrThrow(Member writer) {
     if (!Objects.equals(this.writer, writer)) {
       throw new GlobalNoriterException(CommentExceptionType.NOT_MATCHED_WRITER);
     }
   }
 
-  private void validateArticleOrThrow(Article article) {
+  public void validateArticleOrThrow(Article article) {
     if (!Objects.equals(this.article, article)) {
       throw new GlobalNoriterException(CommentExceptionType.NOT_MATCHED_ARTICLE);
     }

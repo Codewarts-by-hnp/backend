@@ -80,7 +80,7 @@ class FreeListTest {
             .body("[0].id", equalTo(10))
             .body("[0].title", equalTo("붕어빵 먹고싶어요"))
             .body("[0].content", equalTo("강남 붕어빵 맛잇는 집"))
-            .body("[0].writerNickname", equalTo("admin1"))
+            .body("[0].writerNickname", equalTo("admin2"))
             .body("[0].sameWriter", equalTo(false))
             .body("[0].writtenTime", equalTo("2022-11-25 16:25:58"))
             .body("[0].editedTime", equalTo("2022-11-25 16:25:58"))
@@ -88,7 +88,7 @@ class FreeListTest {
             .body("[0].hashtags[1]", equalTo("붕어팥"))
             .body("[0].wish", equalTo(false))
             .body("[0].wishCount", equalTo(1))
-            .body("[0].commentCount", equalTo(2));
+            .body("[0].commentCount", equalTo(1));
     }
 
     @Test
@@ -107,14 +107,14 @@ class FreeListTest {
             .body("[0].id", equalTo(10))
             .body("[0].title", equalTo("붕어빵 먹고싶어요"))
             .body("[0].content", equalTo("강남 붕어빵 맛잇는 집"))
-            .body("[0].writerNickname", equalTo("admin1"))
-            .body("[0].sameWriter", equalTo(false))
+            .body("[0].writerNickname", equalTo("admin2"))
+            .body("[0].sameWriter", equalTo(true))
             .body("[0].writtenTime", equalTo("2022-11-25 16:25:58"))
             .body("[0].editedTime", equalTo("2022-11-25 16:25:58"))
             .body("[0].hashtags[0]", equalTo("강남역"))
             .body("[0].hashtags[1]", equalTo("붕어팥"))
             .body("[0].wish", equalTo(true))
             .body("[0].wishCount", equalTo(1))
-            .body("[0].commentCount", equalTo(2));
+            .body("[0].commentCount", equalTo(1));
     }
 }

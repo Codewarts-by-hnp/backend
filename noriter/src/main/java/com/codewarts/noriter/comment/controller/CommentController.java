@@ -2,6 +2,7 @@ package com.codewarts.noriter.comment.controller;
 
 import com.codewarts.noriter.comment.dto.comment.CommentPostRequest;
 import com.codewarts.noriter.comment.dto.comment.CommentUpdateRequest;
+import com.codewarts.noriter.comment.dto.recomment.ReCommentEditRequest;
 import com.codewarts.noriter.comment.dto.recomment.ReCommentRequest;
 import com.codewarts.noriter.comment.service.CommentService;
 import javax.servlet.http.HttpServletRequest;
@@ -59,9 +60,30 @@ public class CommentController {
         @Positive(message = "댓글 ID는 양수이어야 합니다.") Long commentId,
         @RequestBody @Valid ReCommentRequest reCommentRequest,
         HttpServletRequest request) {
+
         Long memberId = getMemberId(request);
         commentService.createReComment(articleId, commentId, memberId, reCommentRequest);
     }
+
+    @PutMapping("/{commentId}/recomment/{recommentId}")
+    public void editReComment(
+        @PathVariable(required = false)
+        @NotNull(message = "ID가 비어있습니다.")
+        @Positive(message = "게시글 ID는 양수이어야 합니다.") Long articleId,
+        @PathVariable(required = false)
+        @NotNull(message = "ID가 비어있습니다.")
+        @Positive(message = "댓글 ID는 양수이어야 합니다.") Long commentId,
+        @NotNull(message = "ID가 비어있습니다.")
+        @PathVariable(required = false)
+        @Positive(message = "대댓글 ID는 양수이어야 합니다.") Long recommentId,
+        @RequestBody @Valid ReCommentEditRequest reCommentEditRequest,
+        HttpServletRequest request) {
+
+        Long memberId = getMemberId(request);
+        commentService.updateReComment(
+            articleId, commentId, recommentId, memberId, reCommentEditRequest);
+    }
+
 
     private Long getMemberId(HttpServletRequest request) {
         return (Long) request.getAttribute("memberId");

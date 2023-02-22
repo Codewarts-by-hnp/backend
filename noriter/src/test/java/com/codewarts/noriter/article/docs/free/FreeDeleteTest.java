@@ -70,7 +70,7 @@ class FreeDeleteTest {
 
     @Test
     void 글을_삭제한다() {
-        String accessToken = jwtProvider.issueAccessToken(1L);
+        String accessToken = jwtProvider.issueAccessToken(2L);
 
         given(documentationSpec)
             .contentType(APPLICATION_JSON_VALUE)
@@ -163,7 +163,7 @@ class FreeDeleteTest {
         given(documentationSpec)
             .contentType(APPLICATION_JSON_VALUE)
             .header(AUTHORIZATION, accessToken)
-            .pathParam("id", 10)
+            .pathParam("id", 1)
 
             .when()
             .delete("/community/playground/{id}")
