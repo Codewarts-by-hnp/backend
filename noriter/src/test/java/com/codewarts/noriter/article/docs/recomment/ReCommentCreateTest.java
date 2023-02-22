@@ -218,7 +218,7 @@ public class ReCommentCreateTest {
             .contentType(APPLICATION_JSON_VALUE)
             .header(AUTHORIZATION, accessToken)
             .pathParam("articleId", 13)
-            .pathParam("commentId", 6)
+            .pathParam("commentId", 7)
             .body(requestBody)
 
             .when()
@@ -240,7 +240,7 @@ public class ReCommentCreateTest {
         given(documentationSpec)
             .contentType(APPLICATION_JSON_VALUE)
             .header(AUTHORIZATION, accessToken)
-            .pathParam("articleId", 10)
+            .pathParam("articleId", 12)
             .pathParam("commentId", 6)
             .body(requestBody)
 

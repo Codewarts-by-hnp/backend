@@ -1,6 +1,7 @@
 package com.codewarts.noriter.article.docs.comment;
 
 import static com.codewarts.noriter.exception.type.ArticleExceptionType.ARTICLE_NOT_FOUND;
+import static com.codewarts.noriter.exception.type.ArticleExceptionType.DELETED_ARTICLE;
 import static com.codewarts.noriter.exception.type.AuthExceptionType.EMPTY_ACCESS_TOKEN;
 import static com.codewarts.noriter.exception.type.AuthExceptionType.TAMPERED_ACCESS_TOKEN;
 import static com.codewarts.noriter.exception.type.CommentExceptionType.COMMENT_NOT_FOUND;
@@ -78,7 +79,7 @@ class CommentEditTest {
 
     @Test
     void 댓글을_수정한다() {
-        String accessToken = jwtProvider.issueAccessToken(2L);
+        String accessToken = jwtProvider.issueAccessToken(1L);
 
         Map<String, Object> requestBody = Map.of("content", "수정한 댓글이에요",
             "secret", "false");
@@ -277,9 +278,9 @@ class CommentEditTest {
             .put("/{articleId}/comment/{commentId}")
 
             .then()
-            .statusCode(ARTICLE_NOT_FOUND.getStatus().value())
-            .body("errorCode", equalTo(ARTICLE_NOT_FOUND.getErrorCode()))
-            .body("message", equalTo(ARTICLE_NOT_FOUND.getErrorMessage()));
+            .statusCode(DELETED_ARTICLE.getStatus().value())
+            .body("errorCode", equalTo(DELETED_ARTICLE.getErrorCode()))
+            .body("message", equalTo(DELETED_ARTICLE.getErrorMessage()));
     }
 
     @Test
@@ -353,7 +354,7 @@ class CommentEditTest {
 
     @Test
     void commentId가_삭제된_경우_예외가_발생한다() {
-        String accessToken = jwtProvider.issueAccessToken(1L);
+        String accessToken = jwtProvider.issueAccessToken(2L);
 
         Map<String, Object> requestBody = Map.of("content", "댓글이에요",
             "secret", "true");
@@ -361,7 +362,7 @@ class CommentEditTest {
         given(documentationSpec)
             .contentType(APPLICATION_JSON_VALUE)
             .header(AUTHORIZATION, accessToken)
-            .pathParam("articleId", 10)
+            .pathParam("articleId", 12)
             .pathParam("commentId", 6)
             .body(requestBody)
 
@@ -376,7 +377,7 @@ class CommentEditTest {
 
     @Test
     void 작성자가_일치하지_않는_경우_예외가_발생한다() {
-        String accessToken = jwtProvider.issueAccessToken(1L);
+        String accessToken = jwtProvider.issueAccessToken(2L);
 
         Map<String, Object> requestBody = Map.of("content", "댓글이에요",
             "secret", "true");
@@ -399,7 +400,7 @@ class CommentEditTest {
 
     @Test
     void 해당_게시글의_댓글이_아닌_경우_예외가_발생한다() {
-        String accessToken = jwtProvider.issueAccessToken(2L);
+        String accessToken = jwtProvider.issueAccessToken(1L);
 
         Map<String, Object> requestBody = Map.of("content", "댓글이에요",
             "secret", "true");
