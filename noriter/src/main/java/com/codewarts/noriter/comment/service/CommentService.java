@@ -25,8 +25,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class CommentService {
 
-    private final ReCommentRepository reCommentRepository;
     private final CommentRepository commentRepository;
+    private final ReCommentRepository reCommentRepository;
     private final ArticleRepository articleRepository;
     private final MemberService memberService;
 
@@ -38,10 +38,11 @@ public class CommentService {
     }
 
     public void updateComment(Long memberId, Long articleId, Long commentId, CommentUpdateRequest request) {
-        Article article = findNotDeletedArticle(articleId);
         Member member = memberService.findMember(memberId);
+        Article article = findNotDeletedArticle(articleId);
         Comment comment = findNotDeletedComment(commentId);
-        comment.validateOrThrow(member, article);
+        comment.validateArticleOrThrow(article);
+        comment.validateWriterOrThrow(member);
         comment.update(request.getContent(), request.getSecret());
     }
 
@@ -75,7 +76,7 @@ public class CommentService {
         Article article = articleRepository.findById(id)
             .orElseThrow(() -> new GlobalNoriterException(ArticleExceptionType.ARTICLE_NOT_FOUND));
         if (article.isDeleted()) {
-            throw new GlobalNoriterException(ArticleExceptionType.ARTICLE_NOT_FOUND);
+            throw new GlobalNoriterException(ArticleExceptionType.DELETED_ARTICLE);
         }
         return article;
     }
@@ -84,7 +85,7 @@ public class CommentService {
         Comment comment = commentRepository.findById(id)
             .orElseThrow(() -> new GlobalNoriterException(CommentExceptionType.COMMENT_NOT_FOUND));
         if (comment.isDeleted()) {
-            throw new GlobalNoriterException(CommentExceptionType.COMMENT_NOT_FOUND);
+            throw new GlobalNoriterException(CommentExceptionType.DELETED_COMMENT);
         }
         return comment;
     }
