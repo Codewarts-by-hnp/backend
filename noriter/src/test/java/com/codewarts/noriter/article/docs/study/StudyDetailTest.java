@@ -96,10 +96,10 @@ public class StudyDetailTest {
             .body("status", equalTo("INCOMPLETE"))
             .body("comment[0].id", equalTo(1))
             .body("comment[0].content", equalTo("우왕 잘봤어용"))
-            .body("comment[0].writer.id", equalTo(2))
-            .body("comment[0].writer.nickname", equalTo("admin2"))
+            .body("comment[0].writer.id", equalTo(1))
+            .body("comment[0].writer.nickname", equalTo("admin1"))
             .body("comment[0].writer.profileImage",
-                equalTo("https://avatars.githubusercontent.com/u/222222?v=4"));
+                equalTo("https://avatars.githubusercontent.com/u/111111?v=4"));
     }
 
     @Test
@@ -132,10 +132,10 @@ public class StudyDetailTest {
             .body("status", equalTo("INCOMPLETE"))
             .body("comment[0].id", equalTo(1))
             .body("comment[0].content", equalTo("우왕 잘봤어용"))
-            .body("comment[0].writer.id", equalTo(2))
-            .body("comment[0].writer.nickname", equalTo("admin2"))
+            .body("comment[0].writer.id", equalTo(1))
+            .body("comment[0].writer.nickname", equalTo("admin1"))
             .body("comment[0].writer.profileImage",
-                equalTo("https://avatars.githubusercontent.com/u/222222?v=4"));
+                equalTo("https://avatars.githubusercontent.com/u/111111?v=4"));
     }
 
     @Test

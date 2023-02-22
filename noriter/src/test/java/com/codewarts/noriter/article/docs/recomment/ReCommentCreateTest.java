@@ -225,9 +225,9 @@ public class ReCommentCreateTest {
             .post("/{articleId}/comment/{commentId}/recomment")
 
             .then()
-            .statusCode(ArticleExceptionType.ARTICLE_NOT_FOUND.getStatus().value())
-            .body("errorCode", equalTo(ArticleExceptionType.ARTICLE_NOT_FOUND.getErrorCode()))
-            .body("message", equalTo(ArticleExceptionType.ARTICLE_NOT_FOUND.getErrorMessage()));
+            .statusCode(ArticleExceptionType.DELETED_ARTICLE.getStatus().value())
+            .body("errorCode", equalTo(ArticleExceptionType.DELETED_ARTICLE.getErrorCode()))
+            .body("message", equalTo(ArticleExceptionType.DELETED_ARTICLE.getErrorMessage()));
     }
 
     @Test
@@ -248,8 +248,8 @@ public class ReCommentCreateTest {
             .post("/{articleId}/comment/{commentId}/recomment")
 
             .then()
-            .statusCode(CommentExceptionType.COMMENT_NOT_FOUND.getStatus().value())
-            .body("errorCode", equalTo(CommentExceptionType.COMMENT_NOT_FOUND.getErrorCode()))
-            .body("message", equalTo(CommentExceptionType.COMMENT_NOT_FOUND.getErrorMessage()));
+            .statusCode(CommentExceptionType.DELETED_COMMENT.getStatus().value())
+            .body("errorCode", equalTo(CommentExceptionType.DELETED_COMMENT.getErrorCode()))
+            .body("message", equalTo(CommentExceptionType.DELETED_COMMENT.getErrorMessage()));
     }
 }
