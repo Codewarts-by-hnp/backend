@@ -55,6 +55,10 @@ public class ReComment {
         this.editedTime = LocalDateTime.now();
     }
 
+    public void delete() {
+        this.deleted = true;
+    }
+
     public void validateWriterOrThrow(Member writer) {
         if (!Objects.equals(this.writer, writer)) {
             throw new GlobalNoriterException(ReCommentExceptionType.RECOMMENT_NOT_MATCHED_WRITER);

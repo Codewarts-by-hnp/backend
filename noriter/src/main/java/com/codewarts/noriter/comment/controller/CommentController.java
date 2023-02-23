@@ -98,6 +98,23 @@ public class CommentController {
             articleId, commentId, recommentId, memberId, reCommentEditRequest);
     }
 
+    @DeleteMapping("/{commentId}/recomment/{recommentId}")
+    public void removeReComment(
+        @PathVariable(required = false)
+        @NotNull(message = "ID가 비어있습니다.")
+        @Positive(message = "게시글 ID는 양수이어야 합니다.") Long articleId,
+        @PathVariable(required = false)
+        @NotNull(message = "ID가 비어있습니다.")
+        @Positive(message = "댓글 ID는 양수이어야 합니다.") Long commentId,
+        @NotNull(message = "ID가 비어있습니다.")
+        @PathVariable(required = false)
+        @Positive(message = "대댓글 ID는 양수이어야 합니다.") Long recommentId,
+        HttpServletRequest request) {
+
+        Long memberId = getMemberId(request);
+        commentService.deleteRecomment(articleId, commentId, recommentId, memberId);
+
+    }
 
     private Long getMemberId(HttpServletRequest request) {
         return (Long) request.getAttribute("memberId");
