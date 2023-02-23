@@ -108,4 +108,17 @@ public class CommentService {
         }
         return reComment;
     }
+
+    public void deleteRecomment(Long articleId, Long commentId, Long recommentId, Long memberId) {
+        Member member = memberService.findMember(memberId);
+        Article article = findNotDeletedArticle(articleId);
+
+        Comment comment = findNotDeletedComment(commentId);
+        comment.validateArticleOrThrow(article);
+
+        ReComment reComment = findNotDeletedReComment(recommentId);
+        reComment.validateCommentOrThrow(comment);
+        reComment.validateWriterOrThrow(member);
+        reComment.delete();
+    }
 }
