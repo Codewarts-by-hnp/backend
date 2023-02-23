@@ -46,6 +46,15 @@ public class CommentService {
         comment.update(request.getContent(), request.getSecret());
     }
 
+    public void deleteComment(Long memberId, Long articleId, Long commentId) {
+        Member member = memberService.findMember(memberId);
+        Article article = findNotDeletedArticle(articleId);
+        Comment comment = findNotDeletedComment(commentId);
+        comment.validateArticleOrThrow(article);
+        comment.validateWriterOrThrow(member);
+        comment.delete();
+    }
+
     public void createReComment(Long articleId, Long commentId, Long memberId,
         ReCommentRequest request) {
         Member member = memberService.findMember(memberId);
