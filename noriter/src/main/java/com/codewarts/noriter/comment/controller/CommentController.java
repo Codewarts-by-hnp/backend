@@ -11,6 +11,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -48,6 +49,19 @@ public class CommentController {
         HttpServletRequest request) {
         Long memberId = getMemberId(request);
         commentService.updateComment(memberId, articleId, commentId, commentRequest);
+    }
+
+    @DeleteMapping("/{commentId}")
+    public void removeComment(
+        @PathVariable(required = false)
+        @NotNull(message = "ID가 비어있습니다.")
+        @Positive(message = "게시글 ID는 양수이어야 합니다.") Long articleId,
+        @PathVariable(required = false)
+        @NotNull(message = "ID가 비어있습니다.")
+        @Positive(message = "댓글 ID는 양수이어야 합니다.") Long commentId,
+        HttpServletRequest request) {
+        Long memberId = getMemberId(request);
+        commentService.deleteComment(memberId, articleId, commentId);
     }
 
     @PostMapping("/{commentId}/recomment")

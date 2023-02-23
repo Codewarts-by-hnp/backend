@@ -77,4 +77,8 @@ public class Comment {
       throw new GlobalNoriterException(CommentExceptionType.NOT_MATCHED_ARTICLE);
     }
   }
+
+  public void delete() {
+    this.deleted = true;
+  }
 }
