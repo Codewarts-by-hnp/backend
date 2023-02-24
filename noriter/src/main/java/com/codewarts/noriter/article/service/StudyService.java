@@ -63,7 +63,7 @@ public class StudyService {
     }
 
     public StudyDetailResponse findDetail(Long id, Long memberId) {
-        Study study = findStudy(id);
+        Study study = findNotDeletedStudy(id);
         boolean sameWriter = study.getWriter().getId().equals(memberId);
 
         if (memberId == null) {
@@ -78,15 +78,15 @@ public class StudyService {
     @Transactional
     public void delete(Long id, Long writerId) {
         memberService.findMember(writerId);
-        Study study = findStudy(id);
+        Study study = findNotDeletedStudy(id);
         study.validateWriterOrThrow(writerId);
-        articleRepository.deleteByIdAndWriterId(id, writerId);
+        study.delete();
     }
 
     @Transactional
     public void updateCompletion(Long id, Long writerId, StatusType status) {
         memberService.findMember(writerId);
-        Study study = findStudy(id);
+        Study study = findNotDeletedStudy(id);
         study.validateWriterOrThrow(writerId);
 
         if (study.getStatus() == status) {
@@ -102,13 +102,17 @@ public class StudyService {
     @Transactional
     public void update(Long id, StudyEditRequest request, Long writerId) {
         memberService.findMember(writerId);
-        Study study = findStudy(id);
+        Study study = findNotDeletedStudy(id);
         study.validateWriterOrThrow(writerId);
         study.update(request.getTitle(), request.getContent(), request.getHashtags());
     }
 
-    public Study findStudy(Long id) {
-        return studyRepository.findById(id).
+    public Study findNotDeletedStudy(Long id) {
+        Study study = studyRepository.findById(id).
             orElseThrow(() -> new GlobalNoriterException(ArticleExceptionType.ARTICLE_NOT_FOUND));
+        if (study.isDeleted()) {
+            throw new GlobalNoriterException(ArticleExceptionType.DELETED_ARTICLE);
+        }
+        return study;
     }
 }

@@ -36,7 +36,7 @@ public class FreeService {
     }
 
     public FreeDetailResponse findDetail(Long id, Long memberId) {
-        Article article = findArticle(id);
+        Article article = findNotDeletedArticle(id);
         Long writerId = article.getWriter().getId();
         boolean sameWriter = writerId.equals(memberId);
         if (memberId == null) {
@@ -66,7 +66,7 @@ public class FreeService {
     @Transactional
     public void update(Long id, FreeEditRequest request, Long writerId) {
         memberService.findMember(writerId);
-        Article free = findArticle(id);
+        Article free = findNotDeletedArticle(id);
         free.validateWriterOrThrow(writerId);
         free.update(request.getTitle(), request.getContent(), request.getHashtags());
     }
@@ -74,13 +74,17 @@ public class FreeService {
     @Transactional
     public void delete(Long id, Long writerId) {
         memberService.findMember(writerId);
-        Article free = findArticle(id);
+        Article free = findNotDeletedArticle(id);
         free.validateWriterOrThrow(writerId);
-        articleRepository.deleteByIdAndWriterId(id, writerId);
+        free.delete();
     }
 
-    public Article findArticle(Long id) {
-        return articleRepository.findById(id)
+    public Article findNotDeletedArticle(Long id) {
+        Article article = articleRepository.findById(id)
             .orElseThrow(() -> new GlobalNoriterException(ArticleExceptionType.ARTICLE_NOT_FOUND));
+        if (article.isDeleted()) {
+            throw new GlobalNoriterException(ArticleExceptionType.DELETED_ARTICLE);
+        }
+        return article;
     }
 }
