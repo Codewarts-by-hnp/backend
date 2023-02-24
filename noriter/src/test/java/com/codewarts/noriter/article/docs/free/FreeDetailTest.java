@@ -2,6 +2,7 @@ package com.codewarts.noriter.article.docs.free;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpHeaders.CONNECTION;
 import static org.springframework.http.HttpHeaders.CONTENT_LENGTH;
@@ -96,7 +97,11 @@ class FreeDetailTest {
             .body("comment[0].content", equalTo("강남역 11번출구에서 팔아요"))
             .body("comment[0].writer.id", equalTo(2))
             .body("comment[0].writer.nickname", equalTo("admin2"))
-            .body("comment[0].writer.profileImage", equalTo("https://avatars.githubusercontent.com/u/222222?v=4"));
+            .body("comment[0].writer.profileImage", equalTo("https://avatars.githubusercontent.com/u/222222?v=4"))
+            .body("comment[0].recomments.size()", is(1))
+            .body("comment[0].recomments[0].id", equalTo(6))
+            .body("comment[0].recomments[0].writer.id", equalTo(2))
+            .body("comment[0].recomments[0].content", equalTo("잘 봤다니 다행입니당"));
     }
 
     @Test
