@@ -94,6 +94,10 @@ public class Article {
         addHashtags(requestHashtags);
     }
 
+    public void delete() {
+        this.deleted = true;
+    }
+
     public void validateWriterOrThrow(Long writerId) {
         if (!Objects.equals(this.writer.getId(), writerId)) {
             throw new GlobalNoriterException(ArticleExceptionType.ARTICLE_NOT_MATCHED_WRITER);

@@ -67,7 +67,7 @@ public class QuestionService {
 
     // 질문 상세 조회 기능
     public QuestionDetailResponse findDetail(Long id, Long memberId) {
-        Question question = findQuestion(id);
+        Question question = findNotDeletedQuestion(id);
         boolean sameWriter = question.getWriter().getId().equals(memberId);
 
         if (memberId == null) {
@@ -82,15 +82,15 @@ public class QuestionService {
     @Transactional
     public void delete(Long questionId, Long writerId) {
         memberService.findMember(writerId);
-        Question question = findQuestion(questionId);
+        Question question = findNotDeletedQuestion(questionId);
         question.validateWriterOrThrow(writerId);
-        articleRepository.deleteByIdAndWriterId(questionId, writerId);
+        question.delete();
     }
 
     @Transactional
     public void update(Long questionId, Long writerId, QuestionUpdateRequest request) {
         memberService.findMember(writerId);
-        Question question = findQuestion(questionId);
+        Question question = findNotDeletedQuestion(questionId);
         question.validateWriterOrThrow(writerId);
         question.update(request.getTitle(), request.getContent(), request.getHashtags());
     }
@@ -98,7 +98,7 @@ public class QuestionService {
     @Transactional
     public void updateStatus(Long questionId, Long writerId, StatusType status) {
         memberService.findMember(writerId);
-        Question question = findQuestion(questionId);
+        Question question = findNotDeletedQuestion(questionId);
         question.validateWriterOrThrow(writerId);
 
         if (status.equals(StatusType.COMPLETE)) {
@@ -108,8 +108,13 @@ public class QuestionService {
         question.changeStatusToIncomplete();
     }
 
-    private Question findQuestion(Long id) {
-        return questionRepository.findById(id).orElseThrow(() -> new GlobalNoriterException(
-            ArticleExceptionType.ARTICLE_NOT_FOUND));
+    private Question findNotDeletedQuestion(Long id) {
+        Question question = questionRepository.findById(id)
+            .orElseThrow(() -> new GlobalNoriterException(
+                ArticleExceptionType.ARTICLE_NOT_FOUND));
+        if (question.isDeleted()) {
+            throw new GlobalNoriterException(ArticleExceptionType.DELETED_ARTICLE);
+        }
+        return question;
     }
 }
