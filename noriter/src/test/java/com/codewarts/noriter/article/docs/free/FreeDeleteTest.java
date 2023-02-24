@@ -1,6 +1,7 @@
 package com.codewarts.noriter.article.docs.free;
 
 import static com.codewarts.noriter.exception.type.ArticleExceptionType.ARTICLE_NOT_MATCHED_WRITER;
+import static com.codewarts.noriter.exception.type.ArticleExceptionType.DELETED_ARTICLE;
 import static com.codewarts.noriter.exception.type.MemberExceptionType.MEMBER_NOT_FOUND;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
@@ -136,6 +137,26 @@ class FreeDeleteTest {
             .statusCode(ArticleExceptionType.ARTICLE_NOT_FOUND.getStatus().value())
             .body("errorCode", equalTo(ArticleExceptionType.ARTICLE_NOT_FOUND.getErrorCode()))
             .body("message", equalTo(ArticleExceptionType.ARTICLE_NOT_FOUND.getErrorMessage()));
+    }
+
+    @Test
+    void 게시글이_삭제된_경우_예외가_발생한다() {
+        String accessToken = jwtProvider.issueAccessToken(2L);
+
+        given(documentationSpec)
+            .contentType(APPLICATION_JSON_VALUE)
+            .header(AUTHORIZATION, accessToken)
+            .pathParam("id", 13)
+
+            .when()
+            .delete("/community/playground/{id}")
+
+            .then()
+            .statusCode(DELETED_ARTICLE.getStatus().value())
+            .body("errorCode", equalTo(DELETED_ARTICLE.getErrorCode()))
+            .body("errorCode", equalTo(DELETED_ARTICLE.getErrorCode()))
+            .body("message", equalTo(DELETED_ARTICLE.getErrorMessage()));
+
     }
 
     @Test
