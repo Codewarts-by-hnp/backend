@@ -1,4 +1,4 @@
-package com.codewarts.noriter.article.docs.free;
+package com.codewarts.noriter.article.docs.playground;
 
 import static com.codewarts.noriter.exception.type.ArticleExceptionType.ARTICLE_NOT_MATCHED_WRITER;
 import static com.codewarts.noriter.exception.type.ArticleExceptionType.DELETED_ARTICLE;
@@ -40,7 +40,7 @@ import org.springframework.test.context.jdbc.Sql;
 @ExtendWith({RestDocumentationExtension.class})
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Sql("classpath:/data.sql")
-class FreeDeleteTest {
+class PlaygroundDeleteTest {
 
     @LocalServerPort
     int port;
@@ -100,7 +100,7 @@ class FreeDeleteTest {
             .then()
             .statusCode(CommonExceptionType.INVALID_REQUEST.getStatus().value())
             .body("errorCode", equalTo(CommonExceptionType.INVALID_REQUEST.getErrorCode()))
-            .body("message", equalTo("freeRemove.id: ID가 비어있습니다."));
+            .body("message", equalTo("remove.id: ID가 비어있습니다."));
     }
 
     @Test
@@ -118,7 +118,7 @@ class FreeDeleteTest {
             .then()
             .statusCode(CommonExceptionType.INVALID_REQUEST.getStatus().value())
             .body("errorCode", equalTo(CommonExceptionType.INVALID_REQUEST.getErrorCode()))
-            .body("message", equalTo("freeRemove.id: 게시글 ID는 양수이어야 합니다."));
+            .body("message", equalTo("remove.id: 게시글 ID는 양수이어야 합니다."));
     }
 
     @Test

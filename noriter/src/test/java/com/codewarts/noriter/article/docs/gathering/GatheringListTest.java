@@ -1,8 +1,5 @@
-package com.codewarts.noriter.article.docs.free;
+package com.codewarts.noriter.article.docs.gathering;
 
-
-import static com.codewarts.noriter.exception.type.CommonExceptionType.INVALID_REQUEST;
-import static com.codewarts.noriter.exception.type.MemberExceptionType.MEMBER_NOT_FOUND;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
@@ -17,11 +14,10 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.re
 import static org.springframework.restdocs.restassured3.RestAssuredRestDocumentation.documentationConfiguration;
 
 import com.codewarts.noriter.auth.jwt.JwtProvider;
+import com.codewarts.noriter.exception.type.CommonExceptionType;
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.specification.RequestSpecification;
-import java.util.List;
-import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -42,8 +38,7 @@ import org.springframework.test.context.jdbc.Sql;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Profile({"test"})
 @Sql("classpath:/data.sql")
-public class FreeCreateTest {
-
+class GatheringListTest {
 
     @LocalServerPort
     int port;
@@ -73,66 +68,87 @@ public class FreeCreateTest {
     }
 
     @Test
-    void 글을_등록한다() {
-        String accessToken = jwtProvider.issueAccessToken(2L);
+    void 리스트를_조회한다() {
 
-        Map<String, Object> requestBody = Map.of("title", "안녕하세용",
-            "content", "헬륨가스를모곳지", "hashtags",
-            List.of("자유게시판", "개발자좋아효", "코린이"));
+        given(documentationSpec)
+            .contentType(APPLICATION_JSON_VALUE)
+            .param("status", "INCOMPLETE")
+
+            .when()
+            .get("/community/gathering")
+
+            .then()
+            .statusCode(HttpStatus.OK.value())
+            .body("[0].id", equalTo(1))
+            .body("[0].title", equalTo("테스트를 해볼것이당"))
+            .body("[0].content", equalTo("안녕하냐고오옹"))
+            .body("[0].writerNickname", equalTo("admin1"))
+            .body("[0].sameWriter", equalTo(false))
+            .body("[0].writtenTime", equalTo("2022-11-11 16:25:58"))
+            .body("[0].editedTime", equalTo("2022-11-11 16:25:58"))
+            .body("[0].hashtags[0]", equalTo("SPRING"))
+            .body("[0].hashtags[1]", equalTo("JPA"))
+            .body("[0].wish", equalTo(false))
+            .body("[0].wishCount", equalTo(1))
+            .body("[0].commentCount", equalTo(4));
+    }
+    @Test
+    void 로그인_후_리스트를_조회한다() {
+        String accessToken = jwtProvider.issueAccessToken(2L);
 
         given(documentationSpec)
             .contentType(APPLICATION_JSON_VALUE)
             .header(AUTHORIZATION, accessToken)
-            .body(requestBody)
+            .param("status", "INCOMPLETE")
 
             .when()
-            .post("/community/playground")
+            .get("/community/gathering")
 
             .then()
-            .statusCode(HttpStatus.OK.value());
+            .statusCode(HttpStatus.OK.value())
+            .body("[0].id", equalTo(1))
+            .body("[0].title", equalTo("테스트를 해볼것이당"))
+            .body("[0].content", equalTo("안녕하냐고오옹"))
+            .body("[0].writerNickname", equalTo("admin1"))
+            .body("[0].sameWriter", equalTo(false))
+            .body("[0].writtenTime", equalTo("2022-11-11 16:25:58"))
+            .body("[0].editedTime", equalTo("2022-11-11 16:25:58"))
+            .body("[0].hashtags[0]", equalTo("SPRING"))
+            .body("[0].hashtags[1]", equalTo("JPA"))
+            .body("[0].wish", equalTo(true))
+            .body("[0].wishCount", equalTo(1))
+            .body("[0].commentCount", equalTo(4));
     }
 
     @Test
-    void 필수값이_비어있을_경우_예외가_발생한다() {
-        String accessToken = jwtProvider.issueAccessToken(2L);
-
-        Map<String, Object> requestBody = Map.of("content", "헬륨가스를모곳지", "hashtags",
-            List.of("자유게시판", "개발자좋아효", "코린이"));
+    void 잘못된_requestParam_값인_경우_예외를_발생시킨다() {
 
         given(documentationSpec)
             .contentType(APPLICATION_JSON_VALUE)
-            .header(AUTHORIZATION, accessToken)
-            .body(requestBody)
+            .param("comp", "INCOMPLETE")
 
             .when()
-            .post("/community/playground")
+            .get("/community/gathering")
 
             .then()
-            .statusCode(INVALID_REQUEST.getStatus().value())
-            .body("errorCode", equalTo(INVALID_REQUEST.getErrorCode()))
-            .body("message", equalTo(INVALID_REQUEST.getErrorMessage()))
-            .body("detail.title", equalTo("제목은 필수입니다."));
+            .statusCode(CommonExceptionType.INVALID_REQUEST.getStatus().value())
+            .body("errorCode", equalTo(CommonExceptionType.INCORRECT_REQUEST_PARAM.getErrorCode()))
+            .body("message", equalTo(CommonExceptionType.INCORRECT_REQUEST_PARAM.getErrorMessage()));
     }
-
     @Test
-    void 존재하지_않는_회원인_경우_예외가_발생한다() {
-        String accessToken = jwtProvider.issueAccessToken(99999999L);
-
-        Map<String, Object> requestBody = Map.of("title", "안녕하세용",
-            "content", "헬륨가스를모곳지", "hashtags",
-            List.of("자유게시판", "개발자좋아효", "코린이"));
+    void 잘못된_requestParam_타입인_경우_예외를_발생시킨다() {
 
         given(documentationSpec)
             .contentType(APPLICATION_JSON_VALUE)
-            .header(AUTHORIZATION, accessToken)
-            .body(requestBody)
+            .param("status", "dd")
 
             .when()
-            .post("/community/playground")
+            .get("/community/gathering")
 
             .then()
-            .statusCode(MEMBER_NOT_FOUND.getStatus().value())
-            .body("errorCode", equalTo(MEMBER_NOT_FOUND.getErrorCode()))
-            .body("message", equalTo(MEMBER_NOT_FOUND.getErrorMessage()));
+            .statusCode(CommonExceptionType.INVALID_REQUEST.getStatus().value())
+            .body("errorCode", equalTo(CommonExceptionType.INCORRECT_REQUEST_VALUE.getErrorCode()))
+            .body("message", equalTo(CommonExceptionType.INCORRECT_REQUEST_VALUE.getErrorMessage()));
     }
+
 }

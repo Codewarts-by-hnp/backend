@@ -1,31 +1,33 @@
-package com.codewarts.noriter.comment.dto.comment;
+package com.codewarts.noriter.article.dto.free;
 
 import com.codewarts.noriter.article.domain.Article;
-import com.codewarts.noriter.comment.domain.Comment;
+import com.codewarts.noriter.article.domain.type.ArticleType;
 import com.codewarts.noriter.member.domain.Member;
 import java.time.LocalDateTime;
+import java.util.List;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class CommentPostRequest {
+public class PlaygroundCreateRequest {
 
+    @NotBlank(message = "제목은 필수입니다.")
+    private String title;
     @NotBlank(message = "내용은 필수입니다.")
     private String content;
-    @NotNull(message = "내용은 필수입니다.")
-    private Boolean secret;
+    private List<String> hashtags;
 
-    public Comment toEntity(Article article, Member writer) {
-        return Comment.builder()
-            .article(article)
-            .writer(writer)
+    public Article toEntity(Member writer) {
+        return Article.builder()
+            .title(title)
             .content(content)
-            .secret(secret)
+            .writer(writer)
             .writtenTime(LocalDateTime.now())
             .editedTime(LocalDateTime.now())
+            .articleType(ArticleType.FREE)
             .build();
     }
 }
+

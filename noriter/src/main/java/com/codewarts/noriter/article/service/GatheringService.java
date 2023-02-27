@@ -1,13 +1,13 @@
 package com.codewarts.noriter.article.service;
 
 import com.codewarts.noriter.article.domain.Study;
-import com.codewarts.noriter.article.dto.study.StudyDetailResponse;
-import com.codewarts.noriter.article.dto.study.StudyEditRequest;
-import com.codewarts.noriter.article.dto.study.StudyListResponse;
-import com.codewarts.noriter.article.dto.study.StudyPostRequest;
+import com.codewarts.noriter.article.dto.study.GatheringDetailResponse;
+import com.codewarts.noriter.article.dto.study.GatheringUpdateRequest;
+import com.codewarts.noriter.article.dto.study.GatheringListResponse;
+import com.codewarts.noriter.article.dto.study.GatheringCreateRequest;
 import com.codewarts.noriter.article.domain.type.StatusType;
 import com.codewarts.noriter.article.repository.ArticleRepository;
-import com.codewarts.noriter.article.repository.StudyRepository;
+import com.codewarts.noriter.article.repository.GatheringRepository;
 import com.codewarts.noriter.exception.GlobalNoriterException;
 import com.codewarts.noriter.exception.type.ArticleExceptionType;
 import com.codewarts.noriter.member.domain.Member;
@@ -22,57 +22,57 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class StudyService {
+public class GatheringService {
 
     private final MemberService memberService;
     private final ArticleRepository articleRepository;
-    private final StudyRepository studyRepository;
+    private final GatheringRepository gatheringRepository;
     private final WishRepository wishRepository;
 
     @Transactional
-    public Long create(StudyPostRequest studyPostRequest, Long memberId) {
+    public Long create(GatheringCreateRequest gatheringCreateRequest, Long memberId) {
         Member member = memberService.findMember(memberId);
-        Study study = studyPostRequest.toEntity(member);
-        study.addHashtags(studyPostRequest.getHashtags());
-        return studyRepository.save(study).getId();
+        Study study = gatheringCreateRequest.toEntity(member);
+        study.addHashtags(gatheringCreateRequest.getHashtags());
+        return gatheringRepository.save(study).getId();
     }
 
-    public List<StudyListResponse> findList(StatusType status, Long memberId) {
+    public List<GatheringListResponse> findList(StatusType status, Long memberId) {
         if (status == null && memberId == null) {
-            return studyRepository.findAllStudy().stream()
-                .map(study -> new StudyListResponse(study, false, false))
+            return gatheringRepository.findAllStudy().stream()
+                .map(study -> new GatheringListResponse(study, false, false))
                 .collect(Collectors.toList());
         }
         if (memberId == null) {
-            return studyRepository.findStudyByCompleted(status).stream()
-                .map(study -> new StudyListResponse(study, false, false))
+            return gatheringRepository.findStudyByCompleted(status).stream()
+                .map(study -> new GatheringListResponse(study, false, false))
                 .collect(Collectors.toList());
         }
         Member member = memberService.findMember(memberId);
         if (status == null) {
-            return studyRepository.findAllStudy().stream()
-                .map(study -> new StudyListResponse(study,
+            return gatheringRepository.findAllStudy().stream()
+                .map(study -> new GatheringListResponse(study,
                     study.getWriter().getId().equals(memberId),
                     wishRepository.existsByArticleAndMember(study, member)))
                 .collect(Collectors.toList());
         }
-        return studyRepository.findStudyByCompleted(status).stream()
-            .map(study -> new StudyListResponse(study, study.getWriter().getId().equals(memberId),
+        return gatheringRepository.findStudyByCompleted(status).stream()
+            .map(study -> new GatheringListResponse(study, study.getWriter().getId().equals(memberId),
                 wishRepository.existsByArticleAndMember(study, member)))
             .collect(Collectors.toList());
     }
 
-    public StudyDetailResponse findDetail(Long id, Long memberId) {
+    public GatheringDetailResponse findDetail(Long id, Long memberId) {
         Study study = findNotDeletedStudy(id);
         boolean sameWriter = study.getWriter().getId().equals(memberId);
 
         if (memberId == null) {
-            return new StudyDetailResponse(study, false, false);
+            return new GatheringDetailResponse(study, false, false);
         }
         Member member = memberService.findMember(memberId);
         boolean wish = wishRepository.existsByArticleAndMember(study, member);
 
-        return new StudyDetailResponse(study, sameWriter, wish);
+        return new GatheringDetailResponse(study, sameWriter, wish);
     }
 
     @Transactional
@@ -100,7 +100,7 @@ public class StudyService {
     }
 
     @Transactional
-    public void update(Long id, StudyEditRequest request, Long writerId) {
+    public void update(Long id, GatheringUpdateRequest request, Long writerId) {
         memberService.findMember(writerId);
         Study study = findNotDeletedStudy(id);
         study.validateWriterOrThrow(writerId);
@@ -108,7 +108,7 @@ public class StudyService {
     }
 
     public Study findNotDeletedStudy(Long id) {
-        Study study = studyRepository.findById(id).
+        Study study = gatheringRepository.findById(id).
             orElseThrow(() -> new GlobalNoriterException(ArticleExceptionType.ARTICLE_NOT_FOUND));
         if (study.isDeleted()) {
             throw new GlobalNoriterException(ArticleExceptionType.DELETED_ARTICLE);

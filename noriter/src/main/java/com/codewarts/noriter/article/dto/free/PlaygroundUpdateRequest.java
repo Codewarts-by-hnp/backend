@@ -1,4 +1,4 @@
-package com.codewarts.noriter.article.dto.study;
+package com.codewarts.noriter.article.dto.free;
 
 import java.util.List;
 import javax.validation.constraints.NotBlank;
@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class StudyEditRequest {
+public class PlaygroundUpdateRequest {
 
     @NotBlank(message = "제목은 필수입니다.")
     private String title;

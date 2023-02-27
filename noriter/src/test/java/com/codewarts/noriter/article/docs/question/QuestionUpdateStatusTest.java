@@ -162,7 +162,7 @@ class QuestionUpdateStatusTest {
             .then()
             .statusCode(CommonExceptionType.INVALID_REQUEST.getStatus().value())
             .body("errorCode", equalTo(CommonExceptionType.INVALID_REQUEST.getErrorCode()))
-            .body("message", equalTo("questionChangeStatus.id: ID가 비어있습니다."));
+            .body("message", equalTo("changeStatus.id: ID가 비어있습니다."));
     }
 
     @Test
@@ -183,7 +183,7 @@ class QuestionUpdateStatusTest {
             .then()
             .statusCode(CommonExceptionType.INVALID_REQUEST.getStatus().value())
             .body("errorCode", equalTo(CommonExceptionType.INVALID_REQUEST.getErrorCode()))
-            .body("message", equalTo("questionChangeStatus.id: 게시글 ID는 양수이어야 합니다."));
+            .body("message", equalTo("changeStatus.id: 게시글 ID는 양수이어야 합니다."));
     }
 
     @Test

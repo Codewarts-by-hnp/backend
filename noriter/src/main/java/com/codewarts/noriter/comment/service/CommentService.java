@@ -4,10 +4,10 @@ import com.codewarts.noriter.article.domain.Article;
 import com.codewarts.noriter.article.repository.ArticleRepository;
 import com.codewarts.noriter.comment.domain.Comment;
 import com.codewarts.noriter.comment.domain.ReComment;
-import com.codewarts.noriter.comment.dto.comment.CommentPostRequest;
+import com.codewarts.noriter.comment.dto.comment.CommentCreateRequest;
 import com.codewarts.noriter.comment.dto.comment.CommentUpdateRequest;
-import com.codewarts.noriter.comment.dto.recomment.ReCommentEditRequest;
-import com.codewarts.noriter.comment.dto.recomment.ReCommentRequest;
+import com.codewarts.noriter.comment.dto.recomment.ReCommentUpdateRequest;
+import com.codewarts.noriter.comment.dto.recomment.ReCommentCreateRequest;
 import com.codewarts.noriter.comment.repository.CommentRepository;
 import com.codewarts.noriter.comment.repository.ReCommentRepository;
 import com.codewarts.noriter.exception.GlobalNoriterException;
@@ -30,7 +30,7 @@ public class CommentService {
     private final ArticleRepository articleRepository;
     private final MemberService memberService;
 
-    public void createComment(Long memberId, Long articleId, CommentPostRequest request) {
+    public void createComment(Long memberId, Long articleId, CommentCreateRequest request) {
         Member member = memberService.findMember(memberId);
         Article article = findNotDeletedArticle(articleId);
         Comment comment = request.toEntity(article, member);
@@ -56,7 +56,7 @@ public class CommentService {
     }
 
     public void createReComment(Long articleId, Long commentId, Long memberId,
-        ReCommentRequest request) {
+        ReCommentCreateRequest request) {
         Member member = memberService.findMember(memberId);
         Article article = findNotDeletedArticle(articleId);
 
@@ -68,7 +68,7 @@ public class CommentService {
     }
 
     public void updateReComment(Long articleId, Long commentId, Long recommentId, Long memberId,
-        ReCommentEditRequest request) {
+        ReCommentUpdateRequest request) {
         Member member = memberService.findMember(memberId);
         Article article = findNotDeletedArticle(articleId);
 

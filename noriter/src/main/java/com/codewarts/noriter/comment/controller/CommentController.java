@@ -1,9 +1,9 @@
 package com.codewarts.noriter.comment.controller;
 
-import com.codewarts.noriter.comment.dto.comment.CommentPostRequest;
+import com.codewarts.noriter.comment.dto.comment.CommentCreateRequest;
 import com.codewarts.noriter.comment.dto.comment.CommentUpdateRequest;
-import com.codewarts.noriter.comment.dto.recomment.ReCommentEditRequest;
-import com.codewarts.noriter.comment.dto.recomment.ReCommentRequest;
+import com.codewarts.noriter.comment.dto.recomment.ReCommentUpdateRequest;
+import com.codewarts.noriter.comment.dto.recomment.ReCommentCreateRequest;
 import com.codewarts.noriter.comment.service.CommentService;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -31,7 +31,7 @@ public class CommentController {
         @PathVariable(required = false)
         @NotNull(message = "ID가 비어있습니다.")
         @Positive(message = "게시글 ID는 양수이어야 합니다.") Long articleId,
-        @RequestBody @Valid CommentPostRequest commentRequest,
+        @RequestBody @Valid CommentCreateRequest commentRequest,
         HttpServletRequest request) {
         Long memberId = getMemberId(request);
         commentService.createComment(memberId, articleId, commentRequest);
@@ -72,11 +72,11 @@ public class CommentController {
         @PathVariable(required = false)
         @NotNull(message = "ID가 비어있습니다.")
         @Positive(message = "댓글 ID는 양수이어야 합니다.") Long commentId,
-        @RequestBody @Valid ReCommentRequest reCommentRequest,
+        @RequestBody @Valid ReCommentCreateRequest reCommentCreateRequest,
         HttpServletRequest request) {
 
         Long memberId = getMemberId(request);
-        commentService.createReComment(articleId, commentId, memberId, reCommentRequest);
+        commentService.createReComment(articleId, commentId, memberId, reCommentCreateRequest);
     }
 
     @PutMapping("/{commentId}/recomment/{recommentId}")
@@ -90,12 +90,12 @@ public class CommentController {
         @NotNull(message = "ID가 비어있습니다.")
         @PathVariable(required = false)
         @Positive(message = "대댓글 ID는 양수이어야 합니다.") Long recommentId,
-        @RequestBody @Valid ReCommentEditRequest reCommentEditRequest,
+        @RequestBody @Valid ReCommentUpdateRequest reCommentUpdateRequest,
         HttpServletRequest request) {
 
         Long memberId = getMemberId(request);
         commentService.updateReComment(
-            articleId, commentId, recommentId, memberId, reCommentEditRequest);
+            articleId, commentId, recommentId, memberId, reCommentUpdateRequest);
     }
 
     @DeleteMapping("/{commentId}/recomment/{recommentId}")

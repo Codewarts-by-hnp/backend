@@ -1,7 +1,8 @@
-package com.codewarts.noriter.article.dto.free;
+package com.codewarts.noriter.article.dto.study;
 
-import com.codewarts.noriter.article.domain.Article;
 import com.codewarts.noriter.article.domain.Hashtag;
+import com.codewarts.noriter.article.domain.Study;
+import com.codewarts.noriter.article.domain.type.StatusType;
 import com.codewarts.noriter.comment.dto.comment.CommentResponse;
 import com.codewarts.noriter.member.dto.WriterInfoResponse;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -13,7 +14,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class FreeDetailResponse {
+public class GatheringDetailResponse {
 
     private Long id;
     private String title;
@@ -27,22 +28,24 @@ public class FreeDetailResponse {
     private LocalDateTime editedTime;
     private boolean wish;
     private int wishCount;
+    private StatusType status;
     private List<CommentResponse> comment;
 
-    public FreeDetailResponse(Article article, boolean sameWriter, boolean wish) {
-        this.id = article.getId();
-        this.title = article.getTitle();
-        this.content = article.getContent();
-        this.writer = new WriterInfoResponse(article.getWriter());
+    public GatheringDetailResponse(Study study, boolean sameWriter, boolean wish) {
+        this.id = study.getId();
+        this.title = study.getTitle();
+        this.content = study.getContent();
+        this.writer = new WriterInfoResponse(study.getWriter());
         this.sameWriter = sameWriter;
-        this.hashtags = article.getHashtags().stream()
+        this.hashtags = study.getHashtags().stream()
             .map(Hashtag::getContent)
             .collect(Collectors.toList());
-        this.writtenTime = article.getWrittenTime();
-        this.editedTime = article.getEditedTime();
+        this.writtenTime = study.getWrittenTime();
+        this.editedTime = study.getEditedTime();
         this.wish = wish;
-        this.wishCount = article.getWishList().size();
-        this.comment = article.getComments().stream()
+        this.wishCount = study.getWishList().size();
+        this.status = study.getStatus();
+        this.comment = study.getComments().stream()
             .map(CommentResponse::new)
             .collect(Collectors.toList());
     }

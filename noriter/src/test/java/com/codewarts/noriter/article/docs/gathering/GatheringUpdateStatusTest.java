@@ -1,6 +1,10 @@
-package com.codewarts.noriter.article.docs.study;
+package com.codewarts.noriter.article.docs.gathering;
 
+import static com.codewarts.noriter.exception.type.ArticleExceptionType.ALREADY_CHANGED_STATUS;
+import static com.codewarts.noriter.exception.type.ArticleExceptionType.ARTICLE_NOT_FOUND;
 import static com.codewarts.noriter.exception.type.ArticleExceptionType.ARTICLE_NOT_MATCHED_WRITER;
+import static com.codewarts.noriter.exception.type.CommonExceptionType.INCORRECT_REQUEST_VALUE;
+import static com.codewarts.noriter.exception.type.CommonExceptionType.INVALID_REQUEST;
 import static com.codewarts.noriter.exception.type.MemberExceptionType.MEMBER_NOT_FOUND;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
@@ -16,11 +20,10 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.re
 import static org.springframework.restdocs.restassured3.RestAssuredRestDocumentation.documentationConfiguration;
 
 import com.codewarts.noriter.auth.jwt.JwtProvider;
-import com.codewarts.noriter.exception.type.ArticleExceptionType;
-import com.codewarts.noriter.exception.type.CommonExceptionType;
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.specification.RequestSpecification;
+import java.util.Collections;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -39,7 +42,7 @@ import org.springframework.test.context.jdbc.Sql;
 @ExtendWith({RestDocumentationExtension.class})
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Sql("classpath:/data.sql")
-class StudyDeleteTest {
+class GatheringUpdateStatusTest {
 
     @LocalServerPort
     int port;
@@ -69,20 +72,22 @@ class StudyDeleteTest {
     }
 
     @Test
-    void 게시글을_삭제한다() {
+    void 게시글의_모집상태를_변경한다() {
         String accessToken = jwtProvider.issueAccessToken(1L);
 
         given(documentationSpec)
             .contentType(APPLICATION_JSON_VALUE)
             .header(AUTHORIZATION, accessToken)
-            .pathParam("id", 2)
+            .pathParam("id", 1)
+            .body(Collections.singletonMap("status", "complete"))
 
             .when()
-            .delete("/community/gathering/{id}")
+            .patch("/community/gathering/{id}")
 
             .then()
             .statusCode(HttpStatus.OK.value());
     }
+
     @Test
     void Path_Variable이_없는_경우_예외를_발생시킨다() {
         String accessToken = jwtProvider.issueAccessToken(1L);
@@ -90,15 +95,16 @@ class StudyDeleteTest {
         given(documentationSpec)
             .contentType(APPLICATION_JSON_VALUE)
             .header(AUTHORIZATION, accessToken)
-            .pathParam("id", "  ")
+            .pathParam("id", " ")
+            .body(Collections.singletonMap("status", "complete"))
 
             .when()
-            .delete("/community/gathering/{id}")
+            .patch("/community/gathering/{id}")
 
             .then()
-            .statusCode(CommonExceptionType.INVALID_REQUEST.getStatus().value())
-            .body("errorCode", equalTo(CommonExceptionType.INVALID_REQUEST.getErrorCode()))
-            .body("message", equalTo("gatheringRemove.id: ID가 비어있습니다."));
+            .statusCode(INVALID_REQUEST.getStatus().value())
+            .body("errorCode", equalTo(INVALID_REQUEST.getErrorCode()))
+            .body("message", equalTo("changeStatus.id: ID가 비어있습니다."));
     }
 
     @Test
@@ -109,32 +115,35 @@ class StudyDeleteTest {
             .contentType(APPLICATION_JSON_VALUE)
             .header(AUTHORIZATION, accessToken)
             .pathParam("id", -1)
+            .body(Collections.singletonMap("status", "complete"))
 
             .when()
-            .delete("/community/gathering/{id}")
+            .patch("/community/gathering/{id}")
 
             .then()
-            .statusCode(CommonExceptionType.INVALID_REQUEST.getStatus().value())
-            .body("errorCode", equalTo(CommonExceptionType.INVALID_REQUEST.getErrorCode()))
-            .body("message", equalTo("gatheringRemove.id: 게시글 ID는 양수이어야 합니다."));
+            .statusCode(INVALID_REQUEST.getStatus().value())
+            .body("errorCode", equalTo(INVALID_REQUEST.getErrorCode()))
+            .body("message", equalTo("changeStatus.id: 게시글 ID는 양수이어야 합니다."));
     }
 
     @Test
-    void id가_존재하지_않는_경우_예외를_발생시킨다() {
+    void 필수값이_비어있을_경우_예외가_발생한다() {
         String accessToken = jwtProvider.issueAccessToken(1L);
 
         given(documentationSpec)
             .contentType(APPLICATION_JSON_VALUE)
             .header(AUTHORIZATION, accessToken)
-            .pathParam("id", 999999)
+            .pathParam("id", 1)
+            .body(Collections.singletonMap("status", " "))
 
             .when()
-            .delete("/community/gathering/{id}")
+            .patch("/community/gathering/{id}")
 
             .then()
-            .statusCode(ArticleExceptionType.ARTICLE_NOT_FOUND.getStatus().value())
-            .body("errorCode", equalTo(ArticleExceptionType.ARTICLE_NOT_FOUND.getErrorCode()))
-            .body("message", equalTo(ArticleExceptionType.ARTICLE_NOT_FOUND.getErrorMessage()));
+            .statusCode(INCORRECT_REQUEST_VALUE.getStatus().value())
+            .body("errorCode", equalTo(INCORRECT_REQUEST_VALUE.getErrorCode()))
+            .body("message", equalTo(INCORRECT_REQUEST_VALUE.getErrorMessage()));
+
     }
 
     @Test
@@ -144,10 +153,11 @@ class StudyDeleteTest {
         given(documentationSpec)
             .contentType(APPLICATION_JSON_VALUE)
             .header(AUTHORIZATION, accessToken)
-            .pathParam("id", 1)
+            .pathParam("id", 9999999)
+            .body(Collections.singletonMap("status", "complete"))
 
             .when()
-            .delete("/community/gathering/{id}")
+            .patch("/community/gathering/{id}")
 
             .then()
             .statusCode(MEMBER_NOT_FOUND.getStatus().value())
@@ -156,20 +166,59 @@ class StudyDeleteTest {
     }
 
     @Test
-    void 작성자가_일치하지_않는_경우_예외가_발생한다() {
+    void id가_존재하지_않는_경우_예외를_발생시킨다() {
+        String accessToken = jwtProvider.issueAccessToken(1L);
+
+        given(documentationSpec)
+            .contentType(APPLICATION_JSON_VALUE)
+            .header(AUTHORIZATION, accessToken)
+            .pathParam("id", 9999999)
+            .body(Collections.singletonMap("status", "complete"))
+
+            .when()
+            .patch("/community/gathering/{id}")
+
+            .then()
+            .statusCode(ARTICLE_NOT_FOUND.getStatus().value())
+            .body("errorCode", equalTo(ARTICLE_NOT_FOUND.getErrorCode()))
+            .body("message", equalTo(ARTICLE_NOT_FOUND.getErrorMessage()));
+    }
+
+    @Test
+    void 다른_회원의_상태변경을_요청할_경우_예외를_발생시킨다() {
         String accessToken = jwtProvider.issueAccessToken(2L);
 
         given(documentationSpec)
             .contentType(APPLICATION_JSON_VALUE)
             .header(AUTHORIZATION, accessToken)
             .pathParam("id", 1)
+            .body(Collections.singletonMap("status", "incomplete"))
 
             .when()
-            .delete("/community/gathering/{id}")
+            .patch("/community/gathering/{id}")
 
             .then()
             .statusCode(ARTICLE_NOT_MATCHED_WRITER.getStatus().value())
-            .body("errorCode", equalTo(ARTICLE_NOT_MATCHED_WRITER.getErrorCode()));
+            .body("errorCode", equalTo(ARTICLE_NOT_MATCHED_WRITER.getErrorCode()))
+            .body("message", equalTo(ARTICLE_NOT_MATCHED_WRITER.getErrorMessage()));
     }
 
+    @Test
+    void 현재와_같은_상태변경으_요청할_경우_예외가_발생한다() {
+        String accessToken = jwtProvider.issueAccessToken(1L);
+
+        given(documentationSpec)
+            .contentType(APPLICATION_JSON_VALUE)
+            .header(AUTHORIZATION, accessToken)
+            .pathParam("id", 1)
+            .body(Collections.singletonMap("status", "incomplete"))
+
+            .when()
+            .patch("/community/gathering/{id}")
+
+            .then()
+            .statusCode(ALREADY_CHANGED_STATUS.getStatus().value())
+            .body("errorCode", equalTo(ALREADY_CHANGED_STATUS.getErrorCode()))
+            .body("message", equalTo(ALREADY_CHANGED_STATUS.getErrorMessage()));
+    }
 }

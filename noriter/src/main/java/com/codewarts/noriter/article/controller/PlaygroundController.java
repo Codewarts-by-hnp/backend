@@ -1,11 +1,11 @@
 package com.codewarts.noriter.article.controller;
 
 
-import com.codewarts.noriter.article.dto.free.FreeDetailResponse;
-import com.codewarts.noriter.article.dto.free.FreeEditRequest;
-import com.codewarts.noriter.article.dto.free.FreeListResponse;
-import com.codewarts.noriter.article.dto.free.FreePostRequest;
-import com.codewarts.noriter.article.service.FreeService;
+import com.codewarts.noriter.article.dto.free.PlaygroundDetailResponse;
+import com.codewarts.noriter.article.dto.free.PlaygroundUpdateRequest;
+import com.codewarts.noriter.article.dto.free.PlaygroundListResponse;
+import com.codewarts.noriter.article.dto.free.PlaygroundCreateRequest;
+import com.codewarts.noriter.article.service.PlaygroundService;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -26,51 +26,51 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/community/playground")
 @Validated
-public class FreeController {
+public class PlaygroundController {
 
-    private final FreeService freeService;
+    private final PlaygroundService playgroundService;
 
     @PostMapping
-    public Long register(@RequestBody @Valid FreePostRequest freePostRequest,
+    public Long register(@RequestBody @Valid PlaygroundCreateRequest playgroundCreateRequest,
         HttpServletRequest request) {
         Long memberId = getMemberId(request);
-        return freeService.create(freePostRequest, memberId);
+        return playgroundService.create(playgroundCreateRequest, memberId);
     }
 
     @GetMapping("/{id}")
-    public FreeDetailResponse freeDetail(
+    public PlaygroundDetailResponse getDetail(
         @PathVariable(required = false)
         @NotNull(message = "ID가 비어있습니다.")
         @Positive(message = "게시글 ID는 양수이어야 합니다.") Long id, HttpServletRequest request) {
         Long memberId = getMemberId(request);
-        return freeService.findDetail(id, memberId);
+        return playgroundService.findDetail(id, memberId);
     }
 
     @GetMapping
-    public List<FreeListResponse> freeList(HttpServletRequest request) {
+    public List<PlaygroundListResponse> getList(HttpServletRequest request) {
         Long memberId = getMemberId(request);
-        return freeService.findList(memberId);
+        return playgroundService.findList(memberId);
     }
 
     @PutMapping("/{id}")
-    public void freeEdit(
+    public void edit(
         @PathVariable(required = false)
         @NotNull(message = "ID가 비어있습니다.")
         @Positive(message = "게시글 ID는 양수이어야 합니다.") Long id,
-        @RequestBody @Valid FreeEditRequest freeEditRequest,
+        @RequestBody @Valid PlaygroundUpdateRequest playgroundUpdateRequest,
         HttpServletRequest request) {
         Long memberId = getMemberId(request);
-        freeService.update(id, freeEditRequest, memberId);
+        playgroundService.update(id, playgroundUpdateRequest, memberId);
     }
 
     @DeleteMapping("/{id}")
-    public void freeRemove(
+    public void remove(
         @PathVariable(required = false)
         @NotNull(message = "ID가 비어있습니다.")
         @Positive(message = "게시글 ID는 양수이어야 합니다.") Long id,
         HttpServletRequest request) {
         Long memberId = getMemberId(request);
-        freeService.delete(id, memberId);
+        playgroundService.delete(id, memberId);
     }
 
     private Long getMemberId(HttpServletRequest request) {

@@ -1,11 +1,11 @@
 package com.codewarts.noriter.article.controller;
 
-import com.codewarts.noriter.article.dto.study.StudyDetailResponse;
-import com.codewarts.noriter.article.dto.study.StudyEditRequest;
-import com.codewarts.noriter.article.dto.study.StudyListResponse;
-import com.codewarts.noriter.article.dto.study.StudyPostRequest;
+import com.codewarts.noriter.article.dto.study.GatheringDetailResponse;
+import com.codewarts.noriter.article.dto.study.GatheringUpdateRequest;
+import com.codewarts.noriter.article.dto.study.GatheringListResponse;
+import com.codewarts.noriter.article.dto.study.GatheringCreateRequest;
 import com.codewarts.noriter.article.domain.type.StatusType;
-import com.codewarts.noriter.article.service.StudyService;
+import com.codewarts.noriter.article.service.GatheringService;
 import com.codewarts.noriter.exception.GlobalNoriterException;
 import com.codewarts.noriter.exception.type.CommonExceptionType;
 import java.util.List;
@@ -32,67 +32,67 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/community/gathering")
 @Validated
-public class StudyController {
+public class GatheringController {
 
-    private final StudyService studyService;
+    private final GatheringService gatheringService;
     private final ConversionService conversionService;
 
     @PostMapping
-    public Long register(@RequestBody @Valid StudyPostRequest studyPostRequest,
+    public Long register(@RequestBody @Valid GatheringCreateRequest gatheringCreateRequest,
         HttpServletRequest request) {
         Long memberId = getMemberId(request);
-        return studyService.create(studyPostRequest, memberId);
+        return gatheringService.create(gatheringCreateRequest, memberId);
     }
 
     @GetMapping
-    public List<StudyListResponse> gatheringList(
+    public List<GatheringListResponse> getList(
         @RequestParam(required = false)  Map<String, String> paramMap, HttpServletRequest request) {
         Long memberId = getMemberId(request);
 
         if (paramMap.isEmpty()) {
-            return studyService.findList(null, memberId);
+            return gatheringService.findList(null, memberId);
         }
         if (paramMap.size() == 1 && paramMap.containsKey("status")) {
             StatusType status = conversionService.convert(paramMap.get("status"), StatusType.class);
-            return studyService.findList(status, memberId);
+            return gatheringService.findList(status, memberId);
         }
         throw new GlobalNoriterException(CommonExceptionType.INCORRECT_REQUEST_PARAM);
     }
 
     @GetMapping("/{id}")
-    public StudyDetailResponse gatheringDetail(@PathVariable(required = false)
+    public GatheringDetailResponse getDetail(@PathVariable(required = false)
     @NotNull(message = "ID가 비어있습니다.")
     @Positive(message = "게시글 ID는 양수이어야 합니다.") Long id, HttpServletRequest request) {
         Long memberId = getMemberId(request);
-        return studyService.findDetail(id, memberId);
+        return gatheringService.findDetail(id, memberId);
     }
 
     @DeleteMapping("/{id}")
-    public void gatheringRemove(@PathVariable(required = false)
+    public void remove(@PathVariable(required = false)
     @NotNull(message = "ID가 비어있습니다.")
     @Positive(message = "게시글 ID는 양수이어야 합니다.") Long id, HttpServletRequest request) {
         Long memberId = getMemberId(request);
-        studyService.delete(id, memberId);
+        gatheringService.delete(id, memberId);
     }
 
     @PatchMapping("/{id}")
-    public void recruitmentCompletionUpdate(@PathVariable(required = false)
+    public void changeStatus(@PathVariable(required = false)
     @NotNull(message = "ID가 비어있습니다.")
     @Positive(message = "게시글 ID는 양수이어야 합니다.") Long id,
         @RequestBody Map<String, StatusType> map,
         HttpServletRequest request) {
         Long memberId = getMemberId(request);
-        studyService.updateCompletion(id, memberId, map.get("status"));
+        gatheringService.updateCompletion(id, memberId, map.get("status"));
     }
 
     @PutMapping("/{id}")
-    public void gatheringEdit(@PathVariable(required = false)
+    public void edit(@PathVariable(required = false)
     @NotNull(message = "ID가 비어있습니다.")
     @Positive(message = "게시글 ID는 양수이어야 합니다.") Long id,
-        @RequestBody @Valid StudyEditRequest studyEditRequest,
+        @RequestBody @Valid GatheringUpdateRequest gatheringUpdateRequest,
         HttpServletRequest request) {
         Long memberId = getMemberId(request);
-        studyService.update(id, studyEditRequest, memberId);
+        gatheringService.update(id, gatheringUpdateRequest, memberId);
     }
 
     private Long getMemberId(HttpServletRequest request) {

@@ -1,10 +1,10 @@
 package com.codewarts.noriter.article.service;
 
 import com.codewarts.noriter.article.domain.Article;
-import com.codewarts.noriter.article.dto.free.FreeDetailResponse;
-import com.codewarts.noriter.article.dto.free.FreeEditRequest;
-import com.codewarts.noriter.article.dto.free.FreeListResponse;
-import com.codewarts.noriter.article.dto.free.FreePostRequest;
+import com.codewarts.noriter.article.dto.free.PlaygroundDetailResponse;
+import com.codewarts.noriter.article.dto.free.PlaygroundUpdateRequest;
+import com.codewarts.noriter.article.dto.free.PlaygroundListResponse;
+import com.codewarts.noriter.article.dto.free.PlaygroundCreateRequest;
 import com.codewarts.noriter.article.domain.type.ArticleType;
 import com.codewarts.noriter.article.repository.ArticleRepository;
 import com.codewarts.noriter.exception.GlobalNoriterException;
@@ -21,50 +21,50 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class FreeService {
+public class PlaygroundService {
 
     private final ArticleRepository articleRepository;
     private final WishRepository wishRepository;
     private final MemberService memberService;
 
     @Transactional
-    public Long create(FreePostRequest freePostRequest, Long writerId) {
+    public Long create(PlaygroundCreateRequest playgroundCreateRequest, Long writerId) {
         Member member = memberService.findMember(writerId);
-        Article free = freePostRequest.toEntity(member);
-        free.addHashtags(freePostRequest.getHashtags());
+        Article free = playgroundCreateRequest.toEntity(member);
+        free.addHashtags(playgroundCreateRequest.getHashtags());
         return articleRepository.save(free).getId();
     }
 
-    public FreeDetailResponse findDetail(Long id, Long memberId) {
+    public PlaygroundDetailResponse findDetail(Long id, Long memberId) {
         Article article = findNotDeletedArticle(id);
         Long writerId = article.getWriter().getId();
         boolean sameWriter = writerId.equals(memberId);
         if (memberId == null) {
-            return new FreeDetailResponse(article, sameWriter, false);
+            return new PlaygroundDetailResponse(article, sameWriter, false);
         }
         Member member = memberService.findMember(memberId);
         boolean wish = wishRepository.existsByArticleAndMember(article, member);
-        return new FreeDetailResponse(article, sameWriter, wish);
+        return new PlaygroundDetailResponse(article, sameWriter, wish);
     }
 
-    public List<FreeListResponse> findList(Long memberId) {
+    public List<PlaygroundListResponse> findList(Long memberId) {
         List<Article> freeTypeArticle = articleRepository.findAllByArticleType(ArticleType.FREE);
         if (memberId == null) {
             return freeTypeArticle.stream()
-                .map(article -> new FreeListResponse(article, false, false))
+                .map(article -> new PlaygroundListResponse(article, false, false))
                     .collect(Collectors.toList());
         }
         Member member = memberService.findMember(memberId);
         // Todo -> N+1 해결하기
         return freeTypeArticle.stream()
-            .map(article -> new FreeListResponse(article,
+            .map(article -> new PlaygroundListResponse(article,
                 article.getWriter().getId().equals(memberId),
                 wishRepository.existsByArticleAndMember(article, member)))
             .collect(Collectors.toList());
     }
 
     @Transactional
-    public void update(Long id, FreeEditRequest request, Long writerId) {
+    public void update(Long id, PlaygroundUpdateRequest request, Long writerId) {
         memberService.findMember(writerId);
         Article free = findNotDeletedArticle(id);
         free.validateWriterOrThrow(writerId);

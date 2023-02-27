@@ -1,5 +1,7 @@
-package com.codewarts.noriter.article.docs.free;
+package com.codewarts.noriter.article.docs.gathering;
 
+import static com.codewarts.noriter.exception.type.CommonExceptionType.INVALID_REQUEST;
+import static com.codewarts.noriter.exception.type.MemberExceptionType.MEMBER_NOT_FOUND;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
@@ -17,6 +19,8 @@ import com.codewarts.noriter.auth.jwt.JwtProvider;
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.specification.RequestSpecification;
+import java.util.List;
+import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -37,7 +41,7 @@ import org.springframework.test.context.jdbc.Sql;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Profile({"test"})
 @Sql("classpath:/data.sql")
-class FreeListTest {
+class GatheringCreateTest {
 
     @LocalServerPort
     int port;
@@ -67,54 +71,64 @@ class FreeListTest {
     }
 
     @Test
-    void 리스트를_조회한다() {
-
-        given(documentationSpec)
-            .contentType(APPLICATION_JSON_VALUE)
-
-            .when()
-            .get("/community/playground")
-
-            .then()
-            .statusCode(HttpStatus.OK.value())
-            .body("[0].id", equalTo(10))
-            .body("[0].title", equalTo("붕어빵 먹고싶어요"))
-            .body("[0].content", equalTo("강남 붕어빵 맛잇는 집"))
-            .body("[0].writerNickname", equalTo("admin2"))
-            .body("[0].sameWriter", equalTo(false))
-            .body("[0].writtenTime", equalTo("2022-11-25 16:25:58"))
-            .body("[0].editedTime", equalTo("2022-11-25 16:25:58"))
-            .body("[0].hashtags[0]", equalTo("강남역"))
-            .body("[0].hashtags[1]", equalTo("붕어팥"))
-            .body("[0].wish", equalTo(false))
-            .body("[0].wishCount", equalTo(1))
-            .body("[0].commentCount", equalTo(1));
-    }
-
-    @Test
-    void 로그인_후_리스트를_조회한다() {
+    void 글을_등록한다() {
         String accessToken = jwtProvider.issueAccessToken(2L);
+
+        Map<String, Object> requestBody = Map.of("title", "안녕하세용",
+            "content", "헬륨가스를모곳지", "hashtags", List.of("SPRING", "JPA", "코린이"));
 
         given(documentationSpec)
             .contentType(APPLICATION_JSON_VALUE)
             .header(AUTHORIZATION, accessToken)
+            .body(requestBody)
 
             .when()
-            .get("/community/playground")
+            .post("/community/gathering")
 
             .then()
-            .statusCode(HttpStatus.OK.value())
-            .body("[0].id", equalTo(10))
-            .body("[0].title", equalTo("붕어빵 먹고싶어요"))
-            .body("[0].content", equalTo("강남 붕어빵 맛잇는 집"))
-            .body("[0].writerNickname", equalTo("admin2"))
-            .body("[0].sameWriter", equalTo(true))
-            .body("[0].writtenTime", equalTo("2022-11-25 16:25:58"))
-            .body("[0].editedTime", equalTo("2022-11-25 16:25:58"))
-            .body("[0].hashtags[0]", equalTo("강남역"))
-            .body("[0].hashtags[1]", equalTo("붕어팥"))
-            .body("[0].wish", equalTo(true))
-            .body("[0].wishCount", equalTo(1))
-            .body("[0].commentCount", equalTo(1));
+            .statusCode(HttpStatus.OK.value());
     }
+
+    @Test
+    void 필수값이_비어있을_경우_예외가_발생한다() {
+        String accessToken = jwtProvider.issueAccessToken(2L);
+
+        Map<String, Object> requestBody = Map.of("title", "안녕하세용",
+            "hashtags", List.of("SPRING", "JPA", "코린이"));
+
+        given(documentationSpec)
+            .contentType(APPLICATION_JSON_VALUE)
+            .header(AUTHORIZATION, accessToken)
+            .body(requestBody)
+
+            .when()
+            .post("/community/gathering")
+
+            .then()
+            .body("errorCode", equalTo(INVALID_REQUEST.getErrorCode()))
+            .body("message", equalTo(INVALID_REQUEST.getErrorMessage()))
+            .body("detail.content", equalTo("내용은 필수입니다."));
+    }
+
+    @Test
+    void 존재하지_않는_회원인_경우_예외가_발생한다() {
+        String accessToken = jwtProvider.issueAccessToken(222222L);
+
+        Map<String, Object> requestBody = Map.of("title", "안녕하세용",
+            "content", "헬륨가스를모곳지", "hashtags", List.of("SPRING", "JPA", "코린이"));
+
+        given(documentationSpec)
+            .contentType(APPLICATION_JSON_VALUE)
+            .header(AUTHORIZATION, accessToken)
+            .body(requestBody)
+
+            .when()
+            .post("/community/gathering")
+
+            .then()
+            .statusCode(MEMBER_NOT_FOUND.getStatus().value())
+            .body("errorCode", equalTo(MEMBER_NOT_FOUND.getErrorCode()))
+            .body("message", equalTo(MEMBER_NOT_FOUND.getErrorMessage()));
+    }
+
 }

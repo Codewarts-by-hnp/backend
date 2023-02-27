@@ -3,7 +3,7 @@ package com.codewarts.noriter.article.service;
 import com.codewarts.noriter.article.domain.Question;
 import com.codewarts.noriter.article.dto.question.QuestionDetailResponse;
 import com.codewarts.noriter.article.dto.question.QuestionListResponse;
-import com.codewarts.noriter.article.dto.question.QuestionPostRequest;
+import com.codewarts.noriter.article.dto.question.QuestionCreateRequest;
 import com.codewarts.noriter.article.dto.question.QuestionUpdateRequest;
 import com.codewarts.noriter.article.domain.type.StatusType;
 import com.codewarts.noriter.article.repository.ArticleRepository;
@@ -31,7 +31,7 @@ public class QuestionService {
 
     // 질문 등록 기능
     @Transactional
-    public Long create(QuestionPostRequest request, Long memberId) {
+    public Long create(QuestionCreateRequest request, Long memberId) {
         Member writer = memberService.findMember(memberId);
         Question question = request.toEntity(writer);
         question.addHashtags(request.getHashtags());

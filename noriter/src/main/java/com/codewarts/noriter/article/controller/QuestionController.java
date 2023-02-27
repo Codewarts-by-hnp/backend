@@ -2,7 +2,7 @@ package com.codewarts.noriter.article.controller;
 
 import com.codewarts.noriter.article.dto.question.QuestionDetailResponse;
 import com.codewarts.noriter.article.dto.question.QuestionListResponse;
-import com.codewarts.noriter.article.dto.question.QuestionPostRequest;
+import com.codewarts.noriter.article.dto.question.QuestionCreateRequest;
 import com.codewarts.noriter.article.dto.question.QuestionUpdateRequest;
 import com.codewarts.noriter.article.domain.type.StatusType;
 import com.codewarts.noriter.article.service.QuestionService;
@@ -38,14 +38,14 @@ public class QuestionController {
     private final ConversionService conversionService;
 
     @PostMapping
-    public Long register(@RequestBody @Valid QuestionPostRequest postRequest,
+    public Long register(@RequestBody @Valid QuestionCreateRequest postRequest,
         HttpServletRequest request) {
         Long memberId = getMemberId(request);
         return questionService.create(postRequest, memberId);
     }
 
     @GetMapping
-    public List<QuestionListResponse> questionList(@RequestParam Map<String, String> paramMap,
+    public List<QuestionListResponse> getList(@RequestParam Map<String, String> paramMap,
         HttpServletRequest request) {
         Long memberId = getMemberId(request);
         if (paramMap.isEmpty()) {
@@ -59,7 +59,7 @@ public class QuestionController {
     }
 
     @GetMapping("/{id}")
-    public QuestionDetailResponse questionDetail(
+    public QuestionDetailResponse getDetail(
         @PathVariable(required = false)
         @NotNull(message = "ID가 비어있습니다.")
         @Positive(message = "게시글 ID는 양수이어야 합니다.") Long id, HttpServletRequest request) {
@@ -68,7 +68,7 @@ public class QuestionController {
     }
 
     @DeleteMapping("/{id}")
-    public void questionRemove(
+    public void remove(
         @PathVariable(required = false)
         @NotNull(message = "ID가 비어있습니다.")
         @Positive(message = "게시글 ID는 양수이어야 합니다.") Long id,
@@ -78,7 +78,7 @@ public class QuestionController {
     }
 
     @PutMapping("/{id}")
-    public void questionEdit(
+    public void edit(
         @PathVariable(required = false)
         @NotNull(message = "ID가 비어있습니다.")
         @Positive(message = "게시글 ID는 양수이어야 합니다.") Long id,
@@ -89,7 +89,7 @@ public class QuestionController {
     }
 
     @PatchMapping("/{id}")
-    public void questionChangeStatus(
+    public void changeStatus(
         @PathVariable(required = false)
         @NotNull(message = "ID가 비어있습니다.")
         @Positive(message = "게시글 ID는 양수이어야 합니다.") Long id,

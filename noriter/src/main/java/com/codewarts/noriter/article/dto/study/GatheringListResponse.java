@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class StudyListResponse {
+public class GatheringListResponse {
 
     private Long id;
     private String title;
@@ -29,7 +29,7 @@ public class StudyListResponse {
     private int commentCount;
     private StatusType status;
 
-    public StudyListResponse(Study study, boolean sameWriter, boolean wish) {
+    public GatheringListResponse(Study study, boolean sameWriter, boolean wish) {
         this.id = study.getId();
         this.title = study.getTitle();
         this.content = study.getContent();
