@@ -1,10 +1,10 @@
 package com.codewarts.noriter.article.service;
 
 import com.codewarts.noriter.article.domain.Study;
-import com.codewarts.noriter.article.dto.study.GatheringDetailResponse;
-import com.codewarts.noriter.article.dto.study.GatheringUpdateRequest;
-import com.codewarts.noriter.article.dto.study.GatheringListResponse;
-import com.codewarts.noriter.article.dto.study.GatheringCreateRequest;
+import com.codewarts.noriter.article.dto.gathering.GatheringDetailResponse;
+import com.codewarts.noriter.article.dto.gathering.GatheringUpdateRequest;
+import com.codewarts.noriter.article.dto.gathering.GatheringListResponse;
+import com.codewarts.noriter.article.dto.gathering.GatheringCreateRequest;
 import com.codewarts.noriter.article.domain.type.StatusType;
 import com.codewarts.noriter.article.repository.ArticleRepository;
 import com.codewarts.noriter.article.repository.GatheringRepository;

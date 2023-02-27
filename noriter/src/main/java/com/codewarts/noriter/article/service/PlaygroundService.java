@@ -1,10 +1,10 @@
 package com.codewarts.noriter.article.service;
 
 import com.codewarts.noriter.article.domain.Article;
-import com.codewarts.noriter.article.dto.free.PlaygroundDetailResponse;
-import com.codewarts.noriter.article.dto.free.PlaygroundUpdateRequest;
-import com.codewarts.noriter.article.dto.free.PlaygroundListResponse;
-import com.codewarts.noriter.article.dto.free.PlaygroundCreateRequest;
+import com.codewarts.noriter.article.dto.playground.PlaygroundDetailResponse;
+import com.codewarts.noriter.article.dto.playground.PlaygroundUpdateRequest;
+import com.codewarts.noriter.article.dto.playground.PlaygroundListResponse;
+import com.codewarts.noriter.article.dto.playground.PlaygroundCreateRequest;
 import com.codewarts.noriter.article.domain.type.ArticleType;
 import com.codewarts.noriter.article.repository.ArticleRepository;
 import com.codewarts.noriter.exception.GlobalNoriterException;

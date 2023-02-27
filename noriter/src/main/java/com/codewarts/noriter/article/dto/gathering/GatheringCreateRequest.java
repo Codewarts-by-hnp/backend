@@ -1,4 +1,4 @@
-package com.codewarts.noriter.article.dto.study;
+package com.codewarts.noriter.article.dto.gathering;
 
 import com.codewarts.noriter.article.domain.Study;
 import com.codewarts.noriter.article.domain.type.ArticleType;

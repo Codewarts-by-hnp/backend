@@ -1,10 +1,10 @@
 package com.codewarts.noriter.article.controller;
 
 
-import com.codewarts.noriter.article.dto.free.PlaygroundDetailResponse;
-import com.codewarts.noriter.article.dto.free.PlaygroundUpdateRequest;
-import com.codewarts.noriter.article.dto.free.PlaygroundListResponse;
-import com.codewarts.noriter.article.dto.free.PlaygroundCreateRequest;
+import com.codewarts.noriter.article.dto.playground.PlaygroundDetailResponse;
+import com.codewarts.noriter.article.dto.playground.PlaygroundUpdateRequest;
+import com.codewarts.noriter.article.dto.playground.PlaygroundListResponse;
+import com.codewarts.noriter.article.dto.playground.PlaygroundCreateRequest;
 import com.codewarts.noriter.article.service.PlaygroundService;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;

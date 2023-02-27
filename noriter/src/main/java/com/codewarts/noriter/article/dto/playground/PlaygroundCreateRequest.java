@@ -1,4 +1,4 @@
-package com.codewarts.noriter.article.dto.free;
+package com.codewarts.noriter.article.dto.playground;
 
 import com.codewarts.noriter.article.domain.Article;
 import com.codewarts.noriter.article.domain.type.ArticleType;
