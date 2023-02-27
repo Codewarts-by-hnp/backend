@@ -1,6 +1,6 @@
 package com.codewarts.noriter.article.dto.gathering;
 
-import com.codewarts.noriter.article.domain.Study;
+import com.codewarts.noriter.article.domain.Gathering;
 import com.codewarts.noriter.article.domain.type.ArticleType;
 import com.codewarts.noriter.article.domain.type.StatusType;
 import com.codewarts.noriter.member.domain.Member;
@@ -20,14 +20,14 @@ public class GatheringCreateRequest {
     private String content;
     private List<String> hashtags;
 
-    public Study toEntity(Member writer) {
-        return Study.builder()
+    public Gathering toEntity(Member writer) {
+        return Gathering.builder()
             .title(title)
             .content(content)
             .writer(writer)
             .writtenTime(LocalDateTime.now())
             .editedTime(LocalDateTime.now())
-            .articleType(ArticleType.STUDY)
+            .articleType(ArticleType.GATHERING)
             .status(StatusType.INCOMPLETE)
             .build();
     }

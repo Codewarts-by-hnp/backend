@@ -17,12 +17,12 @@ import lombok.experimental.SuperBuilder;
 @Getter
 @SuperBuilder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Study extends Article {
+public class Gathering extends Article {
 
     @Enumerated(EnumType.STRING)
     private StatusType status;
 
-    public Study(String title, String content, Member writer, LocalDateTime writtenTime,
+    public Gathering(String title, String content, Member writer, LocalDateTime writtenTime,
         LocalDateTime editedTime, ArticleType articleType, StatusType status) {
         super(title, content, writer, writtenTime, editedTime, articleType);
         this.status = status;

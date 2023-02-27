@@ -1,7 +1,7 @@
 package com.codewarts.noriter.article.dto.gathering;
 
+import com.codewarts.noriter.article.domain.Gathering;
 import com.codewarts.noriter.article.domain.Hashtag;
-import com.codewarts.noriter.article.domain.Study;
 import com.codewarts.noriter.article.domain.type.StatusType;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDateTime;
@@ -29,19 +29,19 @@ public class GatheringListResponse {
     private int commentCount;
     private StatusType status;
 
-    public GatheringListResponse(Study study, boolean sameWriter, boolean wish) {
-        this.id = study.getId();
-        this.title = study.getTitle();
-        this.content = study.getContent();
-        this.writerNickname = study.getWriter().getNickname();
+    public GatheringListResponse(Gathering gathering, boolean sameWriter, boolean wish) {
+        this.id = gathering.getId();
+        this.title = gathering.getTitle();
+        this.content = gathering.getContent();
+        this.writerNickname = gathering.getWriter().getNickname();
         this.sameWriter = sameWriter;
-        this.hashtags = study.getHashtags().stream().map(Hashtag::getContent)
+        this.hashtags = gathering.getHashtags().stream().map(Hashtag::getContent)
             .collect(Collectors.toList());
-        this.writtenTime = study.getWrittenTime();
-        this.editedTime = study.getEditedTime();
+        this.writtenTime = gathering.getWrittenTime();
+        this.editedTime = gathering.getEditedTime();
         this.wish = wish;
-        this.wishCount = study.getWishList().size();
-        this.commentCount = study.getComments().size();
-        this.status = study.getStatus();
+        this.wishCount = gathering.getWishList().size();
+        this.commentCount = gathering.getComments().size();
+        this.status = gathering.getStatus();
     }
 }

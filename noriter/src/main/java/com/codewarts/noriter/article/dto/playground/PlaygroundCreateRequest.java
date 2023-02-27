@@ -26,7 +26,7 @@ public class PlaygroundCreateRequest {
             .writer(writer)
             .writtenTime(LocalDateTime.now())
             .editedTime(LocalDateTime.now())
-            .articleType(ArticleType.FREE)
+            .articleType(ArticleType.PLAYGROUND)
             .build();
     }
 }

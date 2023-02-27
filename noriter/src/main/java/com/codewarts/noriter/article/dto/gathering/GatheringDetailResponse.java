@@ -1,7 +1,7 @@
 package com.codewarts.noriter.article.dto.gathering;
 
+import com.codewarts.noriter.article.domain.Gathering;
 import com.codewarts.noriter.article.domain.Hashtag;
-import com.codewarts.noriter.article.domain.Study;
 import com.codewarts.noriter.article.domain.type.StatusType;
 import com.codewarts.noriter.comment.dto.comment.CommentResponse;
 import com.codewarts.noriter.member.dto.WriterInfoResponse;
@@ -31,21 +31,21 @@ public class GatheringDetailResponse {
     private StatusType status;
     private List<CommentResponse> comment;
 
-    public GatheringDetailResponse(Study study, boolean sameWriter, boolean wish) {
-        this.id = study.getId();
-        this.title = study.getTitle();
-        this.content = study.getContent();
-        this.writer = new WriterInfoResponse(study.getWriter());
+    public GatheringDetailResponse(Gathering gathering, boolean sameWriter, boolean wish) {
+        this.id = gathering.getId();
+        this.title = gathering.getTitle();
+        this.content = gathering.getContent();
+        this.writer = new WriterInfoResponse(gathering.getWriter());
         this.sameWriter = sameWriter;
-        this.hashtags = study.getHashtags().stream()
+        this.hashtags = gathering.getHashtags().stream()
             .map(Hashtag::getContent)
             .collect(Collectors.toList());
-        this.writtenTime = study.getWrittenTime();
-        this.editedTime = study.getEditedTime();
+        this.writtenTime = gathering.getWrittenTime();
+        this.editedTime = gathering.getEditedTime();
         this.wish = wish;
-        this.wishCount = study.getWishList().size();
-        this.status = study.getStatus();
-        this.comment = study.getComments().stream()
+        this.wishCount = gathering.getWishList().size();
+        this.status = gathering.getStatus();
+        this.comment = gathering.getComments().stream()
             .map(CommentResponse::new)
             .collect(Collectors.toList());
     }

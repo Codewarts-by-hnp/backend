@@ -1,6 +1,6 @@
 package com.codewarts.noriter.article.service;
 
-import com.codewarts.noriter.article.domain.Study;
+import com.codewarts.noriter.article.domain.Gathering;
 import com.codewarts.noriter.article.dto.gathering.GatheringDetailResponse;
 import com.codewarts.noriter.article.dto.gathering.GatheringUpdateRequest;
 import com.codewarts.noriter.article.dto.gathering.GatheringListResponse;
@@ -32,9 +32,9 @@ public class GatheringService {
     @Transactional
     public Long create(GatheringCreateRequest gatheringCreateRequest, Long memberId) {
         Member member = memberService.findMember(memberId);
-        Study study = gatheringCreateRequest.toEntity(member);
-        study.addHashtags(gatheringCreateRequest.getHashtags());
-        return gatheringRepository.save(study).getId();
+        Gathering gathering = gatheringCreateRequest.toEntity(member);
+        gathering.addHashtags(gatheringCreateRequest.getHashtags());
+        return gatheringRepository.save(gathering).getId();
     }
 
     public List<GatheringListResponse> findList(StatusType status, Long memberId) {
@@ -63,56 +63,56 @@ public class GatheringService {
     }
 
     public GatheringDetailResponse findDetail(Long id, Long memberId) {
-        Study study = findNotDeletedStudy(id);
-        boolean sameWriter = study.getWriter().getId().equals(memberId);
+        Gathering gathering = findNotDeletedStudy(id);
+        boolean sameWriter = gathering.getWriter().getId().equals(memberId);
 
         if (memberId == null) {
-            return new GatheringDetailResponse(study, false, false);
+            return new GatheringDetailResponse(gathering, false, false);
         }
         Member member = memberService.findMember(memberId);
-        boolean wish = wishRepository.existsByArticleAndMember(study, member);
+        boolean wish = wishRepository.existsByArticleAndMember(gathering, member);
 
-        return new GatheringDetailResponse(study, sameWriter, wish);
+        return new GatheringDetailResponse(gathering, sameWriter, wish);
     }
 
     @Transactional
     public void delete(Long id, Long writerId) {
         memberService.findMember(writerId);
-        Study study = findNotDeletedStudy(id);
-        study.validateWriterOrThrow(writerId);
-        study.delete();
+        Gathering gathering = findNotDeletedStudy(id);
+        gathering.validateWriterOrThrow(writerId);
+        gathering.delete();
     }
 
     @Transactional
     public void updateCompletion(Long id, Long writerId, StatusType status) {
         memberService.findMember(writerId);
-        Study study = findNotDeletedStudy(id);
-        study.validateWriterOrThrow(writerId);
+        Gathering gathering = findNotDeletedStudy(id);
+        gathering.validateWriterOrThrow(writerId);
 
-        if (study.getStatus() == status) {
+        if (gathering.getStatus() == status) {
             throw new GlobalNoriterException(ArticleExceptionType.ALREADY_CHANGED_STATUS);
         }
         if (status == StatusType.COMPLETE) {
-            study.completion();
+            gathering.completion();
         } else {
-            study.incomplete();
+            gathering.incomplete();
         }
     }
 
     @Transactional
     public void update(Long id, GatheringUpdateRequest request, Long writerId) {
         memberService.findMember(writerId);
-        Study study = findNotDeletedStudy(id);
-        study.validateWriterOrThrow(writerId);
-        study.update(request.getTitle(), request.getContent(), request.getHashtags());
+        Gathering gathering = findNotDeletedStudy(id);
+        gathering.validateWriterOrThrow(writerId);
+        gathering.update(request.getTitle(), request.getContent(), request.getHashtags());
     }
 
-    public Study findNotDeletedStudy(Long id) {
-        Study study = gatheringRepository.findById(id).
+    public Gathering findNotDeletedStudy(Long id) {
+        Gathering gathering = gatheringRepository.findById(id).
             orElseThrow(() -> new GlobalNoriterException(ArticleExceptionType.ARTICLE_NOT_FOUND));
-        if (study.isDeleted()) {
+        if (gathering.isDeleted()) {
             throw new GlobalNoriterException(ArticleExceptionType.DELETED_ARTICLE);
         }
-        return study;
+        return gathering;
     }
 }

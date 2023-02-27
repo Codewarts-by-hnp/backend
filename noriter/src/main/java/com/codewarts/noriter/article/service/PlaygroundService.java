@@ -48,7 +48,7 @@ public class PlaygroundService {
     }
 
     public List<PlaygroundListResponse> findList(Long memberId) {
-        List<Article> freeTypeArticle = articleRepository.findAllByArticleType(ArticleType.FREE);
+        List<Article> freeTypeArticle = articleRepository.findAllByArticleType(ArticleType.PLAYGROUND);
         if (memberId == null) {
             return freeTypeArticle.stream()
                 .map(article -> new PlaygroundListResponse(article, false, false))
