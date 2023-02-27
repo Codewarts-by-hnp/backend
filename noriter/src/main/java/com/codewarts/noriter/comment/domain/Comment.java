@@ -1,10 +1,10 @@
 package com.codewarts.noriter.comment.domain;
 
 import com.codewarts.noriter.article.domain.Article;
+import com.codewarts.noriter.common.util.BaseTimeEntity;
 import com.codewarts.noriter.exception.GlobalNoriterException;
 import com.codewarts.noriter.exception.type.CommentExceptionType;
 import com.codewarts.noriter.member.domain.Member;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -24,7 +24,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Comment {
+public class Comment extends BaseTimeEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,12 +44,10 @@ public class Comment {
   private String content;
   private boolean secret;
   private boolean deleted;
-  private LocalDateTime writtenTime;
-  private LocalDateTime editedTime;
 
   @Builder
   public Comment(Long id, Article article, List<ReComment> reComments, Member writer,
-      String content, boolean secret, boolean deleted, LocalDateTime writtenTime, LocalDateTime editedTime) {
+      String content, boolean secret, boolean deleted) {
     this.id = id;
     this.article = article;
     this.reComments = reComments;
@@ -57,8 +55,6 @@ public class Comment {
     this.content = content;
     this.secret = secret;
     this.deleted = deleted;
-    this.writtenTime = writtenTime;
-    this.editedTime = editedTime;
   }
 
   public void update(String content, boolean secret) {

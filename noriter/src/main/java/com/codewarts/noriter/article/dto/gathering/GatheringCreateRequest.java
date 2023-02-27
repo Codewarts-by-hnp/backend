@@ -4,7 +4,6 @@ import com.codewarts.noriter.article.domain.Gathering;
 import com.codewarts.noriter.article.domain.type.ArticleType;
 import com.codewarts.noriter.article.domain.type.StatusType;
 import com.codewarts.noriter.member.domain.Member;
-import java.time.LocalDateTime;
 import java.util.List;
 import javax.validation.constraints.NotBlank;
 import lombok.Getter;
@@ -25,8 +24,6 @@ public class GatheringCreateRequest {
             .title(title)
             .content(content)
             .writer(writer)
-            .writtenTime(LocalDateTime.now())
-            .editedTime(LocalDateTime.now())
             .articleType(ArticleType.GATHERING)
             .status(StatusType.INCOMPLETE)
             .build();

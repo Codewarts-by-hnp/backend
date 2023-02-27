@@ -3,7 +3,6 @@ package com.codewarts.noriter.comment.dto.comment;
 import com.codewarts.noriter.article.domain.Article;
 import com.codewarts.noriter.comment.domain.Comment;
 import com.codewarts.noriter.member.domain.Member;
-import java.time.LocalDateTime;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import lombok.Getter;
@@ -24,8 +23,6 @@ public class CommentCreateRequest {
             .writer(writer)
             .content(content)
             .secret(secret)
-            .writtenTime(LocalDateTime.now())
-            .editedTime(LocalDateTime.now())
             .build();
     }
 }

@@ -21,9 +21,9 @@ public class QuestionDetailResponse {
     private final boolean sameWriter;
     private final List<String> hashtags;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private final LocalDateTime writtenTime;
+    private final LocalDateTime createdTime;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private final LocalDateTime editedTime;
+    private final LocalDateTime lastModifiedTime;
     private final boolean wish;
     private final int wishCount;
     private final List<CommentResponse> comment;
@@ -38,8 +38,8 @@ public class QuestionDetailResponse {
         this.hashtags = question.getHashtags().stream()
             .map(Hashtag::getContent)
             .collect(Collectors.toList());
-        this.writtenTime = question.getWrittenTime();
-        this.editedTime = question.getEditedTime();
+        this.createdTime = question.getCreatedTime();
+        this.lastModifiedTime = question.getLastModifiedTime();
         this.wish = wish;
         this.wishCount = question.getWishList().size();
         this.comment = question.getComments().stream()

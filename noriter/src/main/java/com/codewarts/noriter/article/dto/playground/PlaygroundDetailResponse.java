@@ -22,9 +22,9 @@ public class PlaygroundDetailResponse {
     private boolean sameWriter;
     private List<String> hashtags;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime writtenTime;
+    private LocalDateTime createdTime;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime editedTime;
+    private LocalDateTime lastModifiedTime;
     private boolean wish;
     private int wishCount;
     private List<CommentResponse> comment;
@@ -38,8 +38,8 @@ public class PlaygroundDetailResponse {
         this.hashtags = article.getHashtags().stream()
             .map(Hashtag::getContent)
             .collect(Collectors.toList());
-        this.writtenTime = article.getWrittenTime();
-        this.editedTime = article.getEditedTime();
+        this.createdTime = article.getCreatedTime();
+        this.lastModifiedTime = article.getLastModifiedTime();
         this.wish = wish;
         this.wishCount = article.getWishList().size();
         this.comment = article.getComments().stream()

@@ -2,11 +2,11 @@ package com.codewarts.noriter.article.domain;
 
 import com.codewarts.noriter.article.domain.type.ArticleType;
 import com.codewarts.noriter.comment.domain.Comment;
+import com.codewarts.noriter.common.util.BaseTimeEntity;
 import com.codewarts.noriter.exception.GlobalNoriterException;
 import com.codewarts.noriter.exception.type.ArticleExceptionType;
 import com.codewarts.noriter.member.domain.Member;
 import com.codewarts.noriter.wish.domain.Wish;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -34,7 +34,7 @@ import org.springframework.util.ObjectUtils;
 @SuperBuilder
 @Inheritance(strategy = InheritanceType.JOINED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Article {
+public class Article extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -59,9 +59,6 @@ public class Article {
     @OneToMany(mappedBy = "article", orphanRemoval = true)
     private final List<Comment> comments = new ArrayList<>();
 
-    private LocalDateTime writtenTime;
-    private LocalDateTime editedTime;
-
     @Enumerated(EnumType.STRING)
     private ArticleType articleType;
     private boolean deleted;
@@ -78,7 +75,6 @@ public class Article {
     public void update(String title, String content, List<String> requestHashtags) {
         this.title = title;
         this.content = content;
-        this.editedTime = LocalDateTime.now();
         this.hashtags.clear();
         addHashtags(requestHashtags);
     }

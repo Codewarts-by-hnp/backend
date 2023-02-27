@@ -3,7 +3,6 @@ package com.codewarts.noriter.article.dto.playground;
 import com.codewarts.noriter.article.domain.Article;
 import com.codewarts.noriter.article.domain.type.ArticleType;
 import com.codewarts.noriter.member.domain.Member;
-import java.time.LocalDateTime;
 import java.util.List;
 import javax.validation.constraints.NotBlank;
 import lombok.Getter;
@@ -24,8 +23,6 @@ public class PlaygroundCreateRequest {
             .title(title)
             .content(content)
             .writer(writer)
-            .writtenTime(LocalDateTime.now())
-            .editedTime(LocalDateTime.now())
             .articleType(ArticleType.PLAYGROUND)
             .build();
         article.addHashtags(hashtags);

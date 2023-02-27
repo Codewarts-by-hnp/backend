@@ -4,7 +4,6 @@ import com.codewarts.noriter.article.domain.Question;
 import com.codewarts.noriter.article.domain.type.ArticleType;
 import com.codewarts.noriter.article.domain.type.StatusType;
 import com.codewarts.noriter.member.domain.Member;
-import java.time.LocalDateTime;
 import java.util.List;
 import javax.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -28,8 +27,6 @@ public class QuestionCreateRequest {
             .title(title)
             .content(content)
             .writer(writer)
-            .writtenTime(LocalDateTime.now())
-            .editedTime(LocalDateTime.now())
             .articleType(ArticleType.QUESTION)
             .status(StatusType.INCOMPLETE)
             .build();

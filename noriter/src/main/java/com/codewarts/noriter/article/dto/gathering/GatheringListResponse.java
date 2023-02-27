@@ -21,9 +21,9 @@ public class GatheringListResponse {
     private boolean sameWriter;
     private List<String> hashtags;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime writtenTime;
+    private LocalDateTime createdTime;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime editedTime;
+    private LocalDateTime lastModifiedTime;
     private boolean wish;
     private int wishCount;
     private int commentCount;
@@ -37,8 +37,8 @@ public class GatheringListResponse {
         this.sameWriter = sameWriter;
         this.hashtags = gathering.getHashtags().stream().map(Hashtag::getContent)
             .collect(Collectors.toList());
-        this.writtenTime = gathering.getWrittenTime();
-        this.editedTime = gathering.getEditedTime();
+        this.createdTime = gathering.getCreatedTime();
+        this.lastModifiedTime = gathering.getLastModifiedTime();
         this.wish = wish;
         this.wishCount = gathering.getWishList().size();
         this.commentCount = gathering.getComments().size();
