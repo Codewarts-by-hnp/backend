@@ -38,26 +38,26 @@ public class GatheringService {
 
     public List<GatheringListResponse> findList(StatusType status, Long memberId) {
         if (status == null && memberId == null) {
-            return gatheringRepository.findAllStudy().stream()
-                .map(study -> new GatheringListResponse(study, false, false))
+            return gatheringRepository.findAllGathering().stream()
+                .map(gathering -> new GatheringListResponse(gathering, false, false))
                 .collect(Collectors.toList());
         }
         if (memberId == null) {
-            return gatheringRepository.findStudyByCompleted(status).stream()
-                .map(study -> new GatheringListResponse(study, false, false))
+            return gatheringRepository.findByGatheringCompleted(status).stream()
+                .map(gathering -> new GatheringListResponse(gathering, false, false))
                 .collect(Collectors.toList());
         }
         Member member = memberService.findMember(memberId);
         if (status == null) {
-            return gatheringRepository.findAllStudy().stream()
-                .map(study -> new GatheringListResponse(study,
-                    study.getWriter().getId().equals(memberId),
-                    wishRepository.existsByArticleAndMember(study, member)))
+            return gatheringRepository.findAllGathering().stream()
+                .map(gathering -> new GatheringListResponse(gathering,
+                    gathering.getWriter().getId().equals(memberId),
+                    wishRepository.existsByArticleAndMember(gathering, member)))
                 .collect(Collectors.toList());
         }
-        return gatheringRepository.findStudyByCompleted(status).stream()
-            .map(study -> new GatheringListResponse(study, study.getWriter().getId().equals(memberId),
-                wishRepository.existsByArticleAndMember(study, member)))
+        return gatheringRepository.findByGatheringCompleted(status).stream()
+            .map(gathering -> new GatheringListResponse(gathering, gathering.getWriter().getId().equals(memberId),
+                wishRepository.existsByArticleAndMember(gathering, member)))
             .collect(Collectors.toList());
     }
 

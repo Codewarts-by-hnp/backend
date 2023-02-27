@@ -10,8 +10,8 @@ import org.springframework.data.repository.query.Param;
 public interface GatheringRepository extends JpaRepository<Gathering, Long> {
 
     @Query("select s from Gathering s where s.status = :status")
-    List<Gathering> findStudyByCompleted(@Param("status") StatusType status);
+    List<Gathering> findByGatheringCompleted(@Param("status") StatusType status);
 
     @Query("select s from Gathering s")
-    List<Gathering> findAllStudy();
+    List<Gathering> findAllGathering();
 }

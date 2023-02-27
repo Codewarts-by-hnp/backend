@@ -30,8 +30,8 @@ public class PlaygroundService {
     @Transactional
     public Long create(PlaygroundCreateRequest playgroundCreateRequest, Long writerId) {
         Member member = memberService.findMember(writerId);
-        Article free = playgroundCreateRequest.toEntity(member);
-        return articleRepository.save(free).getId();
+        Article playground = playgroundCreateRequest.toEntity(member);
+        return articleRepository.save(playground).getId();
     }
 
     public PlaygroundDetailResponse findDetail(Long id, Long memberId) {
@@ -47,15 +47,16 @@ public class PlaygroundService {
     }
 
     public List<PlaygroundListResponse> findList(Long memberId) {
-        List<Article> freeTypeArticle = articleRepository.findAllByArticleType(ArticleType.PLAYGROUND);
+        List<Article> playgroundTypeArticle = articleRepository.findAllByArticleType(
+            ArticleType.PLAYGROUND);
         if (memberId == null) {
-            return freeTypeArticle.stream()
+            return playgroundTypeArticle.stream()
                 .map(article -> new PlaygroundListResponse(article, false, false))
-                    .collect(Collectors.toList());
+                .collect(Collectors.toList());
         }
         Member member = memberService.findMember(memberId);
         // Todo -> N+1 해결하기
-        return freeTypeArticle.stream()
+        return playgroundTypeArticle.stream()
             .map(article -> new PlaygroundListResponse(article,
                 article.getWriter().getId().equals(memberId),
                 wishRepository.existsByArticleAndMember(article, member)))
@@ -65,17 +66,17 @@ public class PlaygroundService {
     @Transactional
     public void update(Long id, PlaygroundUpdateRequest request, Long writerId) {
         memberService.findMember(writerId);
-        Article free = findNotDeletedArticle(id);
-        free.validateWriterOrThrow(writerId);
-        free.update(request.getTitle(), request.getContent(), request.getHashtags());
+        Article playground = findNotDeletedArticle(id);
+        playground.validateWriterOrThrow(writerId);
+        playground.update(request.getTitle(), request.getContent(), request.getHashtags());
     }
 
     @Transactional
     public void delete(Long id, Long writerId) {
         memberService.findMember(writerId);
-        Article free = findNotDeletedArticle(id);
-        free.validateWriterOrThrow(writerId);
-        free.delete();
+        Article playground = findNotDeletedArticle(id);
+        playground.validateWriterOrThrow(writerId);
+        playground.delete();
     }
 
     public Article findNotDeletedArticle(Long id) {
