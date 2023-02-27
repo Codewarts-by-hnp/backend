@@ -24,7 +24,7 @@ public class QuestionCreateRequest {
     private List<String> hashtags;
 
     public Question toEntity(Member writer) {
-        return Question.builder()
+        Question question = Question.builder()
             .title(title)
             .content(content)
             .writer(writer)
@@ -33,5 +33,7 @@ public class QuestionCreateRequest {
             .articleType(ArticleType.QUESTION)
             .status(StatusType.INCOMPLETE)
             .build();
+        question.addHashtags(hashtags);
+        return question;
     }
 }

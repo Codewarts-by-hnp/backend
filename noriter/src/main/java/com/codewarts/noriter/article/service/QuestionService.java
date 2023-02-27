@@ -34,7 +34,6 @@ public class QuestionService {
     public Long create(QuestionCreateRequest request, Long memberId) {
         Member writer = memberService.findMember(memberId);
         Question question = request.toEntity(writer);
-        question.addHashtags(request.getHashtags());
         return questionRepository.save(question).getId();
     }
 

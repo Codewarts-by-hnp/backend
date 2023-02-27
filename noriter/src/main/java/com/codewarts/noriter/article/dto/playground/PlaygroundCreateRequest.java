@@ -20,7 +20,7 @@ public class PlaygroundCreateRequest {
     private List<String> hashtags;
 
     public Article toEntity(Member writer) {
-        return Article.builder()
+        Article article = Article.builder()
             .title(title)
             .content(content)
             .writer(writer)
@@ -28,6 +28,8 @@ public class PlaygroundCreateRequest {
             .editedTime(LocalDateTime.now())
             .articleType(ArticleType.PLAYGROUND)
             .build();
+        article.addHashtags(hashtags);
+        return article;
     }
 }
 

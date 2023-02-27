@@ -33,7 +33,6 @@ public class GatheringService {
     public Long create(GatheringCreateRequest gatheringCreateRequest, Long memberId) {
         Member member = memberService.findMember(memberId);
         Gathering gathering = gatheringCreateRequest.toEntity(member);
-        gathering.addHashtags(gatheringCreateRequest.getHashtags());
         return gatheringRepository.save(gathering).getId();
     }
 
@@ -93,9 +92,9 @@ public class GatheringService {
             throw new GlobalNoriterException(ArticleExceptionType.ALREADY_CHANGED_STATUS);
         }
         if (status == StatusType.COMPLETE) {
-            gathering.completion();
+            gathering.changeStatusToComplete();
         } else {
-            gathering.incomplete();
+            gathering.changeStatusToIncomplete();
         }
     }
 

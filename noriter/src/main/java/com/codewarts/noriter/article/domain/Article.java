@@ -66,17 +66,6 @@ public class Article {
     private ArticleType articleType;
     private boolean deleted;
 
-    public Article(String title, String content, Member writer, LocalDateTime writtenTime,
-        LocalDateTime editedTime, ArticleType articleType) {
-        this.title = title;
-        this.content = content;
-        this.writer = writer;
-        this.writtenTime = writtenTime;
-        this.editedTime = editedTime;
-        this.articleType = articleType;
-        this.deleted = false;
-    }
-
     public void addHashtags(List<String> requestHashtags) {
         if (ObjectUtils.isEmpty(requestHashtags)) {
             return;

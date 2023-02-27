@@ -31,7 +31,6 @@ public class PlaygroundService {
     public Long create(PlaygroundCreateRequest playgroundCreateRequest, Long writerId) {
         Member member = memberService.findMember(writerId);
         Article free = playgroundCreateRequest.toEntity(member);
-        free.addHashtags(playgroundCreateRequest.getHashtags());
         return articleRepository.save(free).getId();
     }
 

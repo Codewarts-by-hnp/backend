@@ -21,7 +21,7 @@ public class GatheringCreateRequest {
     private List<String> hashtags;
 
     public Gathering toEntity(Member writer) {
-        return Gathering.builder()
+        Gathering gathering = Gathering.builder()
             .title(title)
             .content(content)
             .writer(writer)
@@ -30,5 +30,7 @@ public class GatheringCreateRequest {
             .articleType(ArticleType.GATHERING)
             .status(StatusType.INCOMPLETE)
             .build();
+        gathering.addHashtags(hashtags);
+        return gathering;
     }
 }
