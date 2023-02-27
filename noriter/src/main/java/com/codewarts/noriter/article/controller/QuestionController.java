@@ -51,11 +51,12 @@ public class QuestionController {
         if (paramMap.isEmpty()) {
             return questionService.findList(null, memberId);
         }
-        if (paramMap.size() == 1 && paramMap.containsKey("status")) {
-            StatusType status = conversionService.convert(paramMap.get("status"), StatusType.class);
-            return questionService.findList(status, memberId);
+        if (paramMap.size() != 1 || !paramMap.containsKey("status")) {
+            throw new GlobalNoriterException(CommonExceptionType.INCORRECT_REQUEST_PARAM);
         }
-        throw new GlobalNoriterException(CommonExceptionType.INCORRECT_REQUEST_PARAM);
+
+        StatusType status = conversionService.convert(paramMap.get("status"), StatusType.class);
+        return questionService.findList(status, memberId);
     }
 
     @GetMapping("/{id}")

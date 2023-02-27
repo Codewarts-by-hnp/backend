@@ -46,17 +46,18 @@ public class GatheringController {
 
     @GetMapping
     public List<GatheringListResponse> getList(
-        @RequestParam(required = false)  Map<String, String> paramMap, HttpServletRequest request) {
+        @RequestParam(required = false) Map<String, String> paramMap, HttpServletRequest request) {
         Long memberId = getMemberId(request);
 
         if (paramMap.isEmpty()) {
             return gatheringService.findList(null, memberId);
         }
-        if (paramMap.size() == 1 && paramMap.containsKey("status")) {
-            StatusType status = conversionService.convert(paramMap.get("status"), StatusType.class);
-            return gatheringService.findList(status, memberId);
+        if (paramMap.size() != 1 || !paramMap.containsKey("status")) {
+            throw new GlobalNoriterException(CommonExceptionType.INCORRECT_REQUEST_PARAM);
         }
-        throw new GlobalNoriterException(CommonExceptionType.INCORRECT_REQUEST_PARAM);
+
+        StatusType status = conversionService.convert(paramMap.get("status"), StatusType.class);
+        return gatheringService.findList(status, memberId);
     }
 
     @GetMapping("/{id}")
