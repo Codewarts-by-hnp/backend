@@ -9,69 +9,18 @@ import static com.codewarts.noriter.exception.type.MemberExceptionType.MEMBER_NO
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
-import static org.springframework.http.HttpHeaders.CONNECTION;
-import static org.springframework.http.HttpHeaders.CONTENT_LENGTH;
-import static org.springframework.http.HttpHeaders.DATE;
-import static org.springframework.http.HttpHeaders.HOST;
-import static org.springframework.http.HttpHeaders.TRANSFER_ENCODING;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.removeHeaders;
-import static org.springframework.restdocs.restassured3.RestAssuredRestDocumentation.documentationConfiguration;
 
-import com.codewarts.noriter.auth.jwt.JwtProvider;
-import io.restassured.RestAssured;
-import io.restassured.builder.RequestSpecBuilder;
-import io.restassured.specification.RequestSpecification;
+import com.codewarts.noriter.article.docs.InitIntegrationRestDocsTest;
 import java.util.Map;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayNameGeneration;
-import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.context.annotation.Profile;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.restdocs.RestDocumentationContextProvider;
-import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.test.context.jdbc.Sql;
 
-@DisplayNameGeneration(ReplaceUnderscores.class)
-@ExtendWith({RestDocumentationExtension.class})
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@Profile({"test"})
+@DisplayName("댓글 등록 기능 통합 테스트")
 @Sql("classpath:/data.sql")
-class CommentCreateTest {
-
-    @LocalServerPort
-    int port;
-
-    @Autowired
-    protected JwtProvider jwtProvider;
-
-    protected RequestSpecification documentationSpec;
-
-    @BeforeEach
-    void setup(RestDocumentationContextProvider restDocumentation) {
-        RestAssured.port = port;
-        documentationSpec = new RequestSpecBuilder()
-            .addFilter(
-                documentationConfiguration(restDocumentation)
-                    .operationPreprocessors()
-                    .withRequestDefaults(
-                        prettyPrint(),
-                        removeHeaders(HOST, CONTENT_LENGTH))
-                    .withResponseDefaults(
-                        prettyPrint(),
-                        removeHeaders(CONTENT_LENGTH, CONNECTION, DATE, TRANSFER_ENCODING,
-                            "Keep-Alive",
-                            HttpHeaders.VARY))
-            )
-            .build();
-    }
+class CommentCreateTest extends InitIntegrationRestDocsTest {
 
     @Test
     void 댓글을_등록한다() {
@@ -86,10 +35,10 @@ class CommentCreateTest {
             .pathParam("articleId", 1)
             .body(requestBody)
 
-            .when()
+        .when()
             .post("/{articleId}/comment")
 
-            .then()
+        .then()
             .statusCode(HttpStatus.OK.value());
     }
 
@@ -106,10 +55,10 @@ class CommentCreateTest {
             .pathParam("articleId", 1)
             .body(requestBody)
 
-            .when()
+        .when()
             .post("/{articleId}/comment")
 
-            .then()
+        .then()
             .statusCode(EMPTY_ACCESS_TOKEN.getStatus().value())
             .body("errorCode", equalTo(EMPTY_ACCESS_TOKEN.getErrorCode()))
             .body("message", equalTo(EMPTY_ACCESS_TOKEN.getErrorMessage()));
@@ -128,10 +77,10 @@ class CommentCreateTest {
             .pathParam("articleId", 1)
             .body(requestBody)
 
-            .when()
+        .when()
             .post("/{articleId}/comment")
 
-            .then()
+        .then()
             .statusCode(TAMPERED_ACCESS_TOKEN.getStatus().value())
             .body("errorCode", equalTo(TAMPERED_ACCESS_TOKEN.getErrorCode()))
             .body("message", equalTo(TAMPERED_ACCESS_TOKEN.getErrorMessage()));
@@ -150,10 +99,10 @@ class CommentCreateTest {
             .pathParam("articleId", 1)
             .body(requestBody)
 
-            .when()
+        .when()
             .post("/{articleId}/comment")
 
-            .then()
+        .then()
             .statusCode(MEMBER_NOT_FOUND.getStatus().value())
             .body("errorCode", equalTo(MEMBER_NOT_FOUND.getErrorCode()))
             .body("message", equalTo(MEMBER_NOT_FOUND.getErrorMessage()));
@@ -171,10 +120,10 @@ class CommentCreateTest {
             .pathParam("articleId", 1)
             .body(requestBody)
 
-            .when()
+        .when()
             .post("/{articleId}/comment")
 
-            .then()
+        .then()
             .statusCode(INVALID_REQUEST.getStatus().value())
             .body("errorCode", equalTo(INVALID_REQUEST.getErrorCode()))
             .body("message", equalTo(INVALID_REQUEST.getErrorMessage()))
@@ -195,9 +144,9 @@ class CommentCreateTest {
             .pathParam("articleId", " ")
             .body(requestBody)
 
-            .when()
+        .when()
             .post("/{articleId}/comment")
-            .then()
+        .then()
             .statusCode(INVALID_REQUEST.getStatus().value())
             .body("errorCode", equalTo(INVALID_REQUEST.getErrorCode()))
             .body("message", equalTo("registerComment.articleId: ID가 비어있습니다."));
@@ -216,9 +165,9 @@ class CommentCreateTest {
             .pathParam("articleId", -1)
             .body(requestBody)
 
-            .when()
+        .when()
             .post("/{articleId}/comment")
-            .then()
+        .then()
             .statusCode(INVALID_REQUEST.getStatus().value())
             .body("errorCode", equalTo(INVALID_REQUEST.getErrorCode()))
             .body("message", equalTo("registerComment.articleId: 게시글 ID는 양수이어야 합니다."));
@@ -237,9 +186,9 @@ class CommentCreateTest {
             .pathParam("articleId", 99999999)
             .body(requestBody)
 
-            .when()
+        .when()
             .post("/{articleId}/comment")
-            .then()
+        .then()
             .statusCode(ARTICLE_NOT_FOUND.getStatus().value())
             .body("errorCode", equalTo(ARTICLE_NOT_FOUND.getErrorCode()))
             .body("message", equalTo(ARTICLE_NOT_FOUND.getErrorMessage()));
@@ -258,9 +207,9 @@ class CommentCreateTest {
             .pathParam("articleId", 13)
             .body(requestBody)
 
-            .when()
+        .when()
             .post("/{articleId}/comment")
-            .then()
+        .then()
             .statusCode(DELETED_ARTICLE.getStatus().value())
             .body("errorCode", equalTo(DELETED_ARTICLE.getErrorCode()))
             .body("message", equalTo(DELETED_ARTICLE.getErrorMessage()));

@@ -13,68 +13,17 @@ import static com.codewarts.noriter.exception.type.MemberExceptionType.MEMBER_NO
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
-import static org.springframework.http.HttpHeaders.CONNECTION;
-import static org.springframework.http.HttpHeaders.CONTENT_LENGTH;
-import static org.springframework.http.HttpHeaders.DATE;
-import static org.springframework.http.HttpHeaders.HOST;
-import static org.springframework.http.HttpHeaders.TRANSFER_ENCODING;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.removeHeaders;
-import static org.springframework.restdocs.restassured3.RestAssuredRestDocumentation.documentationConfiguration;
 
-import com.codewarts.noriter.auth.jwt.JwtProvider;
-import io.restassured.RestAssured;
-import io.restassured.builder.RequestSpecBuilder;
-import io.restassured.specification.RequestSpecification;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayNameGeneration;
-import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
+import com.codewarts.noriter.article.docs.InitIntegrationRestDocsTest;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.context.annotation.Profile;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.restdocs.RestDocumentationContextProvider;
-import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.test.context.jdbc.Sql;
 
-@DisplayNameGeneration(ReplaceUnderscores.class)
-@ExtendWith({RestDocumentationExtension.class})
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@Profile({"test"})
+@DisplayName("댓글 삭제 기능 통합 테스트")
 @Sql("classpath:/data.sql")
-class CommentDeleteTest {
-
-    @LocalServerPort
-    int port;
-
-    @Autowired
-    protected JwtProvider jwtProvider;
-
-    protected RequestSpecification documentationSpec;
-
-    @BeforeEach
-    void setup(RestDocumentationContextProvider restDocumentation) {
-        RestAssured.port = port;
-        documentationSpec = new RequestSpecBuilder()
-            .addFilter(
-                documentationConfiguration(restDocumentation)
-                    .operationPreprocessors()
-                    .withRequestDefaults(
-                        prettyPrint(),
-                        removeHeaders(HOST, CONTENT_LENGTH))
-                    .withResponseDefaults(
-                        prettyPrint(),
-                        removeHeaders(CONTENT_LENGTH, CONNECTION, DATE, TRANSFER_ENCODING,
-                            "Keep-Alive",
-                            HttpHeaders.VARY))
-            )
-            .build();
-    }
+class CommentDeleteTest extends InitIntegrationRestDocsTest {
 
     @Test
     void 댓글을_삭제한다() {
@@ -86,10 +35,10 @@ class CommentDeleteTest {
             .pathParam("articleId", 1)
             .pathParam("commentId", 1)
 
-            .when()
+        .when()
             .delete("/{articleId}/comment/{commentId}")
 
-            .then()
+        .then()
             .statusCode(HttpStatus.OK.value());
     }
 
@@ -103,10 +52,10 @@ class CommentDeleteTest {
             .pathParam("articleId", 1)
             .pathParam("commentId", 1)
 
-            .when()
+        .when()
             .delete("/{articleId}/comment/{commentId}")
 
-            .then()
+        .then()
             .statusCode(EMPTY_ACCESS_TOKEN.getStatus().value())
             .body("errorCode", equalTo(EMPTY_ACCESS_TOKEN.getErrorCode()))
             .body("message", equalTo(EMPTY_ACCESS_TOKEN.getErrorMessage()));
@@ -122,10 +71,10 @@ class CommentDeleteTest {
             .pathParam("articleId", 1)
             .pathParam("commentId", 1)
 
-            .when()
+        .when()
             .delete("/{articleId}/comment/{commentId}")
 
-            .then()
+        .then()
             .statusCode(TAMPERED_ACCESS_TOKEN.getStatus().value())
             .body("errorCode", equalTo(TAMPERED_ACCESS_TOKEN.getErrorCode()))
             .body("message", equalTo(TAMPERED_ACCESS_TOKEN.getErrorMessage()));
@@ -141,10 +90,10 @@ class CommentDeleteTest {
             .pathParam("articleId", 1)
             .pathParam("commentId", 1)
 
-            .when()
+        .when()
             .delete("/{articleId}/comment/{commentId}")
 
-            .then()
+        .then()
             .statusCode(MEMBER_NOT_FOUND.getStatus().value())
             .body("errorCode", equalTo(MEMBER_NOT_FOUND.getErrorCode()))
             .body("message", equalTo(MEMBER_NOT_FOUND.getErrorMessage()));
@@ -160,10 +109,10 @@ class CommentDeleteTest {
             .pathParam("articleId", " ")
             .pathParam("commentId", 1)
 
-            .when()
+        .when()
             .delete("/{articleId}/comment/{commentId}")
 
-            .then()
+        .then()
             .statusCode(INVALID_REQUEST.getStatus().value())
             .body("errorCode", equalTo(INVALID_REQUEST.getErrorCode()))
             .body("message", equalTo("removeComment.articleId: ID가 비어있습니다."));
@@ -179,10 +128,10 @@ class CommentDeleteTest {
             .pathParam("articleId", -1)
             .pathParam("commentId", 1)
 
-            .when()
+        .when()
             .delete("/{articleId}/comment/{commentId}")
 
-            .then()
+        .then()
             .statusCode(INVALID_REQUEST.getStatus().value())
             .body("errorCode", equalTo(INVALID_REQUEST.getErrorCode()))
             .body("message", equalTo("removeComment.articleId: 게시글 ID는 양수이어야 합니다."));
@@ -198,10 +147,10 @@ class CommentDeleteTest {
             .pathParam("articleId", 9999999)
             .pathParam("commentId", 1)
 
-            .when()
+        .when()
             .delete("/{articleId}/comment/{commentId}")
 
-            .then()
+        .then()
             .statusCode(ARTICLE_NOT_FOUND.getStatus().value())
             .body("errorCode", equalTo(ARTICLE_NOT_FOUND.getErrorCode()))
             .body("message", equalTo(ARTICLE_NOT_FOUND.getErrorMessage()));
@@ -217,10 +166,10 @@ class CommentDeleteTest {
             .pathParam("articleId", 13)
             .pathParam("commentId", 1)
 
-            .when()
+        .when()
             .delete("/{articleId}/comment/{commentId}")
 
-            .then()
+        .then()
             .statusCode(DELETED_ARTICLE.getStatus().value())
             .body("errorCode", equalTo(DELETED_ARTICLE.getErrorCode()))
             .body("message", equalTo(DELETED_ARTICLE.getErrorMessage()));
@@ -236,10 +185,10 @@ class CommentDeleteTest {
             .pathParam("articleId", 1)
             .pathParam("commentId", " ")
 
-            .when()
+        .when()
             .delete("/{articleId}/comment/{commentId}")
 
-            .then()
+        .then()
             .statusCode(INVALID_REQUEST.getStatus().value())
             .body("errorCode", equalTo(INVALID_REQUEST.getErrorCode()))
             .body("message", equalTo("removeComment.commentId: ID가 비어있습니다."));
@@ -255,10 +204,10 @@ class CommentDeleteTest {
             .pathParam("articleId", 1)
             .pathParam("commentId", -1)
 
-            .when()
+        .when()
             .delete("/{articleId}/comment/{commentId}")
 
-            .then()
+        .then()
             .statusCode(INVALID_REQUEST.getStatus().value())
             .body("errorCode", equalTo(INVALID_REQUEST.getErrorCode()))
             .body("message", equalTo("removeComment.commentId: 댓글 ID는 양수이어야 합니다."));
@@ -274,10 +223,10 @@ class CommentDeleteTest {
             .pathParam("articleId", 1)
             .pathParam("commentId", 9999999)
 
-            .when()
+        .when()
             .delete("/{articleId}/comment/{commentId}")
 
-            .then()
+        .then()
             .statusCode(COMMENT_NOT_FOUND.getStatus().value())
             .body("errorCode", equalTo(COMMENT_NOT_FOUND.getErrorCode()))
             .body("message", equalTo(COMMENT_NOT_FOUND.getErrorMessage()));
@@ -293,10 +242,10 @@ class CommentDeleteTest {
             .pathParam("articleId", 12)
             .pathParam("commentId", 6)
 
-            .when()
+        .when()
             .delete("/{articleId}/comment/{commentId}")
 
-            .then()
+        .then()
             .statusCode(DELETED_COMMENT.getStatus().value())
             .body("errorCode", equalTo(DELETED_COMMENT.getErrorCode()))
             .body("message", equalTo(DELETED_COMMENT.getErrorMessage()));
@@ -312,10 +261,10 @@ class CommentDeleteTest {
             .pathParam("articleId", 1)
             .pathParam("commentId", 1)
 
-            .when()
+        .when()
             .delete("/{articleId}/comment/{commentId}")
 
-            .then()
+        .then()
             .statusCode(NOT_MATCHED_WRITER.getStatus().value())
             .body("errorCode", equalTo(NOT_MATCHED_WRITER.getErrorCode()))
             .body("message", equalTo(NOT_MATCHED_WRITER.getErrorMessage()));
@@ -331,10 +280,10 @@ class CommentDeleteTest {
             .pathParam("articleId", 2)
             .pathParam("commentId", 1)
 
-            .when()
+        .when()
             .delete("/{articleId}/comment/{commentId}")
 
-            .then()
+        .then()
             .statusCode(NOT_MATCHED_ARTICLE.getStatus().value())
             .body("errorCode", equalTo(NOT_MATCHED_ARTICLE.getErrorCode()))
             .body("message", equalTo(NOT_MATCHED_ARTICLE.getErrorMessage()));

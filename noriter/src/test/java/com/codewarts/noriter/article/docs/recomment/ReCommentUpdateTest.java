@@ -4,95 +4,18 @@ import static com.codewarts.noriter.exception.type.CommonExceptionType.INVALID_R
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
-import static org.springframework.http.HttpHeaders.CONNECTION;
-import static org.springframework.http.HttpHeaders.CONTENT_LENGTH;
-import static org.springframework.http.HttpHeaders.DATE;
-import static org.springframework.http.HttpHeaders.HOST;
-import static org.springframework.http.HttpHeaders.TRANSFER_ENCODING;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.removeHeaders;
-import static org.springframework.restdocs.restassured3.RestAssuredRestDocumentation.documentationConfiguration;
 
-import com.codewarts.noriter.auth.jwt.JwtProvider;
+import com.codewarts.noriter.article.docs.InitIntegrationRestDocsTest;
 import com.codewarts.noriter.exception.type.ArticleExceptionType;
 import com.codewarts.noriter.exception.type.CommentExceptionType;
 import com.codewarts.noriter.exception.type.ReCommentExceptionType;
-import io.restassured.RestAssured;
-import io.restassured.builder.RequestSpecBuilder;
-import io.restassured.specification.RequestSpecification;
 import java.util.Map;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayNameGeneration;
-import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.context.annotation.Profile;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.restdocs.RestDocumentationContextProvider;
-import org.springframework.restdocs.RestDocumentationExtension;
-import org.springframework.test.context.jdbc.Sql;
 
-@DisplayNameGeneration(ReplaceUnderscores.class)
-@ExtendWith({RestDocumentationExtension.class})
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@Profile({"test"})
-@Sql("classpath:/data.sql")
-public class ReCommentUpdateTest {
-
-
-    @LocalServerPort
-    int port;
-
-    @Autowired
-    protected JwtProvider jwtProvider;
-
-    protected RequestSpecification documentationSpec;
-
-    @BeforeEach
-    void setup(RestDocumentationContextProvider restDocumentation) {
-        RestAssured.port = port;
-        documentationSpec = new RequestSpecBuilder()
-            .addFilter(
-                documentationConfiguration(restDocumentation)
-                    .operationPreprocessors()
-                    .withRequestDefaults(
-                        prettyPrint(),
-                        removeHeaders(HOST, CONTENT_LENGTH))
-                    .withResponseDefaults(
-                        prettyPrint(),
-                        removeHeaders(CONTENT_LENGTH, CONNECTION, DATE, TRANSFER_ENCODING,
-                            "Keep-Alive",
-                            HttpHeaders.VARY))
-            )
-            .build();
-    }
-
-    @Test
-    void 대댓글을_수정한다() {
-        String accessToken = jwtProvider.issueAccessToken(2L);
-
-        Map<String, Object> requestBody = Map.of("content", "대댓글을 수정해볼게용",
-            "secret", false);
-
-        given(documentationSpec)
-            .contentType(APPLICATION_JSON_VALUE)
-            .header(AUTHORIZATION, accessToken)
-            .pathParam("articleId", 1)
-            .pathParam("commentId", 1)
-            .pathParam("recommentId", 1)
-            .body(requestBody)
-
-            .when()
-            .put("/{articleId}/comment/{commentId}/recomment/{recommentId}")
-
-            .then()
-            .statusCode(HttpStatus.OK.value());
-    }
+@DisplayName("대댓글 수정 기능 통합 테스트")
+public class ReCommentUpdateTest extends InitIntegrationRestDocsTest {
 
     @Test
     void 필드값이_비어있을_경우_예외를_발생시킨다() {
@@ -108,10 +31,10 @@ public class ReCommentUpdateTest {
             .pathParam("recommentId", 1)
             .body(requestBody)
 
-            .when()
+        .when()
             .put("/{articleId}/comment/{commentId}/recomment/{recommentId}")
 
-            .then()
+        .then()
             .statusCode(INVALID_REQUEST.getStatus().value())
             .body("errorCode", equalTo(INVALID_REQUEST.getErrorCode()))
             .body("message", equalTo(INVALID_REQUEST.getErrorMessage()))
@@ -133,10 +56,10 @@ public class ReCommentUpdateTest {
             .pathParam("recommentId", 1)
             .body(requestBody)
 
-            .when()
+        .when()
             .put("/{articleId}/comment/{commentId}/recomment/{recommentId}")
 
-            .then()
+        .then()
             .statusCode(INVALID_REQUEST.getStatus().value())
             .body("errorCode", equalTo(INVALID_REQUEST.getErrorCode()))
             .body("message", equalTo("editReComment.articleId: ID가 비어있습니다."));
@@ -157,10 +80,10 @@ public class ReCommentUpdateTest {
             .pathParam("recommentId", 1)
             .body(requestBody)
 
-            .when()
+        .when()
             .put("/{articleId}/comment/{commentId}/recomment/{recommentId}")
 
-            .then()
+        .then()
             .statusCode(INVALID_REQUEST.getStatus().value())
             .body("errorCode", equalTo(INVALID_REQUEST.getErrorCode()))
             .body("message", equalTo("editReComment.articleId: 게시글 ID는 양수이어야 합니다."));
@@ -181,10 +104,10 @@ public class ReCommentUpdateTest {
             .pathParam("recommentId", 1)
             .body(requestBody)
 
-            .when()
+        .when()
             .put("/{articleId}/comment/{commentId}/recomment/{recommentId}")
 
-            .then()
+        .then()
             .statusCode(INVALID_REQUEST.getStatus().value())
             .body("errorCode", equalTo(INVALID_REQUEST.getErrorCode()))
             .body("message", equalTo("editReComment.commentId: ID가 비어있습니다."));
@@ -205,10 +128,10 @@ public class ReCommentUpdateTest {
             .pathParam("recommentId", 1)
             .body(requestBody)
 
-            .when()
+        .when()
             .put("/{articleId}/comment/{commentId}/recomment/{recommentId}")
 
-            .then()
+        .then()
             .statusCode(INVALID_REQUEST.getStatus().value())
             .body("errorCode", equalTo(INVALID_REQUEST.getErrorCode()))
             .body("message", equalTo("editReComment.commentId: 댓글 ID는 양수이어야 합니다."));
@@ -229,10 +152,10 @@ public class ReCommentUpdateTest {
             .pathParam("recommentId", " ")
             .body(requestBody)
 
-            .when()
+        .when()
             .put("/{articleId}/comment/{commentId}/recomment/{recommentId}")
 
-            .then()
+        .then()
             .statusCode(INVALID_REQUEST.getStatus().value())
             .body("errorCode", equalTo(INVALID_REQUEST.getErrorCode()))
             .body("message", equalTo("editReComment.recommentId: ID가 비어있습니다."));
@@ -253,10 +176,10 @@ public class ReCommentUpdateTest {
             .pathParam("recommentId", -1)
             .body(requestBody)
 
-            .when()
+        .when()
             .put("/{articleId}/comment/{commentId}/recomment/{recommentId}")
 
-            .then()
+        .then()
             .statusCode(INVALID_REQUEST.getStatus().value())
             .body("errorCode", equalTo(INVALID_REQUEST.getErrorCode()))
             .body("message", equalTo("editReComment.recommentId: 대댓글 ID는 양수이어야 합니다."));
@@ -277,10 +200,10 @@ public class ReCommentUpdateTest {
             .pathParam("recommentId", 4)
             .body(requestBody)
 
-            .when()
+        .when()
             .put("/{articleId}/comment/{commentId}/recomment/{recommentId}")
 
-            .then()
+        .then()
             .statusCode(ArticleExceptionType.DELETED_ARTICLE.getStatus().value())
             .body("errorCode", equalTo(ArticleExceptionType.DELETED_ARTICLE.getErrorCode()))
             .body("message", equalTo(ArticleExceptionType.DELETED_ARTICLE.getErrorMessage()));
@@ -301,10 +224,10 @@ public class ReCommentUpdateTest {
             .pathParam("recommentId", 2)
             .body(requestBody)
 
-            .when()
+        .when()
             .put("/{articleId}/comment/{commentId}/recomment/{recommentId}")
 
-            .then()
+        .then()
             .statusCode(CommentExceptionType.DELETED_COMMENT.getStatus().value())
             .body("errorCode", equalTo(CommentExceptionType.DELETED_COMMENT.getErrorCode()))
             .body("message", equalTo(CommentExceptionType.DELETED_COMMENT.getErrorMessage()));
@@ -325,10 +248,10 @@ public class ReCommentUpdateTest {
             .pathParam("recommentId", 5)
             .body(requestBody)
 
-            .when()
+        .when()
             .put("/{articleId}/comment/{commentId}/recomment/{recommentId}")
 
-            .then()
+        .then()
             .statusCode(ReCommentExceptionType.DELETED_RECOMMENT.getStatus().value())
             .body("errorCode", equalTo(ReCommentExceptionType.DELETED_RECOMMENT.getErrorCode()))
             .body("message", equalTo(ReCommentExceptionType.DELETED_RECOMMENT.getErrorMessage()));
@@ -349,10 +272,10 @@ public class ReCommentUpdateTest {
             .pathParam("recommentId", 1)
             .body(requestBody)
 
-            .when()
+        .when()
             .put("/{articleId}/comment/{commentId}/recomment/{recommentId}")
 
-            .then()
+        .then()
             .statusCode(ReCommentExceptionType.RECOMMENT_NOT_MATCHED_WRITER.getStatus().value())
             .body("errorCode", equalTo(ReCommentExceptionType.RECOMMENT_NOT_MATCHED_WRITER.getErrorCode()))
             .body("message", equalTo(ReCommentExceptionType.RECOMMENT_NOT_MATCHED_WRITER.getErrorMessage()));
@@ -373,10 +296,10 @@ public class ReCommentUpdateTest {
             .pathParam("recommentId", 1)
             .body(requestBody)
 
-            .when()
+        .when()
             .put("/{articleId}/comment/{commentId}/recomment/{recommentId}")
 
-            .then()
+        .then()
             .statusCode(CommentExceptionType.NOT_MATCHED_ARTICLE.getStatus().value())
             .body("errorCode", equalTo(CommentExceptionType.NOT_MATCHED_ARTICLE.getErrorCode()))
             .body("message", equalTo(CommentExceptionType.NOT_MATCHED_ARTICLE.getErrorMessage()));
@@ -397,10 +320,10 @@ public class ReCommentUpdateTest {
             .pathParam("recommentId", 2)
             .body(requestBody)
 
-            .when()
+        .when()
             .put("/{articleId}/comment/{commentId}/recomment/{recommentId}")
 
-            .then()
+        .then()
             .statusCode(ReCommentExceptionType.NOT_MATCHED_COMMENT.getStatus().value())
             .body("errorCode", equalTo(ReCommentExceptionType.NOT_MATCHED_COMMENT.getErrorCode()))
             .body("message", equalTo(ReCommentExceptionType.NOT_MATCHED_COMMENT.getErrorMessage()));
