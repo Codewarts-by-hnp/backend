@@ -2,10 +2,11 @@ package com.codewarts.noriter.article.service;
 
 import com.codewarts.noriter.article.domain.Gathering;
 import com.codewarts.noriter.article.domain.type.StatusType;
-import com.codewarts.noriter.article.dto.gathering.GatheringCreateRequest;
+import com.codewarts.noriter.article.dto.article.ArticleCreateRequest;
+import com.codewarts.noriter.article.dto.article.ArticleListResponse;
+import com.codewarts.noriter.article.dto.article.ArticleUpdateRequest;
 import com.codewarts.noriter.article.dto.gathering.GatheringDetailResponse;
 import com.codewarts.noriter.article.dto.gathering.GatheringListResponse;
-import com.codewarts.noriter.article.dto.gathering.GatheringUpdateRequest;
 import com.codewarts.noriter.article.repository.GatheringRepository;
 import com.codewarts.noriter.exception.GlobalNoriterException;
 import com.codewarts.noriter.exception.type.ArticleExceptionType;
@@ -21,20 +22,22 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class GatheringService {
+public class GatheringService extends ArticleService {
 
     private final MemberService memberService;
     private final GatheringRepository gatheringRepository;
     private final WishRepository wishRepository;
 
+    @Override
     @Transactional
-    public Long create(GatheringCreateRequest gatheringCreateRequest, Long memberId) {
+    public Long create(ArticleCreateRequest gatheringCreateRequest, Long memberId) {
         Member member = memberService.findMember(memberId);
-        Gathering gathering = gatheringCreateRequest.toEntity(member);
+        Gathering gathering = (Gathering) gatheringCreateRequest.toEntity(member);
         return gatheringRepository.save(gathering).getId();
     }
 
-    public List<GatheringListResponse> findList(StatusType status, Long memberId) {
+    @Override
+    public List<ArticleListResponse> findList(StatusType status, Long memberId) {
         if (status == null && memberId == null) {
             return gatheringRepository.findAllGathering().stream()
                 .map(gathering -> new GatheringListResponse(gathering, false, false))
@@ -59,6 +62,7 @@ public class GatheringService {
             .collect(Collectors.toList());
     }
 
+    @Override
     public GatheringDetailResponse findDetail(Long id, Long memberId) {
         Gathering gathering = findNotDeletedStudy(id);
         boolean sameWriter = gathering.getWriter().getId().equals(memberId);
@@ -72,6 +76,7 @@ public class GatheringService {
         return new GatheringDetailResponse(gathering, sameWriter, wish);
     }
 
+    @Override
     @Transactional
     public void delete(Long id, Long writerId) {
         memberService.findMember(writerId);
@@ -96,8 +101,9 @@ public class GatheringService {
         }
     }
 
+    @Override
     @Transactional
-    public void update(Long id, GatheringUpdateRequest request, Long writerId) {
+    public void update(Long id, ArticleUpdateRequest request, Long writerId) {
         memberService.findMember(writerId);
         Gathering gathering = findNotDeletedStudy(id);
         gathering.validateWriterOrThrow(writerId);

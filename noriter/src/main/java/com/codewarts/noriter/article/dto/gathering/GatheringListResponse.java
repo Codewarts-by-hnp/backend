@@ -3,6 +3,7 @@ package com.codewarts.noriter.article.dto.gathering;
 import com.codewarts.noriter.article.domain.Gathering;
 import com.codewarts.noriter.article.domain.Hashtag;
 import com.codewarts.noriter.article.domain.type.StatusType;
+import com.codewarts.noriter.article.dto.article.ArticleListResponse;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -12,7 +13,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class GatheringListResponse {
+public class GatheringListResponse extends ArticleListResponse {
 
     private Long id;
     private String title;

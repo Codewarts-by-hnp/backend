@@ -1,5 +1,6 @@
 package com.codewarts.noriter.article.dto.gathering;
 
+import com.codewarts.noriter.article.dto.article.ArticleUpdateRequest;
 import java.util.List;
 import javax.validation.constraints.NotBlank;
 import lombok.Getter;
@@ -7,7 +8,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class GatheringUpdateRequest {
+public class GatheringUpdateRequest extends ArticleUpdateRequest {
 
     @NotBlank(message = "제목은 필수입니다.")
     private String title;

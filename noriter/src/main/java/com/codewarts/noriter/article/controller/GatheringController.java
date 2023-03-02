@@ -1,10 +1,10 @@
 package com.codewarts.noriter.article.controller;
 
+import com.codewarts.noriter.article.domain.type.StatusType;
+import com.codewarts.noriter.article.dto.article.ArticleListResponse;
+import com.codewarts.noriter.article.dto.gathering.GatheringCreateRequest;
 import com.codewarts.noriter.article.dto.gathering.GatheringDetailResponse;
 import com.codewarts.noriter.article.dto.gathering.GatheringUpdateRequest;
-import com.codewarts.noriter.article.dto.gathering.GatheringListResponse;
-import com.codewarts.noriter.article.dto.gathering.GatheringCreateRequest;
-import com.codewarts.noriter.article.domain.type.StatusType;
 import com.codewarts.noriter.article.service.GatheringService;
 import com.codewarts.noriter.exception.GlobalNoriterException;
 import com.codewarts.noriter.exception.type.CommonExceptionType;
@@ -45,7 +45,7 @@ public class GatheringController {
     }
 
     @GetMapping
-    public List<GatheringListResponse> getList(
+    public List<ArticleListResponse> getList(
         @RequestParam(required = false) Map<String, String> paramMap, HttpServletRequest request) {
         Long memberId = getMemberId(request);
 
