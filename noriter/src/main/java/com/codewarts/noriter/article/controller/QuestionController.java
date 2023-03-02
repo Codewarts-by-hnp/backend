@@ -1,7 +1,7 @@
 package com.codewarts.noriter.article.controller;
 
+import com.codewarts.noriter.article.dto.article.ArticleListResponse;
 import com.codewarts.noriter.article.dto.question.QuestionDetailResponse;
-import com.codewarts.noriter.article.dto.question.QuestionListResponse;
 import com.codewarts.noriter.article.dto.question.QuestionCreateRequest;
 import com.codewarts.noriter.article.dto.question.QuestionUpdateRequest;
 import com.codewarts.noriter.article.domain.type.StatusType;
@@ -45,7 +45,7 @@ public class QuestionController {
     }
 
     @GetMapping
-    public List<QuestionListResponse> getList(@RequestParam Map<String, String> paramMap,
+    public List<ArticleListResponse> getList(@RequestParam Map<String, String> paramMap,
         HttpServletRequest request) {
         Long memberId = getMemberId(request);
         if (paramMap.isEmpty()) {
@@ -86,7 +86,7 @@ public class QuestionController {
         @RequestBody @Valid QuestionUpdateRequest updateRequest,
         HttpServletRequest request) {
         Long memberId = getMemberId(request);
-        questionService.update(id, memberId, updateRequest);
+        questionService.update(id, updateRequest, memberId);
     }
 
     @PatchMapping("/{id}")

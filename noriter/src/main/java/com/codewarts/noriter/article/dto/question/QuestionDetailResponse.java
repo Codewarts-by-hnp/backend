@@ -3,6 +3,7 @@ package com.codewarts.noriter.article.dto.question;
 import com.codewarts.noriter.article.domain.Hashtag;
 import com.codewarts.noriter.article.domain.Question;
 import com.codewarts.noriter.article.domain.type.StatusType;
+import com.codewarts.noriter.article.dto.article.ArticleDetailResponse;
 import com.codewarts.noriter.comment.dto.comment.CommentResponse;
 import com.codewarts.noriter.member.dto.WriterInfoResponse;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -12,7 +13,7 @@ import java.util.stream.Collectors;
 import lombok.Getter;
 
 @Getter
-public class QuestionDetailResponse {
+public class QuestionDetailResponse extends ArticleDetailResponse {
 
     private final Long id;
     private final String title;

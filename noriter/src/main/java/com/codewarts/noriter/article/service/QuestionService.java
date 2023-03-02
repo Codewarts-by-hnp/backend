@@ -2,10 +2,11 @@ package com.codewarts.noriter.article.service;
 
 import com.codewarts.noriter.article.domain.Question;
 import com.codewarts.noriter.article.domain.type.StatusType;
-import com.codewarts.noriter.article.dto.question.QuestionCreateRequest;
+import com.codewarts.noriter.article.dto.article.ArticleCreateRequest;
+import com.codewarts.noriter.article.dto.article.ArticleListResponse;
+import com.codewarts.noriter.article.dto.article.ArticleUpdateRequest;
 import com.codewarts.noriter.article.dto.question.QuestionDetailResponse;
 import com.codewarts.noriter.article.dto.question.QuestionListResponse;
-import com.codewarts.noriter.article.dto.question.QuestionUpdateRequest;
 import com.codewarts.noriter.article.repository.QuestionRepository;
 import com.codewarts.noriter.exception.GlobalNoriterException;
 import com.codewarts.noriter.exception.type.ArticleExceptionType;
@@ -21,22 +22,24 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class QuestionService {
+public class QuestionService extends ArticleService {
 
     private final QuestionRepository questionRepository;
     private final WishRepository wishRepository;
     private final MemberService memberService;
 
     // 질문 등록 기능
+    @Override
     @Transactional
-    public Long create(QuestionCreateRequest request, Long memberId) {
+    public Long create(ArticleCreateRequest request, Long memberId) {
         Member writer = memberService.findMember(memberId);
-        Question question = request.toEntity(writer);
+        Question question = (Question) request.toEntity(writer);
         return questionRepository.save(question).getId();
     }
 
     // 질문 조회 기능
-    public List<QuestionListResponse> findList(StatusType status, Long memberId) {
+    @Override
+    public List<ArticleListResponse> findList(StatusType status, Long memberId) {
         if (memberId == null && status == null) {
             return questionRepository.findAllQuestion().stream()
                 .map(question -> new QuestionListResponse(question, false, false))
@@ -63,6 +66,7 @@ public class QuestionService {
     }
 
     // 질문 상세 조회 기능
+    @Override
     public QuestionDetailResponse findDetail(Long id, Long memberId) {
         Question question = findNotDeletedQuestion(id);
         boolean sameWriter = question.getWriter().getId().equals(memberId);
@@ -76,6 +80,7 @@ public class QuestionService {
         return QuestionDetailResponse.from(question, sameWriter, wish);
     }
 
+    @Override
     @Transactional
     public void delete(Long questionId, Long writerId) {
         memberService.findMember(writerId);
@@ -84,8 +89,9 @@ public class QuestionService {
         question.delete();
     }
 
+    @Override
     @Transactional
-    public void update(Long questionId, Long writerId, QuestionUpdateRequest request) {
+    public void update(Long questionId, ArticleUpdateRequest request, Long writerId) {
         memberService.findMember(writerId);
         Question question = findNotDeletedQuestion(questionId);
         question.validateWriterOrThrow(writerId);

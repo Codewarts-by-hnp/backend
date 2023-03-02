@@ -26,7 +26,7 @@ public abstract class ArticleService {
         return null;
     }
 
-    List<ArticleListResponse> findList(Long memberId, StatusType status) {
+    List<ArticleListResponse> findList(StatusType status, Long memberId) {
         return null;
     }
 
