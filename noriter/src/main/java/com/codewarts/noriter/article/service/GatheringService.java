@@ -1,12 +1,11 @@
 package com.codewarts.noriter.article.service;
 
 import com.codewarts.noriter.article.domain.Gathering;
-import com.codewarts.noriter.article.dto.gathering.GatheringDetailResponse;
-import com.codewarts.noriter.article.dto.gathering.GatheringUpdateRequest;
-import com.codewarts.noriter.article.dto.gathering.GatheringListResponse;
-import com.codewarts.noriter.article.dto.gathering.GatheringCreateRequest;
 import com.codewarts.noriter.article.domain.type.StatusType;
-import com.codewarts.noriter.article.repository.ArticleRepository;
+import com.codewarts.noriter.article.dto.gathering.GatheringCreateRequest;
+import com.codewarts.noriter.article.dto.gathering.GatheringDetailResponse;
+import com.codewarts.noriter.article.dto.gathering.GatheringListResponse;
+import com.codewarts.noriter.article.dto.gathering.GatheringUpdateRequest;
 import com.codewarts.noriter.article.repository.GatheringRepository;
 import com.codewarts.noriter.exception.GlobalNoriterException;
 import com.codewarts.noriter.exception.type.ArticleExceptionType;
@@ -25,7 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class GatheringService {
 
     private final MemberService memberService;
-    private final ArticleRepository articleRepository;
     private final GatheringRepository gatheringRepository;
     private final WishRepository wishRepository;
 
@@ -106,7 +104,7 @@ public class GatheringService {
         gathering.update(request.getTitle(), request.getContent(), request.getHashtags());
     }
 
-    public Gathering findNotDeletedStudy(Long id) {
+    private Gathering findNotDeletedStudy(Long id) {
         Gathering gathering = gatheringRepository.findById(id).
             orElseThrow(() -> new GlobalNoriterException(ArticleExceptionType.ARTICLE_NOT_FOUND));
         if (gathering.isDeleted()) {

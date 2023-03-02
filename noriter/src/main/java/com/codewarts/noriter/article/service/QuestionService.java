@@ -1,12 +1,11 @@
 package com.codewarts.noriter.article.service;
 
 import com.codewarts.noriter.article.domain.Question;
+import com.codewarts.noriter.article.domain.type.StatusType;
+import com.codewarts.noriter.article.dto.question.QuestionCreateRequest;
 import com.codewarts.noriter.article.dto.question.QuestionDetailResponse;
 import com.codewarts.noriter.article.dto.question.QuestionListResponse;
-import com.codewarts.noriter.article.dto.question.QuestionCreateRequest;
 import com.codewarts.noriter.article.dto.question.QuestionUpdateRequest;
-import com.codewarts.noriter.article.domain.type.StatusType;
-import com.codewarts.noriter.article.repository.ArticleRepository;
 import com.codewarts.noriter.article.repository.QuestionRepository;
 import com.codewarts.noriter.exception.GlobalNoriterException;
 import com.codewarts.noriter.exception.type.ArticleExceptionType;
@@ -25,7 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class QuestionService {
 
     private final QuestionRepository questionRepository;
-    private final ArticleRepository articleRepository;
     private final WishRepository wishRepository;
     private final MemberService memberService;
 

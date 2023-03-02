@@ -1,10 +1,10 @@
 package com.codewarts.noriter.article.controller;
 
 
+import com.codewarts.noriter.article.dto.article.ArticleListResponse;
+import com.codewarts.noriter.article.dto.playground.PlaygroundCreateRequest;
 import com.codewarts.noriter.article.dto.playground.PlaygroundDetailResponse;
 import com.codewarts.noriter.article.dto.playground.PlaygroundUpdateRequest;
-import com.codewarts.noriter.article.dto.playground.PlaygroundListResponse;
-import com.codewarts.noriter.article.dto.playground.PlaygroundCreateRequest;
 import com.codewarts.noriter.article.service.PlaygroundService;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
@@ -47,7 +47,7 @@ public class PlaygroundController {
     }
 
     @GetMapping
-    public List<PlaygroundListResponse> getList(HttpServletRequest request) {
+    public List<ArticleListResponse> getList(HttpServletRequest request) {
         Long memberId = getMemberId(request);
         return playgroundService.findList(memberId);
     }

@@ -2,6 +2,7 @@ package com.codewarts.noriter.article.dto.playground;
 
 import com.codewarts.noriter.article.domain.Article;
 import com.codewarts.noriter.article.domain.Hashtag;
+import com.codewarts.noriter.article.dto.article.ArticleListResponse;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -11,7 +12,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class PlaygroundListResponse {
+public class PlaygroundListResponse extends ArticleListResponse {
 
     private Long id;
     private String title;
@@ -28,7 +29,6 @@ public class PlaygroundListResponse {
     private boolean wish;
     private int wishCount;
     private int commentCount;
-    private boolean completed;
 
     public PlaygroundListResponse(Article article, boolean sameWriter, boolean wish) {
         this.id = article.getId();
@@ -44,6 +44,5 @@ public class PlaygroundListResponse {
         this.wish = wish;
         this.wishCount = article.getWishList().size();
         this.commentCount = article.getComments().size();
-        this.completed = isCompleted();
     }
 }

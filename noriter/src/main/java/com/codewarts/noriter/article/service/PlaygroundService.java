@@ -1,11 +1,12 @@
 package com.codewarts.noriter.article.service;
 
 import com.codewarts.noriter.article.domain.Article;
-import com.codewarts.noriter.article.dto.playground.PlaygroundDetailResponse;
-import com.codewarts.noriter.article.dto.playground.PlaygroundUpdateRequest;
-import com.codewarts.noriter.article.dto.playground.PlaygroundListResponse;
-import com.codewarts.noriter.article.dto.playground.PlaygroundCreateRequest;
 import com.codewarts.noriter.article.domain.type.ArticleType;
+import com.codewarts.noriter.article.dto.article.ArticleCreateRequest;
+import com.codewarts.noriter.article.dto.article.ArticleListResponse;
+import com.codewarts.noriter.article.dto.article.ArticleUpdateRequest;
+import com.codewarts.noriter.article.dto.playground.PlaygroundDetailResponse;
+import com.codewarts.noriter.article.dto.playground.PlaygroundListResponse;
 import com.codewarts.noriter.article.repository.ArticleRepository;
 import com.codewarts.noriter.exception.GlobalNoriterException;
 import com.codewarts.noriter.exception.type.ArticleExceptionType;
@@ -21,19 +22,22 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class PlaygroundService {
+public class PlaygroundService extends ArticleService {
 
     private final ArticleRepository articleRepository;
     private final WishRepository wishRepository;
     private final MemberService memberService;
 
+
     @Transactional
-    public Long create(PlaygroundCreateRequest playgroundCreateRequest, Long writerId) {
+    @Override
+    public Long create(ArticleCreateRequest playgroundCreateRequest, Long writerId) {
         Member member = memberService.findMember(writerId);
         Article playground = playgroundCreateRequest.toEntity(member);
         return articleRepository.save(playground).getId();
     }
 
+    @Override
     public PlaygroundDetailResponse findDetail(Long id, Long memberId) {
         Article article = findNotDeletedArticle(id);
         Long writerId = article.getWriter().getId();
@@ -46,7 +50,8 @@ public class PlaygroundService {
         return new PlaygroundDetailResponse(article, sameWriter, wish);
     }
 
-    public List<PlaygroundListResponse> findList(Long memberId) {
+    @Override
+    public List<ArticleListResponse> findList(Long memberId) {
         List<Article> playgroundTypeArticle = articleRepository.findAllByArticleType(
             ArticleType.PLAYGROUND);
         if (memberId == null) {
@@ -63,14 +68,16 @@ public class PlaygroundService {
             .collect(Collectors.toList());
     }
 
+    @Override
     @Transactional
-    public void update(Long id, PlaygroundUpdateRequest request, Long writerId) {
+    public void update(Long id, ArticleUpdateRequest request, Long writerId) {
         memberService.findMember(writerId);
         Article playground = findNotDeletedArticle(id);
         playground.validateWriterOrThrow(writerId);
         playground.update(request.getTitle(), request.getContent(), request.getHashtags());
     }
 
+    @Override
     @Transactional
     public void delete(Long id, Long writerId) {
         memberService.findMember(writerId);
@@ -79,7 +86,7 @@ public class PlaygroundService {
         playground.delete();
     }
 
-    public Article findNotDeletedArticle(Long id) {
+    private Article findNotDeletedArticle(Long id) {
         Article article = articleRepository.findById(id)
             .orElseThrow(() -> new GlobalNoriterException(ArticleExceptionType.ARTICLE_NOT_FOUND));
         if (article.isDeleted()) {
