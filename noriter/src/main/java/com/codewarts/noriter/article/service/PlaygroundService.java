@@ -1,7 +1,6 @@
 package com.codewarts.noriter.article.service;
 
 import com.codewarts.noriter.article.domain.Article;
-import com.codewarts.noriter.article.domain.type.ArticleType;
 import com.codewarts.noriter.article.dto.article.ArticleCreateRequest;
 import com.codewarts.noriter.article.dto.article.ArticleListResponse;
 import com.codewarts.noriter.article.dto.article.ArticleUpdateRequest;
@@ -49,20 +48,11 @@ public class PlaygroundService extends ArticleService {
 
     @Override
     public List<ArticleListResponse> findList(Long memberId) {
-        List<Article> playgroundTypeArticle = articleRepository.findAllByArticleType(
-            ArticleType.PLAYGROUND);
-        if (memberId == null) {
-            return playgroundTypeArticle.stream()
-                .map(article -> new PlaygroundListResponse(article, false, false))
-                .collect(Collectors.toList());
-        }
-        Member member = findMember(memberId);
-        // Todo -> N+1 해결하기
-        return playgroundTypeArticle.stream()
+        return articleRepository.findAllPlayGroundList(memberId).stream()
             .map(article -> new PlaygroundListResponse(article,
-                article.getWriter().getId().equals(memberId),
-                wishRepository.existsByArticleAndMember(article, member)))
-            .collect(Collectors.toList());
+                isSameWriter(article, memberId),
+                isWished(article, memberId)
+            )).collect(Collectors.toList());
     }
 
     @Override
@@ -83,6 +73,10 @@ public class PlaygroundService extends ArticleService {
         playground.delete();
     }
 
+    Member findMember(Long id) {
+        return super.findMember(id);
+    }
+
     private Article findNotDeletedArticle(Long id) {
         Article article = articleRepository.findById(id)
             .orElseThrow(() -> new GlobalNoriterException(ArticleExceptionType.ARTICLE_NOT_FOUND));
@@ -92,7 +86,14 @@ public class PlaygroundService extends ArticleService {
         return article;
     }
 
-    Member findMember(Long id) {
-        return super.findMember(id);
+    private boolean isSameWriter(Article article, Long memberId) {
+        if (memberId == null) return false;
+        return article.getWriter().getId().equals(memberId);
+    }
+
+    private boolean isWished(Article article, Long memberId) {
+        if (memberId == null) return false;
+        Member member = findMember(memberId);
+        return wishRepository.existsByArticleAndMember(article, member);
     }
 }

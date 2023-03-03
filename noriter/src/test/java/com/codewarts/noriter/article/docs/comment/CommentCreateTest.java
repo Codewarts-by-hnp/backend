@@ -19,7 +19,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.test.context.jdbc.Sql;
 
 @DisplayName("댓글 등록 기능 통합 테스트")
-@Sql("classpath:/data.sql")
 class CommentCreateTest extends InitIntegrationRestDocsTest {
 
     @Test

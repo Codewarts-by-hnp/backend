@@ -36,27 +36,10 @@ public class GatheringService extends ArticleService {
 
     @Override
     public List<ArticleListResponse> findList(StatusType status, Long memberId) {
-        if (status == null && memberId == null) {
-            return gatheringRepository.findAllGathering().stream()
-                .map(gathering -> new GatheringListResponse(gathering, false, false))
-                .collect(Collectors.toList());
-        }
-        if (memberId == null) {
-            return gatheringRepository.findByGatheringCompleted(status).stream()
-                .map(gathering -> new GatheringListResponse(gathering, false, false))
-                .collect(Collectors.toList());
-        }
-        Member member = findMember(memberId);
-        if (status == null) {
-            return gatheringRepository.findAllGathering().stream()
-                .map(gathering -> new GatheringListResponse(gathering,
-                    gathering.getWriter().getId().equals(memberId),
-                    wishRepository.existsByArticleAndMember(gathering, member)))
-                .collect(Collectors.toList());
-        }
-        return gatheringRepository.findByGatheringCompleted(status).stream()
-            .map(gathering -> new GatheringListResponse(gathering, gathering.getWriter().getId().equals(memberId),
-                wishRepository.existsByArticleAndMember(gathering, member)))
+        return gatheringRepository.findAllGatheringList(status, memberId).stream()
+            .map(gathering -> new GatheringListResponse(gathering,
+                isSameWriter(gathering, memberId),
+                isWished(gathering, memberId)))
             .collect(Collectors.toList());
     }
 
@@ -108,6 +91,10 @@ public class GatheringService extends ArticleService {
         gathering.update(request.getTitle(), request.getContent(), request.getHashtags());
     }
 
+    Member findMember(Long id) {
+        return super.findMember(id);
+    }
+
     private Gathering findNotDeletedStudy(Long id) {
         Gathering gathering = gatheringRepository.findById(id).
             orElseThrow(() -> new GlobalNoriterException(ArticleExceptionType.ARTICLE_NOT_FOUND));
@@ -117,7 +104,14 @@ public class GatheringService extends ArticleService {
         return gathering;
     }
 
-    Member findMember(Long id) {
-        return super.findMember(id);
+    private boolean isSameWriter(Gathering gathering, Long memberId) {
+        if (memberId == null) return false;
+        return gathering.getWriter().getId().equals(memberId);
+    }
+
+    private boolean isWished(Gathering gathering, Long memberId) {
+        if (memberId == null) return false;
+        Member member = findMember(memberId);
+        return wishRepository.existsByArticleAndMember(gathering, member);
     }
 }

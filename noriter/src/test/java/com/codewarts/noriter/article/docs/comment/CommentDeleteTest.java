@@ -19,10 +19,8 @@ import com.codewarts.noriter.article.docs.InitIntegrationRestDocsTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
-import org.springframework.test.context.jdbc.Sql;
 
 @DisplayName("댓글 삭제 기능 통합 테스트")
-@Sql("classpath:/data.sql")
 class CommentDeleteTest extends InitIntegrationRestDocsTest {
 
     @Test

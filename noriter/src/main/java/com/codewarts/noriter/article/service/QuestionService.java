@@ -38,28 +38,10 @@ public class QuestionService extends ArticleService {
     // 질문 조회 기능
     @Override
     public List<ArticleListResponse> findList(StatusType status, Long memberId) {
-        if (memberId == null && status == null) {
-            return questionRepository.findAllQuestion().stream()
-                .map(question -> new QuestionListResponse(question, false, false))
-                .collect(Collectors.toList());
-        }
-        if (memberId == null) {
-            return questionRepository.findQuestionByCompleted(status).stream()
-                .map(question -> new QuestionListResponse(question, false, false))
-                .collect(Collectors.toList());
-        }
-        Member member = findMember(memberId);
-        if (status == null) {
-            return questionRepository.findAllQuestion().stream()
-                .map(question -> new QuestionListResponse(question,
-                    question.getWriter().getId().equals(memberId),
-                    wishRepository.existsByArticleAndMember(question, member)))
-                .collect(Collectors.toList());
-        }
-        return questionRepository.findQuestionByCompleted(status).stream()
+        return questionRepository.findAllQuestionList(status, memberId).stream()
             .map(question -> new QuestionListResponse(question,
-                question.getWriter().getId().equals(memberId),
-                wishRepository.existsByArticleAndMember(question, member)))
+                isSameWriter(question, memberId),
+                isWished(question, memberId)))
             .collect(Collectors.toList());
     }
 
@@ -109,6 +91,10 @@ public class QuestionService extends ArticleService {
         question.changeStatusToIncomplete();
     }
 
+    Member findMember(Long id) {
+        return super.findMember(id);
+    }
+
     private Question findNotDeletedQuestion(Long id) {
         Question question = questionRepository.findById(id)
             .orElseThrow(() -> new GlobalNoriterException(
@@ -119,7 +105,14 @@ public class QuestionService extends ArticleService {
         return question;
     }
 
-    Member findMember(Long id) {
-        return super.findMember(id);
+    private boolean isSameWriter(Question question, Long memberId) {
+        if (memberId == null) return false;
+        return question.getWriter().getId().equals(memberId);
+    }
+
+    private boolean isWished(Question question, Long memberId) {
+        if (memberId == null) return false;
+        Member member = findMember(memberId);
+        return wishRepository.existsByArticleAndMember(question, member);
     }
 }
