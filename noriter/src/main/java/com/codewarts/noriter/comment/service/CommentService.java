@@ -6,16 +6,17 @@ import com.codewarts.noriter.comment.domain.Comment;
 import com.codewarts.noriter.comment.domain.ReComment;
 import com.codewarts.noriter.comment.dto.comment.CommentCreateRequest;
 import com.codewarts.noriter.comment.dto.comment.CommentUpdateRequest;
-import com.codewarts.noriter.comment.dto.recomment.ReCommentUpdateRequest;
 import com.codewarts.noriter.comment.dto.recomment.ReCommentCreateRequest;
+import com.codewarts.noriter.comment.dto.recomment.ReCommentUpdateRequest;
 import com.codewarts.noriter.comment.repository.CommentRepository;
 import com.codewarts.noriter.comment.repository.ReCommentRepository;
 import com.codewarts.noriter.exception.GlobalNoriterException;
 import com.codewarts.noriter.exception.type.ArticleExceptionType;
 import com.codewarts.noriter.exception.type.CommentExceptionType;
+import com.codewarts.noriter.exception.type.MemberExceptionType;
 import com.codewarts.noriter.exception.type.ReCommentExceptionType;
 import com.codewarts.noriter.member.domain.Member;
-import com.codewarts.noriter.member.service.MemberService;
+import com.codewarts.noriter.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,17 +29,17 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final ReCommentRepository reCommentRepository;
     private final ArticleRepository articleRepository;
-    private final MemberService memberService;
+    private final MemberRepository memberRepository;
 
     public void createComment(Long memberId, Long articleId, CommentCreateRequest request) {
-        Member member = memberService.findMember(memberId);
+        Member member = findMember(memberId);
         Article article = findNotDeletedArticle(articleId);
         Comment comment = request.toEntity(article, member);
         commentRepository.save(comment);
     }
 
     public void updateComment(Long memberId, Long articleId, Long commentId, CommentUpdateRequest request) {
-        Member member = memberService.findMember(memberId);
+        Member member = findMember(memberId);
         Article article = findNotDeletedArticle(articleId);
         Comment comment = findNotDeletedComment(commentId);
         comment.validateArticleOrThrow(article);
@@ -47,7 +48,7 @@ public class CommentService {
     }
 
     public void deleteComment(Long memberId, Long articleId, Long commentId) {
-        Member member = memberService.findMember(memberId);
+        Member member = findMember(memberId);
         Article article = findNotDeletedArticle(articleId);
         Comment comment = findNotDeletedComment(commentId);
         comment.validateArticleOrThrow(article);
@@ -57,7 +58,7 @@ public class CommentService {
 
     public void createReComment(Long articleId, Long commentId, Long memberId,
         ReCommentCreateRequest request) {
-        Member member = memberService.findMember(memberId);
+        Member member = findMember(memberId);
         Article article = findNotDeletedArticle(articleId);
 
         Comment comment = findNotDeletedComment(commentId);
@@ -69,7 +70,7 @@ public class CommentService {
 
     public void updateReComment(Long articleId, Long commentId, Long recommentId, Long memberId,
         ReCommentUpdateRequest request) {
-        Member member = memberService.findMember(memberId);
+        Member member = findMember(memberId);
         Article article = findNotDeletedArticle(articleId);
 
         Comment comment = findNotDeletedComment(commentId);
@@ -110,7 +111,7 @@ public class CommentService {
     }
 
     public void deleteRecomment(Long articleId, Long commentId, Long recommentId, Long memberId) {
-        Member member = memberService.findMember(memberId);
+        Member member = findMember(memberId);
         Article article = findNotDeletedArticle(articleId);
 
         Comment comment = findNotDeletedComment(commentId);
@@ -120,5 +121,9 @@ public class CommentService {
         reComment.validateCommentOrThrow(comment);
         reComment.validateWriterOrThrow(member);
         reComment.delete();
+    }
+    private Member findMember(Long id) {
+        return memberRepository.findById(id).orElseThrow(() -> new GlobalNoriterException(
+            MemberExceptionType.MEMBER_NOT_FOUND));
     }
 }

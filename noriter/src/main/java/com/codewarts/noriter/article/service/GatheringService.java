@@ -11,7 +11,6 @@ import com.codewarts.noriter.article.repository.GatheringRepository;
 import com.codewarts.noriter.exception.GlobalNoriterException;
 import com.codewarts.noriter.exception.type.ArticleExceptionType;
 import com.codewarts.noriter.member.domain.Member;
-import com.codewarts.noriter.member.service.MemberService;
 import com.codewarts.noriter.wish.repository.WishRepository;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,14 +23,13 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class GatheringService extends ArticleService {
 
-    private final MemberService memberService;
     private final GatheringRepository gatheringRepository;
     private final WishRepository wishRepository;
 
     @Override
     @Transactional
     public Long create(ArticleCreateRequest gatheringCreateRequest, Long memberId) {
-        Member member = memberService.findMember(memberId);
+        Member member = findMember(memberId);
         Gathering gathering = (Gathering) gatheringCreateRequest.toEntity(member);
         return gatheringRepository.save(gathering).getId();
     }
@@ -48,7 +46,7 @@ public class GatheringService extends ArticleService {
                 .map(gathering -> new GatheringListResponse(gathering, false, false))
                 .collect(Collectors.toList());
         }
-        Member member = memberService.findMember(memberId);
+        Member member = findMember(memberId);
         if (status == null) {
             return gatheringRepository.findAllGathering().stream()
                 .map(gathering -> new GatheringListResponse(gathering,
@@ -70,7 +68,7 @@ public class GatheringService extends ArticleService {
         if (memberId == null) {
             return new GatheringDetailResponse(gathering, false, false);
         }
-        Member member = memberService.findMember(memberId);
+        Member member = findMember(memberId);
         boolean wish = wishRepository.existsByArticleAndMember(gathering, member);
 
         return new GatheringDetailResponse(gathering, sameWriter, wish);
@@ -79,7 +77,7 @@ public class GatheringService extends ArticleService {
     @Override
     @Transactional
     public void delete(Long id, Long writerId) {
-        memberService.findMember(writerId);
+        findMember(writerId);
         Gathering gathering = findNotDeletedStudy(id);
         gathering.validateWriterOrThrow(writerId);
         gathering.delete();
@@ -87,7 +85,7 @@ public class GatheringService extends ArticleService {
 
     @Transactional
     public void updateCompletion(Long id, Long writerId, StatusType status) {
-        memberService.findMember(writerId);
+        findMember(writerId);
         Gathering gathering = findNotDeletedStudy(id);
         gathering.validateWriterOrThrow(writerId);
 
@@ -104,7 +102,7 @@ public class GatheringService extends ArticleService {
     @Override
     @Transactional
     public void update(Long id, ArticleUpdateRequest request, Long writerId) {
-        memberService.findMember(writerId);
+        findMember(writerId);
         Gathering gathering = findNotDeletedStudy(id);
         gathering.validateWriterOrThrow(writerId);
         gathering.update(request.getTitle(), request.getContent(), request.getHashtags());
@@ -117,5 +115,9 @@ public class GatheringService extends ArticleService {
             throw new GlobalNoriterException(ArticleExceptionType.DELETED_ARTICLE);
         }
         return gathering;
+    }
+
+    Member findMember(Long id) {
+        return super.findMember(id);
     }
 }

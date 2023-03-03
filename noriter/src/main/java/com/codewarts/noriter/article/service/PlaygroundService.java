@@ -11,7 +11,6 @@ import com.codewarts.noriter.article.repository.ArticleRepository;
 import com.codewarts.noriter.exception.GlobalNoriterException;
 import com.codewarts.noriter.exception.type.ArticleExceptionType;
 import com.codewarts.noriter.member.domain.Member;
-import com.codewarts.noriter.member.service.MemberService;
 import com.codewarts.noriter.wish.repository.WishRepository;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,13 +25,11 @@ public class PlaygroundService extends ArticleService {
 
     private final ArticleRepository articleRepository;
     private final WishRepository wishRepository;
-    private final MemberService memberService;
-
 
     @Transactional
     @Override
     public Long create(ArticleCreateRequest playgroundCreateRequest, Long writerId) {
-        Member member = memberService.findMember(writerId);
+        Member member = findMember(writerId);
         Article playground = playgroundCreateRequest.toEntity(member);
         return articleRepository.save(playground).getId();
     }
@@ -45,7 +42,7 @@ public class PlaygroundService extends ArticleService {
         if (memberId == null) {
             return new PlaygroundDetailResponse(article, sameWriter, false);
         }
-        Member member = memberService.findMember(memberId);
+        Member member = findMember(writerId);
         boolean wish = wishRepository.existsByArticleAndMember(article, member);
         return new PlaygroundDetailResponse(article, sameWriter, wish);
     }
@@ -59,7 +56,7 @@ public class PlaygroundService extends ArticleService {
                 .map(article -> new PlaygroundListResponse(article, false, false))
                 .collect(Collectors.toList());
         }
-        Member member = memberService.findMember(memberId);
+        Member member = findMember(memberId);
         // Todo -> N+1 해결하기
         return playgroundTypeArticle.stream()
             .map(article -> new PlaygroundListResponse(article,
@@ -71,7 +68,7 @@ public class PlaygroundService extends ArticleService {
     @Override
     @Transactional
     public void update(Long id, ArticleUpdateRequest request, Long writerId) {
-        memberService.findMember(writerId);
+        findMember(writerId);
         Article playground = findNotDeletedArticle(id);
         playground.validateWriterOrThrow(writerId);
         playground.update(request.getTitle(), request.getContent(), request.getHashtags());
@@ -80,7 +77,7 @@ public class PlaygroundService extends ArticleService {
     @Override
     @Transactional
     public void delete(Long id, Long writerId) {
-        memberService.findMember(writerId);
+        findMember(writerId);
         Article playground = findNotDeletedArticle(id);
         playground.validateWriterOrThrow(writerId);
         playground.delete();
@@ -93,5 +90,9 @@ public class PlaygroundService extends ArticleService {
             throw new GlobalNoriterException(ArticleExceptionType.DELETED_ARTICLE);
         }
         return article;
+    }
+
+    Member findMember(Long id) {
+        return super.findMember(id);
     }
 }

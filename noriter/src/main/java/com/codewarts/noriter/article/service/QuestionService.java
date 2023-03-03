@@ -11,7 +11,6 @@ import com.codewarts.noriter.article.repository.QuestionRepository;
 import com.codewarts.noriter.exception.GlobalNoriterException;
 import com.codewarts.noriter.exception.type.ArticleExceptionType;
 import com.codewarts.noriter.member.domain.Member;
-import com.codewarts.noriter.member.service.MemberService;
 import com.codewarts.noriter.wish.repository.WishRepository;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,13 +25,12 @@ public class QuestionService extends ArticleService {
 
     private final QuestionRepository questionRepository;
     private final WishRepository wishRepository;
-    private final MemberService memberService;
 
     // 질문 등록 기능
     @Override
     @Transactional
     public Long create(ArticleCreateRequest request, Long memberId) {
-        Member writer = memberService.findMember(memberId);
+        Member writer = findMember(memberId);
         Question question = (Question) request.toEntity(writer);
         return questionRepository.save(question).getId();
     }
@@ -50,7 +48,7 @@ public class QuestionService extends ArticleService {
                 .map(question -> new QuestionListResponse(question, false, false))
                 .collect(Collectors.toList());
         }
-        Member member = memberService.findMember(memberId);
+        Member member = findMember(memberId);
         if (status == null) {
             return questionRepository.findAllQuestion().stream()
                 .map(question -> new QuestionListResponse(question,
@@ -74,7 +72,7 @@ public class QuestionService extends ArticleService {
         if (memberId == null) {
             return QuestionDetailResponse.from(question, false, false);
         }
-        Member member = memberService.findMember(memberId);
+        Member member = findMember(memberId);
         boolean wish = wishRepository.existsByArticleAndMember(question, member);
 
         return QuestionDetailResponse.from(question, sameWriter, wish);
@@ -83,7 +81,7 @@ public class QuestionService extends ArticleService {
     @Override
     @Transactional
     public void delete(Long questionId, Long writerId) {
-        memberService.findMember(writerId);
+        findMember(writerId);
         Question question = findNotDeletedQuestion(questionId);
         question.validateWriterOrThrow(writerId);
         question.delete();
@@ -92,7 +90,7 @@ public class QuestionService extends ArticleService {
     @Override
     @Transactional
     public void update(Long questionId, ArticleUpdateRequest request, Long writerId) {
-        memberService.findMember(writerId);
+        findMember(writerId);
         Question question = findNotDeletedQuestion(questionId);
         question.validateWriterOrThrow(writerId);
         question.update(request.getTitle(), request.getContent(), request.getHashtags());
@@ -100,7 +98,7 @@ public class QuestionService extends ArticleService {
 
     @Transactional
     public void updateStatus(Long questionId, Long writerId, StatusType status) {
-        memberService.findMember(writerId);
+        findMember(writerId);
         Question question = findNotDeletedQuestion(questionId);
         question.validateWriterOrThrow(writerId);
 
@@ -119,5 +117,9 @@ public class QuestionService extends ArticleService {
             throw new GlobalNoriterException(ArticleExceptionType.DELETED_ARTICLE);
         }
         return question;
+    }
+
+    Member findMember(Long id) {
+        return super.findMember(id);
     }
 }
