@@ -10,7 +10,9 @@ import com.codewarts.noriter.article.dto.gathering.GatheringListResponse;
 import com.codewarts.noriter.article.repository.GatheringRepository;
 import com.codewarts.noriter.exception.GlobalNoriterException;
 import com.codewarts.noriter.exception.type.ArticleExceptionType;
+import com.codewarts.noriter.exception.type.MemberExceptionType;
 import com.codewarts.noriter.member.domain.Member;
+import com.codewarts.noriter.member.repository.MemberRepository;
 import com.codewarts.noriter.wish.repository.WishRepository;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,6 +27,8 @@ public class GatheringService extends ArticleService {
 
     private final GatheringRepository gatheringRepository;
     private final WishRepository wishRepository;
+    private final MemberRepository memberRepository;
+
 
     @Override
     @Transactional
@@ -36,7 +40,7 @@ public class GatheringService extends ArticleService {
 
     @Override
     public List<ArticleListResponse> findList(StatusType status, Long memberId) {
-        return gatheringRepository.findAllGatheringList(status, memberId).stream()
+        return gatheringRepository.findAllGatheringList(status).stream()
             .map(gathering -> new GatheringListResponse(gathering,
                 isSameWriter(gathering, memberId),
                 isWished(gathering, memberId)))
@@ -91,8 +95,10 @@ public class GatheringService extends ArticleService {
         gathering.update(request.getTitle(), request.getContent(), request.getHashtags());
     }
 
+    @Override
     Member findMember(Long id) {
-        return super.findMember(id);
+        return memberRepository.findById(id).orElseThrow(() -> new GlobalNoriterException(
+            MemberExceptionType.MEMBER_NOT_FOUND));
     }
 
     private Gathering findNotDeletedStudy(Long id) {

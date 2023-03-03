@@ -10,7 +10,9 @@ import com.codewarts.noriter.article.dto.question.QuestionListResponse;
 import com.codewarts.noriter.article.repository.QuestionRepository;
 import com.codewarts.noriter.exception.GlobalNoriterException;
 import com.codewarts.noriter.exception.type.ArticleExceptionType;
+import com.codewarts.noriter.exception.type.MemberExceptionType;
 import com.codewarts.noriter.member.domain.Member;
+import com.codewarts.noriter.member.repository.MemberRepository;
 import com.codewarts.noriter.wish.repository.WishRepository;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,6 +27,7 @@ public class QuestionService extends ArticleService {
 
     private final QuestionRepository questionRepository;
     private final WishRepository wishRepository;
+    private final MemberRepository memberRepository;
 
     // 질문 등록 기능
     @Override
@@ -38,7 +41,7 @@ public class QuestionService extends ArticleService {
     // 질문 조회 기능
     @Override
     public List<ArticleListResponse> findList(StatusType status, Long memberId) {
-        return questionRepository.findAllQuestionList(status, memberId).stream()
+        return questionRepository.findAllQuestionList(status).stream()
             .map(question -> new QuestionListResponse(question,
                 isSameWriter(question, memberId),
                 isWished(question, memberId)))
@@ -91,8 +94,10 @@ public class QuestionService extends ArticleService {
         question.changeStatusToIncomplete();
     }
 
+    @Override
     Member findMember(Long id) {
-        return super.findMember(id);
+        return memberRepository.findById(id).orElseThrow(() -> new GlobalNoriterException(
+            MemberExceptionType.MEMBER_NOT_FOUND));
     }
 
     private Question findNotDeletedQuestion(Long id) {

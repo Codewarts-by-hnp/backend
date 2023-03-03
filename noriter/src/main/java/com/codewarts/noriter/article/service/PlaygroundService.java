@@ -1,6 +1,7 @@
 package com.codewarts.noriter.article.service;
 
 import com.codewarts.noriter.article.domain.Article;
+import com.codewarts.noriter.article.domain.type.ArticleType;
 import com.codewarts.noriter.article.dto.article.ArticleCreateRequest;
 import com.codewarts.noriter.article.dto.article.ArticleListResponse;
 import com.codewarts.noriter.article.dto.article.ArticleUpdateRequest;
@@ -9,7 +10,9 @@ import com.codewarts.noriter.article.dto.playground.PlaygroundListResponse;
 import com.codewarts.noriter.article.repository.ArticleRepository;
 import com.codewarts.noriter.exception.GlobalNoriterException;
 import com.codewarts.noriter.exception.type.ArticleExceptionType;
+import com.codewarts.noriter.exception.type.MemberExceptionType;
 import com.codewarts.noriter.member.domain.Member;
+import com.codewarts.noriter.member.repository.MemberRepository;
 import com.codewarts.noriter.wish.repository.WishRepository;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,6 +27,8 @@ public class PlaygroundService extends ArticleService {
 
     private final ArticleRepository articleRepository;
     private final WishRepository wishRepository;
+    private final MemberRepository memberRepository;
+
 
     @Transactional
     @Override
@@ -48,7 +53,7 @@ public class PlaygroundService extends ArticleService {
 
     @Override
     public List<ArticleListResponse> findList(Long memberId) {
-        return articleRepository.findAllPlayGroundList(memberId).stream()
+        return articleRepository.findAllByArticleType(ArticleType.PLAYGROUND).stream()
             .map(article -> new PlaygroundListResponse(article,
                 isSameWriter(article, memberId),
                 isWished(article, memberId)
@@ -73,8 +78,10 @@ public class PlaygroundService extends ArticleService {
         playground.delete();
     }
 
+    @Override
     Member findMember(Long id) {
-        return super.findMember(id);
+        return memberRepository.findById(id).orElseThrow(() -> new GlobalNoriterException(
+            MemberExceptionType.MEMBER_NOT_FOUND));
     }
 
     private Article findNotDeletedArticle(Long id) {
