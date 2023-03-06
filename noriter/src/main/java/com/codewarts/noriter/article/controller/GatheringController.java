@@ -6,11 +6,11 @@ import com.codewarts.noriter.article.dto.gathering.GatheringCreateRequest;
 import com.codewarts.noriter.article.dto.gathering.GatheringDetailResponse;
 import com.codewarts.noriter.article.dto.gathering.GatheringUpdateRequest;
 import com.codewarts.noriter.article.service.GatheringService;
+import com.codewarts.noriter.auth.LoginCheck;
 import com.codewarts.noriter.exception.GlobalNoriterException;
 import com.codewarts.noriter.exception.type.CommonExceptionType;
 import java.util.List;
 import java.util.Map;
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
@@ -39,16 +39,13 @@ public class GatheringController {
 
     @PostMapping
     public Long register(@RequestBody @Valid GatheringCreateRequest gatheringCreateRequest,
-        HttpServletRequest request) {
-        Long memberId = getMemberId(request);
+        @LoginCheck Long memberId) {
         return gatheringService.create(gatheringCreateRequest, memberId);
     }
 
     @GetMapping
     public List<ArticleListResponse> getList(
-        @RequestParam(required = false) Map<String, String> paramMap, HttpServletRequest request) {
-        Long memberId = getMemberId(request);
-
+        @RequestParam(required = false) Map<String, String> paramMap, @LoginCheck Long memberId) {
         if (paramMap.isEmpty()) {
             return gatheringService.findList(null, memberId);
         }
@@ -63,16 +60,14 @@ public class GatheringController {
     @GetMapping("/{id}")
     public GatheringDetailResponse getDetail(@PathVariable(required = false)
     @NotNull(message = "ID가 비어있습니다.")
-    @Positive(message = "게시글 ID는 양수이어야 합니다.") Long id, HttpServletRequest request) {
-        Long memberId = getMemberId(request);
+    @Positive(message = "게시글 ID는 양수이어야 합니다.") Long id, @LoginCheck Long memberId) {
         return gatheringService.findDetail(id, memberId);
     }
 
     @DeleteMapping("/{id}")
     public void remove(@PathVariable(required = false)
     @NotNull(message = "ID가 비어있습니다.")
-    @Positive(message = "게시글 ID는 양수이어야 합니다.") Long id, HttpServletRequest request) {
-        Long memberId = getMemberId(request);
+    @Positive(message = "게시글 ID는 양수이어야 합니다.") Long id, @LoginCheck Long memberId) {
         gatheringService.delete(id, memberId);
     }
 
@@ -80,9 +75,7 @@ public class GatheringController {
     public void changeStatus(@PathVariable(required = false)
     @NotNull(message = "ID가 비어있습니다.")
     @Positive(message = "게시글 ID는 양수이어야 합니다.") Long id,
-        @RequestBody Map<String, StatusType> map,
-        HttpServletRequest request) {
-        Long memberId = getMemberId(request);
+        @RequestBody Map<String, StatusType> map, @LoginCheck Long memberId) {
         gatheringService.updateCompletion(id, memberId, map.get("status"));
     }
 
@@ -91,12 +84,7 @@ public class GatheringController {
     @NotNull(message = "ID가 비어있습니다.")
     @Positive(message = "게시글 ID는 양수이어야 합니다.") Long id,
         @RequestBody @Valid GatheringUpdateRequest gatheringUpdateRequest,
-        HttpServletRequest request) {
-        Long memberId = getMemberId(request);
+        @LoginCheck Long memberId) {
         gatheringService.update(id, gatheringUpdateRequest, memberId);
-    }
-
-    private Long getMemberId(HttpServletRequest request) {
-        return (Long) request.getAttribute("memberId");
     }
 }

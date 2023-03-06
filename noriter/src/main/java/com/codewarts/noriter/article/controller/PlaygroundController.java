@@ -6,8 +6,8 @@ import com.codewarts.noriter.article.dto.playground.PlaygroundCreateRequest;
 import com.codewarts.noriter.article.dto.playground.PlaygroundDetailResponse;
 import com.codewarts.noriter.article.dto.playground.PlaygroundUpdateRequest;
 import com.codewarts.noriter.article.service.PlaygroundService;
+import com.codewarts.noriter.auth.LoginCheck;
 import java.util.List;
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
@@ -32,8 +32,7 @@ public class PlaygroundController {
 
     @PostMapping
     public Long register(@RequestBody @Valid PlaygroundCreateRequest playgroundCreateRequest,
-        HttpServletRequest request) {
-        Long memberId = getMemberId(request);
+        @LoginCheck Long memberId) {
         return playgroundService.create(playgroundCreateRequest, memberId);
     }
 
@@ -41,14 +40,12 @@ public class PlaygroundController {
     public PlaygroundDetailResponse getDetail(
         @PathVariable(required = false)
         @NotNull(message = "ID가 비어있습니다.")
-        @Positive(message = "게시글 ID는 양수이어야 합니다.") Long id, HttpServletRequest request) {
-        Long memberId = getMemberId(request);
+        @Positive(message = "게시글 ID는 양수이어야 합니다.") Long id, @LoginCheck Long memberId) {
         return playgroundService.findDetail(id, memberId);
     }
 
     @GetMapping
-    public List<ArticleListResponse> getList(HttpServletRequest request) {
-        Long memberId = getMemberId(request);
+    public List<ArticleListResponse> getList(@LoginCheck Long memberId) {
         return playgroundService.findList(memberId);
     }
 
@@ -58,8 +55,7 @@ public class PlaygroundController {
         @NotNull(message = "ID가 비어있습니다.")
         @Positive(message = "게시글 ID는 양수이어야 합니다.") Long id,
         @RequestBody @Valid PlaygroundUpdateRequest playgroundUpdateRequest,
-        HttpServletRequest request) {
-        Long memberId = getMemberId(request);
+        @LoginCheck Long memberId) {
         playgroundService.update(id, playgroundUpdateRequest, memberId);
     }
 
@@ -67,13 +63,7 @@ public class PlaygroundController {
     public void remove(
         @PathVariable(required = false)
         @NotNull(message = "ID가 비어있습니다.")
-        @Positive(message = "게시글 ID는 양수이어야 합니다.") Long id,
-        HttpServletRequest request) {
-        Long memberId = getMemberId(request);
+        @Positive(message = "게시글 ID는 양수이어야 합니다.") Long id, @LoginCheck Long memberId) {
         playgroundService.delete(id, memberId);
-    }
-
-    private Long getMemberId(HttpServletRequest request) {
-        return (Long) request.getAttribute("memberId");
     }
 }

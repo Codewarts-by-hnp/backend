@@ -30,6 +30,9 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
 
+	//AOP
+	implementation 'org.springframework.boot:spring-boot-starter-aop'
+
 	//Lombok
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
@@ -68,8 +71,8 @@ dependencies {
 	testImplementation 'org.springframework.restdocs:spring-restdocs-restassured'
 
 	// 테스트 환경 lombok 사용
-//	testCompileOnly 'org.projectlombok:lombok:1.18.24'
-//	testAnnotationProcessor 'org.projectlombok:lombok:1.18.24'
+	testCompileOnly 'org.projectlombok:lombok:1.18.24'
+	testAnnotationProcessor 'org.projectlombok:lombok:1.18.24'
 }
 
 // QueryDSL
