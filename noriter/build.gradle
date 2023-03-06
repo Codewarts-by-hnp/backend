@@ -30,9 +30,6 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
 
-	//AOP
-	implementation 'org.springframework.boot:spring-boot-starter-aop'
-
 	//Lombok
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
