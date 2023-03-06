@@ -4,9 +4,10 @@ import com.codewarts.noriter.article.domain.Article;
 import com.codewarts.noriter.article.repository.ArticleRepository;
 import com.codewarts.noriter.exception.GlobalNoriterException;
 import com.codewarts.noriter.exception.type.ArticleExceptionType;
+import com.codewarts.noriter.exception.type.MemberExceptionType;
 import com.codewarts.noriter.exception.type.WishExceptionType;
 import com.codewarts.noriter.member.domain.Member;
-import com.codewarts.noriter.member.service.MemberService;
+import com.codewarts.noriter.member.repository.MemberRepository;
 import com.codewarts.noriter.wish.domain.Wish;
 import com.codewarts.noriter.wish.repository.WishRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,10 +19,10 @@ public class WishService {
 
     private final WishRepository wishRepository;
     private final ArticleRepository articleRepository;
-    private final MemberService memberService;
+    private final MemberRepository memberRepository;
 
     public void create(Long memberId, Long articleId) {
-        Member member = memberService.findMember(memberId);
+        Member member = findMember(memberId);
         Article article = articleRepository.findById(articleId)
             .orElseThrow(() -> new GlobalNoriterException(
                 ArticleExceptionType.ARTICLE_NOT_FOUND));
@@ -34,7 +35,7 @@ public class WishService {
     }
 
     public void delete(Long memberId, Long articleId) {
-        Member member = memberService.findMember(memberId);
+        Member member = findMember(memberId);
         Article article = articleRepository.findById(articleId)
             .orElseThrow(() -> new GlobalNoriterException(
                 ArticleExceptionType.ARTICLE_NOT_FOUND));
@@ -45,5 +46,10 @@ public class WishService {
             ));
 
         wishRepository.delete(wish);
+    }
+
+    private Member findMember(Long id) {
+        return memberRepository.findById(id).orElseThrow(() -> new GlobalNoriterException(
+            MemberExceptionType.MEMBER_NOT_FOUND));
     }
 }

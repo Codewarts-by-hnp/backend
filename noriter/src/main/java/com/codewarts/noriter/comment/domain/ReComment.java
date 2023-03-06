@@ -1,9 +1,9 @@
 package com.codewarts.noriter.comment.domain;
 
+import com.codewarts.noriter.common.util.BaseTimeEntity;
 import com.codewarts.noriter.exception.GlobalNoriterException;
 import com.codewarts.noriter.exception.type.ReCommentExceptionType;
 import com.codewarts.noriter.member.domain.Member;
-import java.time.LocalDateTime;
 import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ReComment {
+public class ReComment extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,8 +36,6 @@ public class ReComment {
     private String content;
     private boolean secret;
     private boolean deleted;
-    private LocalDateTime writtenTime;
-    private LocalDateTime editedTime;
 
     public ReComment(Comment comment, Member writer, String content, boolean secret) {
         this.comment = comment;
@@ -45,14 +43,11 @@ public class ReComment {
         this.content = content;
         this.secret = secret;
         this.deleted = false;
-        this.writtenTime = LocalDateTime.now();
-        this.editedTime = LocalDateTime.now();
     }
 
     public void update(String content, Boolean secret) {
         this.content = content;
         this.secret = secret;
-        this.editedTime = LocalDateTime.now();
     }
 
     public void delete() {
