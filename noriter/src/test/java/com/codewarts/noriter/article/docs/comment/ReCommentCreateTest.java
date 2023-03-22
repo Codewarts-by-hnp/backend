@@ -1,4 +1,4 @@
-package com.codewarts.noriter.article.docs.recomment;
+package com.codewarts.noriter.article.docs.comment;
 
 import static com.codewarts.noriter.exception.type.CommonExceptionType.INVALID_REQUEST;
 import static io.restassured.RestAssured.given;
@@ -28,11 +28,11 @@ public class ReCommentCreateTest extends InitIntegrationRestDocsTest {
             .contentType(APPLICATION_JSON_VALUE)
             .header(AUTHORIZATION, accessToken)
             .pathParam("articleId", 1)
-            .pathParam("commentId", 1)
+            .pathParam("id", 1)
             .body(requestBody)
 
         .when()
-            .post("/{articleId}/comment/{commentId}/recomment")
+            .post("/{articleId}/comment/{id}/recomment")
 
         .then()
             .statusCode(HttpStatus.OK.value());
@@ -48,11 +48,11 @@ public class ReCommentCreateTest extends InitIntegrationRestDocsTest {
             .contentType(APPLICATION_JSON_VALUE)
             .header(AUTHORIZATION, accessToken)
             .pathParam("articleId", 1)
-            .pathParam("commentId", 1)
+            .pathParam("id", 1)
             .body(requestBody)
 
         .when()
-            .post("/{articleId}/comment/{commentId}/recomment")
+            .post("/{articleId}/comment/{id}/recomment")
 
         .then()
             .statusCode(CommonExceptionType.INVALID_REQUEST.getStatus().value())
@@ -72,11 +72,11 @@ public class ReCommentCreateTest extends InitIntegrationRestDocsTest {
             .contentType(APPLICATION_JSON_VALUE)
             .header(AUTHORIZATION, accessToken)
             .pathParam("articleId", " ")
-            .pathParam("commentId", 1)
+            .pathParam("id", 1)
             .body(requestBody)
 
         .when()
-            .post("/{articleId}/comment/{commentId}/recomment")
+            .post("/{articleId}/comment/{id}/recomment")
 
         .then()
             .statusCode(CommonExceptionType.INVALID_REQUEST.getStatus().value())
@@ -95,11 +95,11 @@ public class ReCommentCreateTest extends InitIntegrationRestDocsTest {
             .contentType(APPLICATION_JSON_VALUE)
             .header(AUTHORIZATION, accessToken)
             .pathParam("articleId", -1)
-            .pathParam("commentId", 1)
+            .pathParam("id", 1)
             .body(requestBody)
 
         .when()
-            .post("/{articleId}/comment/{commentId}/recomment")
+            .post("/{articleId}/comment/{id}/recomment")
 
         .then()
             .statusCode(CommonExceptionType.INVALID_REQUEST.getStatus().value())
@@ -118,16 +118,16 @@ public class ReCommentCreateTest extends InitIntegrationRestDocsTest {
             .contentType(APPLICATION_JSON_VALUE)
             .header(AUTHORIZATION, accessToken)
             .pathParam("articleId", 1)
-            .pathParam("commentId", " ")
+            .pathParam("id", " ")
             .body(requestBody)
 
         .when()
-            .post("/{articleId}/comment/{commentId}/recomment")
+            .post("/{articleId}/comment/{id}/recomment")
 
         .then()
             .statusCode(CommonExceptionType.INVALID_REQUEST.getStatus().value())
             .body("errorCode", equalTo(CommonExceptionType.INVALID_REQUEST.getErrorCode()))
-            .body("message", equalTo("registerReComment.commentId: ID가 비어있습니다."));
+            .body("message", equalTo("registerReComment.id: ID가 비어있습니다."));
     }
 
     @Test
@@ -141,16 +141,16 @@ public class ReCommentCreateTest extends InitIntegrationRestDocsTest {
             .contentType(APPLICATION_JSON_VALUE)
             .header(AUTHORIZATION, accessToken)
             .pathParam("articleId", 1)
-            .pathParam("commentId", -1)
+            .pathParam("id", -1)
             .body(requestBody)
 
         .when()
-            .post("/{articleId}/comment/{commentId}/recomment")
+            .post("/{articleId}/comment/{id}/recomment")
 
         .then()
             .statusCode(CommonExceptionType.INVALID_REQUEST.getStatus().value())
             .body("errorCode", equalTo(CommonExceptionType.INVALID_REQUEST.getErrorCode()))
-            .body("message", equalTo("registerReComment.commentId: 댓글 ID는 양수이어야 합니다."));
+            .body("message", equalTo("registerReComment.id: 댓글 ID는 양수이어야 합니다."));
     }
 
     @Test
@@ -164,11 +164,11 @@ public class ReCommentCreateTest extends InitIntegrationRestDocsTest {
             .contentType(APPLICATION_JSON_VALUE)
             .header(AUTHORIZATION, accessToken)
             .pathParam("articleId", 13)
-            .pathParam("commentId", 7)
+            .pathParam("id", 7)
             .body(requestBody)
 
         .when()
-            .post("/{articleId}/comment/{commentId}/recomment")
+            .post("/{articleId}/comment/{id}/recomment")
 
         .then()
             .statusCode(ArticleExceptionType.DELETED_ARTICLE.getStatus().value())
@@ -177,7 +177,7 @@ public class ReCommentCreateTest extends InitIntegrationRestDocsTest {
     }
 
     @Test
-    void 삭제된_댓글일_경우_예외를_발생시킨다() {
+    void 대댓글의_대댓글을_요청할_경우_예외를_발생시킨다() {
         String accessToken = jwtProvider.issueAccessToken(2L);
 
         Map<String, Object> requestBody = Map.of("content", "안녕하세용",
@@ -187,15 +187,15 @@ public class ReCommentCreateTest extends InitIntegrationRestDocsTest {
             .contentType(APPLICATION_JSON_VALUE)
             .header(AUTHORIZATION, accessToken)
             .pathParam("articleId", 12)
-            .pathParam("commentId", 6)
+            .pathParam("id", 13)
             .body(requestBody)
 
         .when()
-            .post("/{articleId}/comment/{commentId}/recomment")
+            .post("/{articleId}/comment/{id}/recomment")
 
         .then()
             .statusCode(CommentExceptionType.DELETED_COMMENT.getStatus().value())
-            .body("errorCode", equalTo(CommentExceptionType.DELETED_COMMENT.getErrorCode()))
-            .body("message", equalTo(CommentExceptionType.DELETED_COMMENT.getErrorMessage()));
+            .body("errorCode", equalTo(CommentExceptionType.NOT_ALLOWED_RECOMMENT.getErrorCode()))
+            .body("message", equalTo(CommentExceptionType.NOT_ALLOWED_RECOMMENT.getErrorMessage()));
     }
 }

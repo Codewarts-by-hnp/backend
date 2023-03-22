@@ -37,7 +37,7 @@ class GatheringListTest extends InitIntegrationRestDocsTest {
             .body("[0].hashtags[1]", equalTo("JPA"))
             .body("[0].wish", equalTo(false))
             .body("[0].wishCount", equalTo(1))
-            .body("[0].commentCount", equalTo(4));
+            .body("[0].commentCount", equalTo(6));
     }
     @Test
     void 로그인_후_리스트를_조회한다() {
@@ -64,7 +64,7 @@ class GatheringListTest extends InitIntegrationRestDocsTest {
             .body("[0].hashtags[1]", equalTo("JPA"))
             .body("[0].wish", equalTo(true))
             .body("[0].wishCount", equalTo(1))
-            .body("[0].commentCount", equalTo(4));
+            .body("[0].commentCount", equalTo(6));
     }
 
     @Test

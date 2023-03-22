@@ -35,7 +35,7 @@ class PlaygroundListTest extends InitIntegrationRestDocsTest {
             .body("[0].hashtags[1]", equalTo("붕어팥"))
             .body("[0].wish", equalTo(false))
             .body("[0].wishCount", equalTo(1))
-            .body("[0].commentCount", equalTo(1));
+            .body("[0].commentCount", equalTo(2));
     }
 
     @Test
@@ -62,6 +62,6 @@ class PlaygroundListTest extends InitIntegrationRestDocsTest {
             .body("[0].hashtags[1]", equalTo("붕어팥"))
             .body("[0].wish", equalTo(true))
             .body("[0].wishCount", equalTo(1))
-            .body("[0].commentCount", equalTo(1));
+            .body("[0].commentCount", equalTo(2));
     }
 }

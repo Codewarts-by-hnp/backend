@@ -46,7 +46,7 @@ class PlaygroundDetailTest extends InitIntegrationRestDocsTest {
             .body("comment[0].writer.nickname", equalTo("admin2"))
             .body("comment[0].writer.profileImage", equalTo("https://avatars.githubusercontent.com/u/222222?v=4"))
             .body("comment[0].recomments.size()", is(1))
-            .body("comment[0].recomments[0].id", equalTo(6))
+            .body("comment[0].recomments[0].id", equalTo(13))
             .body("comment[0].recomments[0].writer.id", equalTo(2))
             .body("comment[0].recomments[0].content", equalTo("잘 봤다니 다행입니당"));
     }
