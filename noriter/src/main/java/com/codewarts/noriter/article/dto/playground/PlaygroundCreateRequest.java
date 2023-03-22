@@ -6,10 +6,12 @@ import com.codewarts.noriter.article.dto.article.ArticleCreateRequest;
 import com.codewarts.noriter.member.domain.Member;
 import java.util.List;
 import javax.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
+@AllArgsConstructor
 @NoArgsConstructor
 public class PlaygroundCreateRequest extends ArticleCreateRequest {
     @NotBlank(message = "제목은 필수입니다.")

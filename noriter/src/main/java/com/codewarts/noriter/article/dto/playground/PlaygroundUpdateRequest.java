@@ -3,10 +3,12 @@ package com.codewarts.noriter.article.dto.playground;
 import com.codewarts.noriter.article.dto.article.ArticleUpdateRequest;
 import java.util.List;
 import javax.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
+@AllArgsConstructor
 @NoArgsConstructor
 public class PlaygroundUpdateRequest extends ArticleUpdateRequest {
 
