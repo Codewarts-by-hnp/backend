@@ -16,8 +16,7 @@ public class CommentCreateRequest {
     private String content;
     @NotNull(message = "내용은 필수입니다.")
     private Boolean secret;
-
-    public Comment toEntity(Article article, Member writer) {
+    public Comment toComment(Article article, Member writer) {
         return Comment.builder()
             .article(article)
             .writer(writer)
@@ -25,4 +24,15 @@ public class CommentCreateRequest {
             .secret(secret)
             .build();
     }
+
+    public Comment toRecomment(Article article, Member writer, Comment comment) {
+        return Comment.builder()
+            .article(article)
+            .writer(writer)
+            .parent(comment)
+            .content(content)
+            .secret(secret)
+            .build();
+    }
+
 }

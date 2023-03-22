@@ -34,8 +34,12 @@ public class Comment extends BaseTimeEntity {
   @JoinColumn
   private Article article;
 
-  @OneToMany(mappedBy = "comment")
-  private List<ReComment> reComments = new ArrayList<>();
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "parent_id")
+  private Comment parent;
+
+  @OneToMany(mappedBy = "parent")
+  private List<Comment> children = new ArrayList<>();
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn
@@ -46,11 +50,12 @@ public class Comment extends BaseTimeEntity {
   private boolean deleted;
 
   @Builder
-  public Comment(Long id, Article article, List<ReComment> reComments, Member writer,
-      String content, boolean secret, boolean deleted) {
+  public Comment(Long id, Article article, Comment parent,
+      List<Comment> children, Member writer, String content, boolean secret, boolean deleted) {
     this.id = id;
     this.article = article;
-    this.reComments = reComments;
+    this.parent = parent;
+    this.children = children;
     this.writer = writer;
     this.content = content;
     this.secret = secret;
@@ -60,6 +65,26 @@ public class Comment extends BaseTimeEntity {
   public void update(String content, boolean secret) {
     this.content = content;
     this.secret = secret;
+  }
+  public void delete() {
+    this.deleted = true;
+    if (this.parent != null) {
+      this.parent.removeChild(this);
+    }
+  }
+
+  public void addChild(Comment comment) {
+    this.children.add(comment);
+  }
+
+  public void removeChild(Comment comment) {
+    this.children.remove(comment);
+  }
+
+  public void validateChildOrThrow() {
+    if (this.parent != null ) {
+      throw new GlobalNoriterException(CommentExceptionType.NOT_ALLOWED_RECOMMENT);
+    }
   }
 
   public void validateWriterOrThrow(Member writer) {
@@ -72,9 +97,5 @@ public class Comment extends BaseTimeEntity {
     if (!Objects.equals(this.article, article)) {
       throw new GlobalNoriterException(CommentExceptionType.NOT_MATCHED_ARTICLE);
     }
-  }
-
-  public void delete() {
-    this.deleted = true;
   }
 }
