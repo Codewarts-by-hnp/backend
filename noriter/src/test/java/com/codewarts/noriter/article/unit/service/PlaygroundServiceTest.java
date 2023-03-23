@@ -283,7 +283,7 @@ class PlaygroundServiceTest {
         Article article = articleRepository.findById(articleId).get();
 
         // then
-        assertThat(article.isDeleted()).isTrue();
+        assertThat(article.getDeleted()).isNotNull();
     }
 
     @DisplayName("존재하지 않는 회원이 자유게시판 글을 삭제 요청하는 경우 예외를 발생시킨다.")
