@@ -104,7 +104,7 @@ public class GatheringService extends ArticleService {
     private Gathering findNotDeletedGathering(Long id) {
         Gathering gathering = gatheringRepository.findById(id).
             orElseThrow(() -> new GlobalNoriterException(ArticleExceptionType.ARTICLE_NOT_FOUND));
-        if (gathering.isDeleted()) {
+        if (gathering.getDeleted() != null) {
             throw new GlobalNoriterException(ArticleExceptionType.DELETED_ARTICLE);
         }
         return gathering;

@@ -22,7 +22,7 @@ public class CustomArticleRepositoryImpl implements CustomArticleRepository {
         return queryFactory.selectFrom(gathering)
             .where(
                 isSameStatusTypeGathering(statusType),
-                gathering.deleted.eq(false)
+                gathering.deleted.isNull()
             )
             .fetch();
     }
@@ -32,7 +32,7 @@ public class CustomArticleRepositoryImpl implements CustomArticleRepository {
         return queryFactory.selectFrom(question)
             .where(
                 isSameStatusTypeQuestion(statusType),
-                question.deleted.eq(false)
+                question.deleted.isNull()
             )
             .fetch();
     }
