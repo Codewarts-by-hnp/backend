@@ -2,6 +2,7 @@ package com.codewarts.noriter.article.docs.gathering;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
@@ -26,6 +27,7 @@ class GatheringListTest extends InitIntegrationRestDocsTest {
 
         .then()
             .statusCode(HttpStatus.OK.value())
+            .body("size()", is(3))
             .body("[0].id", equalTo(1))
             .body("[0].title", equalTo("테스트를 해볼것이당"))
             .body("[0].content", equalTo("안녕하냐고오옹"))
@@ -53,6 +55,7 @@ class GatheringListTest extends InitIntegrationRestDocsTest {
 
         .then()
             .statusCode(HttpStatus.OK.value())
+            .body("size()", is(3))
             .body("[0].id", equalTo(1))
             .body("[0].title", equalTo("테스트를 해볼것이당"))
             .body("[0].content", equalTo("안녕하냐고오옹"))

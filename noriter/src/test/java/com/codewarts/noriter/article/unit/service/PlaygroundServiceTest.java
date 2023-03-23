@@ -139,7 +139,7 @@ class PlaygroundServiceTest {
         List<ArticleListResponse> list = playgroundService.findList(null);
 
         // then
-        assertThat(list).hasSize(2);
+        assertThat(list).hasSize(5);
     }
 
     @DisplayName("삭제되지 않은 자유게시판 글을 전체 조회한다.")
@@ -164,7 +164,7 @@ class PlaygroundServiceTest {
         List<ArticleListResponse> list = playgroundService.findList(null);
 
         // then
-        assertThat(list).hasSize(2);
+        assertThat(list).hasSize(5);
     }
 
     @DisplayName("자유게시판 글을 수정한다.")

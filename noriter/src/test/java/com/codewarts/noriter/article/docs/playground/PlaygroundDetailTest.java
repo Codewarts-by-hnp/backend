@@ -1,5 +1,7 @@
 package com.codewarts.noriter.article.docs.playground;
 
+import static com.codewarts.noriter.exception.type.ArticleExceptionType.ARTICLE_NOT_FOUND;
+import static com.codewarts.noriter.exception.type.ArticleExceptionType.DELETED_ARTICLE;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
@@ -7,7 +9,6 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import com.codewarts.noriter.article.docs.InitIntegrationRestDocsTest;
-import com.codewarts.noriter.exception.type.ArticleExceptionType;
 import com.codewarts.noriter.exception.type.CommonExceptionType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -127,8 +128,24 @@ class PlaygroundDetailTest extends InitIntegrationRestDocsTest {
             .get("/community/playground/{id}")
 
         .then()
-            .statusCode(ArticleExceptionType.ARTICLE_NOT_FOUND.getStatus().value())
-            .body("errorCode", equalTo(ArticleExceptionType.ARTICLE_NOT_FOUND.getErrorCode()))
-            .body("message", equalTo(ArticleExceptionType.ARTICLE_NOT_FOUND.getErrorMessage()));
+            .statusCode(ARTICLE_NOT_FOUND.getStatus().value())
+            .body("errorCode", equalTo(ARTICLE_NOT_FOUND.getErrorCode()))
+            .body("message", equalTo(ARTICLE_NOT_FOUND.getErrorMessage()));
+    }
+
+    @Test
+    void 삭제된_게시물을_조회할_경우_예외를_발생시킨다() {
+
+        given(documentationSpec)
+            .contentType(APPLICATION_JSON_VALUE)
+            .pathParam("id", 13)
+
+        .when()
+            .get("/community/playground/{id}")
+
+        .then()
+            .statusCode(DELETED_ARTICLE.getStatus().value())
+            .body("errorCode", equalTo(DELETED_ARTICLE.getErrorCode()))
+            .body("message", equalTo(DELETED_ARTICLE.getErrorMessage()));
     }
 }

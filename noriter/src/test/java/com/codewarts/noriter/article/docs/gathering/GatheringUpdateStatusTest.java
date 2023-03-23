@@ -3,6 +3,7 @@ package com.codewarts.noriter.article.docs.gathering;
 import static com.codewarts.noriter.exception.type.ArticleExceptionType.ALREADY_CHANGED_STATUS;
 import static com.codewarts.noriter.exception.type.ArticleExceptionType.ARTICLE_NOT_FOUND;
 import static com.codewarts.noriter.exception.type.ArticleExceptionType.ARTICLE_NOT_MATCHED_WRITER;
+import static com.codewarts.noriter.exception.type.ArticleExceptionType.DELETED_ARTICLE;
 import static com.codewarts.noriter.exception.type.CommonExceptionType.INCORRECT_REQUEST_VALUE;
 import static com.codewarts.noriter.exception.type.CommonExceptionType.INVALID_REQUEST;
 import static com.codewarts.noriter.exception.type.MemberExceptionType.MEMBER_NOT_FOUND;
@@ -153,7 +154,7 @@ class GatheringUpdateStatusTest extends InitIntegrationRestDocsTest {
     }
 
     @Test
-    void 현재와_같은_상태변경으_요청할_경우_예외가_발생한다() {
+    void 현재와_같은_상태변경을_요청할_경우_예외가_발생한다() {
         String accessToken = jwtProvider.issueAccessToken(1L);
 
         given(documentationSpec)
@@ -169,5 +170,24 @@ class GatheringUpdateStatusTest extends InitIntegrationRestDocsTest {
             .statusCode(ALREADY_CHANGED_STATUS.getStatus().value())
             .body("errorCode", equalTo(ALREADY_CHANGED_STATUS.getErrorCode()))
             .body("message", equalTo(ALREADY_CHANGED_STATUS.getErrorMessage()));
+    }
+
+    @Test
+    void 삭제된_게시물_상태변경을_요청할_경우_예외가_발생한다() {
+        String accessToken = jwtProvider.issueAccessToken(1L);
+
+        given(documentationSpec)
+            .contentType(APPLICATION_JSON_VALUE)
+            .header(AUTHORIZATION, accessToken)
+            .pathParam("id", 14)
+            .body(Collections.singletonMap("status", "incomplete"))
+
+        .when()
+            .patch("/community/gathering/{id}")
+
+        .then()
+            .statusCode(DELETED_ARTICLE.getStatus().value())
+            .body("errorCode", equalTo(DELETED_ARTICLE.getErrorCode()))
+            .body("message", equalTo(DELETED_ARTICLE.getErrorMessage()));
     }
 }
