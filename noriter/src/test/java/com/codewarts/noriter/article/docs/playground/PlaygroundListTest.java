@@ -2,6 +2,7 @@ package com.codewarts.noriter.article.docs.playground;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
@@ -24,6 +25,7 @@ class PlaygroundListTest extends InitIntegrationRestDocsTest {
 
         .then()
             .statusCode(HttpStatus.OK.value())
+            .body("size()", is(3))
             .body("[0].id", equalTo(10))
             .body("[0].title", equalTo("붕어빵 먹고싶어요"))
             .body("[0].content", equalTo("강남 붕어빵 맛잇는 집"))
@@ -35,7 +37,7 @@ class PlaygroundListTest extends InitIntegrationRestDocsTest {
             .body("[0].hashtags[1]", equalTo("붕어팥"))
             .body("[0].wish", equalTo(false))
             .body("[0].wishCount", equalTo(1))
-            .body("[0].commentCount", equalTo(1));
+            .body("[0].commentCount", equalTo(2));
     }
 
     @Test
@@ -51,6 +53,7 @@ class PlaygroundListTest extends InitIntegrationRestDocsTest {
 
         .then()
             .statusCode(HttpStatus.OK.value())
+            .body("size()", is(3))
             .body("[0].id", equalTo(10))
             .body("[0].title", equalTo("붕어빵 먹고싶어요"))
             .body("[0].content", equalTo("강남 붕어빵 맛잇는 집"))
@@ -62,6 +65,6 @@ class PlaygroundListTest extends InitIntegrationRestDocsTest {
             .body("[0].hashtags[1]", equalTo("붕어팥"))
             .body("[0].wish", equalTo(true))
             .body("[0].wishCount", equalTo(1))
-            .body("[0].commentCount", equalTo(1));
+            .body("[0].commentCount", equalTo(2));
     }
 }

@@ -104,7 +104,7 @@ public class QuestionService extends ArticleService {
         Question question = questionRepository.findById(id)
             .orElseThrow(() -> new GlobalNoriterException(
                 ArticleExceptionType.ARTICLE_NOT_FOUND));
-        if (question.isDeleted()) {
+        if (question.getDeleted() != null) {
             throw new GlobalNoriterException(ArticleExceptionType.DELETED_ARTICLE);
         }
         return question;

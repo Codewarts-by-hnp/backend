@@ -9,6 +9,6 @@ import org.springframework.data.repository.query.Param;
 
 public interface ArticleRepository extends JpaRepository<Article, Long> {
 
-    @Query("select a from Article a where a.articleType = :articleType and a.deleted = false")
+    @Query("select a from Article a where a.articleType = :articleType and a.deleted is null")
     List<Article> findAllByArticleType(@Param("articleType") ArticleType articleType);
 }

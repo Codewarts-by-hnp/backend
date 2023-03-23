@@ -1,6 +1,7 @@
 package com.codewarts.noriter.article.docs.gathering;
 
 import static com.codewarts.noriter.exception.type.ArticleExceptionType.ARTICLE_NOT_MATCHED_WRITER;
+import static com.codewarts.noriter.exception.type.ArticleExceptionType.DELETED_ARTICLE;
 import static com.codewarts.noriter.exception.type.CommonExceptionType.INVALID_REQUEST;
 import static com.codewarts.noriter.exception.type.MemberExceptionType.MEMBER_NOT_FOUND;
 import static io.restassured.RestAssured.given;
@@ -172,6 +173,28 @@ class GatheringUpdateTest extends InitIntegrationRestDocsTest {
         .then()
             .statusCode(ARTICLE_NOT_MATCHED_WRITER.getStatus().value())
             .body("errorCode", equalTo(ARTICLE_NOT_MATCHED_WRITER.getErrorCode()));
+    }
+
+    @Test
+    void 삭제된_게시물에_수정을_요청할_경우_예외가_발생한다() {
+        String accessToken = jwtProvider.issueAccessToken(2L);
+
+        Map<String, Object> requestBody = Map.of("title", "안녕하세용",
+            "content", "헬륨가스를모곳지", "hashtags",
+            List.of("자유게시판", "개발자좋아효", "코린이"));
+
+        given(documentationSpec)
+            .contentType(APPLICATION_JSON_VALUE)
+            .header(AUTHORIZATION, accessToken)
+            .pathParam("id", 14)
+            .body(requestBody)
+
+        .when()
+            .put("/community/gathering/{id}")
+
+        .then()
+            .statusCode(DELETED_ARTICLE.getStatus().value())
+            .body("errorCode", equalTo(DELETED_ARTICLE.getErrorCode()));
     }
 
 }

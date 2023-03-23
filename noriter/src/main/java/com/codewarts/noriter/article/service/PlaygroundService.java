@@ -87,7 +87,7 @@ public class PlaygroundService extends ArticleService {
     private Article findNotDeletedArticle(Long id) {
         Article article = articleRepository.findById(id)
             .orElseThrow(() -> new GlobalNoriterException(ArticleExceptionType.ARTICLE_NOT_FOUND));
-        if (article.isDeleted()) {
+        if (article.getDeleted() != null) {
             throw new GlobalNoriterException(ArticleExceptionType.DELETED_ARTICLE);
         }
         return article;

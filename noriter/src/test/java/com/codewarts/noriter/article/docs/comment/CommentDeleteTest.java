@@ -31,10 +31,10 @@ class CommentDeleteTest extends InitIntegrationRestDocsTest {
             .contentType(APPLICATION_JSON_VALUE)
             .header(AUTHORIZATION, accessToken)
             .pathParam("articleId", 1)
-            .pathParam("commentId", 1)
+            .pathParam("id", 1)
 
         .when()
-            .delete("/{articleId}/comment/{commentId}")
+            .delete("/{articleId}/comment/{id}")
 
         .then()
             .statusCode(HttpStatus.OK.value());
@@ -48,10 +48,10 @@ class CommentDeleteTest extends InitIntegrationRestDocsTest {
             .contentType(APPLICATION_JSON_VALUE)
             .header(AUTHORIZATION, accessToken)
             .pathParam("articleId", 1)
-            .pathParam("commentId", 1)
+            .pathParam("id", 1)
 
         .when()
-            .delete("/{articleId}/comment/{commentId}")
+            .delete("/{articleId}/comment/{id}")
 
         .then()
             .statusCode(EMPTY_ACCESS_TOKEN.getStatus().value())
@@ -67,10 +67,10 @@ class CommentDeleteTest extends InitIntegrationRestDocsTest {
             .contentType(APPLICATION_JSON_VALUE)
             .header(AUTHORIZATION, accessToken)
             .pathParam("articleId", 1)
-            .pathParam("commentId", 1)
+            .pathParam("id", 1)
 
         .when()
-            .delete("/{articleId}/comment/{commentId}")
+            .delete("/{articleId}/comment/{id}")
 
         .then()
             .statusCode(TAMPERED_ACCESS_TOKEN.getStatus().value())
@@ -86,10 +86,10 @@ class CommentDeleteTest extends InitIntegrationRestDocsTest {
             .contentType(APPLICATION_JSON_VALUE)
             .header(AUTHORIZATION, accessToken)
             .pathParam("articleId", 1)
-            .pathParam("commentId", 1)
+            .pathParam("id", 1)
 
         .when()
-            .delete("/{articleId}/comment/{commentId}")
+            .delete("/{articleId}/comment/{id}")
 
         .then()
             .statusCode(MEMBER_NOT_FOUND.getStatus().value())
@@ -105,10 +105,10 @@ class CommentDeleteTest extends InitIntegrationRestDocsTest {
             .contentType(APPLICATION_JSON_VALUE)
             .header(AUTHORIZATION, accessToken)
             .pathParam("articleId", " ")
-            .pathParam("commentId", 1)
+            .pathParam("id", 1)
 
         .when()
-            .delete("/{articleId}/comment/{commentId}")
+            .delete("/{articleId}/comment/{id}")
 
         .then()
             .statusCode(INVALID_REQUEST.getStatus().value())
@@ -124,10 +124,10 @@ class CommentDeleteTest extends InitIntegrationRestDocsTest {
             .contentType(APPLICATION_JSON_VALUE)
             .header(AUTHORIZATION, accessToken)
             .pathParam("articleId", -1)
-            .pathParam("commentId", 1)
+            .pathParam("id", 1)
 
         .when()
-            .delete("/{articleId}/comment/{commentId}")
+            .delete("/{articleId}/comment/{id}")
 
         .then()
             .statusCode(INVALID_REQUEST.getStatus().value())
@@ -143,10 +143,10 @@ class CommentDeleteTest extends InitIntegrationRestDocsTest {
             .contentType(APPLICATION_JSON_VALUE)
             .header(AUTHORIZATION, accessToken)
             .pathParam("articleId", 9999999)
-            .pathParam("commentId", 1)
+            .pathParam("id", 1)
 
         .when()
-            .delete("/{articleId}/comment/{commentId}")
+            .delete("/{articleId}/comment/{id}")
 
         .then()
             .statusCode(ARTICLE_NOT_FOUND.getStatus().value())
@@ -162,10 +162,10 @@ class CommentDeleteTest extends InitIntegrationRestDocsTest {
             .contentType(APPLICATION_JSON_VALUE)
             .header(AUTHORIZATION, accessToken)
             .pathParam("articleId", 13)
-            .pathParam("commentId", 1)
+            .pathParam("id", 1)
 
         .when()
-            .delete("/{articleId}/comment/{commentId}")
+            .delete("/{articleId}/comment/{id}")
 
         .then()
             .statusCode(DELETED_ARTICLE.getStatus().value())
@@ -174,55 +174,55 @@ class CommentDeleteTest extends InitIntegrationRestDocsTest {
     }
 
     @Test
-    void commentId가_Null이면_예외가_발생한다() {
+    void id가_Null이면_예외가_발생한다() {
         String accessToken = jwtProvider.issueAccessToken(1L);
 
         given(documentationSpec)
             .contentType(APPLICATION_JSON_VALUE)
             .header(AUTHORIZATION, accessToken)
             .pathParam("articleId", 1)
-            .pathParam("commentId", " ")
+            .pathParam("id", " ")
 
         .when()
-            .delete("/{articleId}/comment/{commentId}")
+            .delete("/{articleId}/comment/{id}")
 
         .then()
             .statusCode(INVALID_REQUEST.getStatus().value())
             .body("errorCode", equalTo(INVALID_REQUEST.getErrorCode()))
-            .body("message", equalTo("removeComment.commentId: ID가 비어있습니다."));
+            .body("message", equalTo("removeComment.id: ID가 비어있습니다."));
     }
 
     @Test
-    void commentId가_음수이면_예외가_발생한다() {
+    void id가_음수이면_예외가_발생한다() {
         String accessToken = jwtProvider.issueAccessToken(1L);
 
         given(documentationSpec)
             .contentType(APPLICATION_JSON_VALUE)
             .header(AUTHORIZATION, accessToken)
             .pathParam("articleId", 1)
-            .pathParam("commentId", -1)
+            .pathParam("id", -1)
 
         .when()
-            .delete("/{articleId}/comment/{commentId}")
+            .delete("/{articleId}/comment/{id}")
 
         .then()
             .statusCode(INVALID_REQUEST.getStatus().value())
             .body("errorCode", equalTo(INVALID_REQUEST.getErrorCode()))
-            .body("message", equalTo("removeComment.commentId: 댓글 ID는 양수이어야 합니다."));
+            .body("message", equalTo("removeComment.id: 댓글 ID는 양수이어야 합니다."));
     }
 
     @Test
-    void commentId가_존재하지_않는_경우_예외가_발생한다() {
+    void id가_존재하지_않는_경우_예외가_발생한다() {
         String accessToken = jwtProvider.issueAccessToken(1L);
 
         given(documentationSpec)
             .contentType(APPLICATION_JSON_VALUE)
             .header(AUTHORIZATION, accessToken)
             .pathParam("articleId", 1)
-            .pathParam("commentId", 9999999)
+            .pathParam("id", 9999999)
 
         .when()
-            .delete("/{articleId}/comment/{commentId}")
+            .delete("/{articleId}/comment/{id}")
 
         .then()
             .statusCode(COMMENT_NOT_FOUND.getStatus().value())
@@ -231,17 +231,17 @@ class CommentDeleteTest extends InitIntegrationRestDocsTest {
     }
 
     @Test
-    void commentId가_삭제된_경우_예외가_발생한다() {
+    void id가_삭제된_경우_예외가_발생한다() {
         String accessToken = jwtProvider.issueAccessToken(2L);
 
         given(documentationSpec)
             .contentType(APPLICATION_JSON_VALUE)
             .header(AUTHORIZATION, accessToken)
             .pathParam("articleId", 12)
-            .pathParam("commentId", 6)
+            .pathParam("id", 6)
 
         .when()
-            .delete("/{articleId}/comment/{commentId}")
+            .delete("/{articleId}/comment/{id}")
 
         .then()
             .statusCode(DELETED_COMMENT.getStatus().value())
@@ -257,10 +257,10 @@ class CommentDeleteTest extends InitIntegrationRestDocsTest {
             .contentType(APPLICATION_JSON_VALUE)
             .header(AUTHORIZATION, accessToken)
             .pathParam("articleId", 1)
-            .pathParam("commentId", 1)
+            .pathParam("id", 1)
 
         .when()
-            .delete("/{articleId}/comment/{commentId}")
+            .delete("/{articleId}/comment/{id}")
 
         .then()
             .statusCode(NOT_MATCHED_WRITER.getStatus().value())
@@ -276,10 +276,10 @@ class CommentDeleteTest extends InitIntegrationRestDocsTest {
             .contentType(APPLICATION_JSON_VALUE)
             .header(AUTHORIZATION, accessToken)
             .pathParam("articleId", 2)
-            .pathParam("commentId", 1)
+            .pathParam("id", 1)
 
         .when()
-            .delete("/{articleId}/comment/{commentId}")
+            .delete("/{articleId}/comment/{id}")
 
         .then()
             .statusCode(NOT_MATCHED_ARTICLE.getStatus().value())

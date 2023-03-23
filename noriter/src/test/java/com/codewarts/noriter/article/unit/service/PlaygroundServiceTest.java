@@ -139,7 +139,7 @@ class PlaygroundServiceTest {
         List<ArticleListResponse> list = playgroundService.findList(null);
 
         // then
-        assertThat(list).hasSize(2);
+        assertThat(list).hasSize(5);
     }
 
     @DisplayName("삭제되지 않은 자유게시판 글을 전체 조회한다.")
@@ -164,7 +164,7 @@ class PlaygroundServiceTest {
         List<ArticleListResponse> list = playgroundService.findList(null);
 
         // then
-        assertThat(list).hasSize(2);
+        assertThat(list).hasSize(5);
     }
 
     @DisplayName("자유게시판 글을 수정한다.")
@@ -283,7 +283,7 @@ class PlaygroundServiceTest {
         Article article = articleRepository.findById(articleId).get();
 
         // then
-        assertThat(article.isDeleted()).isTrue();
+        assertThat(article.getDeleted()).isNotNull();
     }
 
     @DisplayName("존재하지 않는 회원이 자유게시판 글을 삭제 요청하는 경우 예외를 발생시킨다.")

@@ -1,6 +1,7 @@
 package com.codewarts.noriter.article.docs.question;
 
 import static com.codewarts.noriter.exception.type.ArticleExceptionType.ARTICLE_NOT_MATCHED_WRITER;
+import static com.codewarts.noriter.exception.type.ArticleExceptionType.DELETED_ARTICLE;
 import static com.codewarts.noriter.exception.type.AuthExceptionType.EMPTY_ACCESS_TOKEN;
 import static com.codewarts.noriter.exception.type.AuthExceptionType.TAMPERED_ACCESS_TOKEN;
 import static com.codewarts.noriter.exception.type.MemberExceptionType.MEMBER_NOT_FOUND;
@@ -165,5 +166,21 @@ class QuestionDeleteTest extends InitIntegrationRestDocsTest {
         .then()
             .statusCode(ARTICLE_NOT_MATCHED_WRITER.getStatus().value())
             .body("errorCode", equalTo(ARTICLE_NOT_MATCHED_WRITER.getErrorCode()));
+    }
+
+    @Test
+    void 삭제된_게시물을_조회할_경우_예외를_발생시킨다() {
+
+        given(documentationSpec)
+            .contentType(APPLICATION_JSON_VALUE)
+            .pathParam("id", 15)
+
+            .when()
+            .get("/community/question/{id}")
+
+            .then()
+            .statusCode(DELETED_ARTICLE.getStatus().value())
+            .body("errorCode", equalTo(DELETED_ARTICLE.getErrorCode()))
+            .body("message", equalTo(DELETED_ARTICLE.getErrorMessage()));
     }
 }

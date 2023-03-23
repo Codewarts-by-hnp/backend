@@ -7,6 +7,7 @@ import com.codewarts.noriter.exception.GlobalNoriterException;
 import com.codewarts.noriter.exception.type.ArticleExceptionType;
 import com.codewarts.noriter.member.domain.Member;
 import com.codewarts.noriter.wish.domain.Wish;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -61,7 +62,7 @@ public class Article extends BaseTimeEntity {
 
     @Enumerated(EnumType.STRING)
     private ArticleType articleType;
-    private boolean deleted;
+    private LocalDateTime deleted;
 
     public void addHashtags(List<String> requestHashtags) {
         if (ObjectUtils.isEmpty(requestHashtags)) {
@@ -80,7 +81,7 @@ public class Article extends BaseTimeEntity {
     }
 
     public void delete() {
-        this.deleted = true;
+        this.deleted = LocalDateTime.now();
     }
 
     public void validateWriterOrThrow(Long writerId) {
