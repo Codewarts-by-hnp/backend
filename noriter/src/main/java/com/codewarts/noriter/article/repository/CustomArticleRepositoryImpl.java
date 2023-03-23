@@ -21,7 +21,8 @@ public class CustomArticleRepositoryImpl implements CustomArticleRepository {
     public List<Gathering> findAllGatheringList(StatusType statusType) {
         return queryFactory.selectFrom(gathering)
             .where(
-                isSameStatusTypeGathering(statusType)
+                isSameStatusTypeGathering(statusType),
+                gathering.deleted.eq(false)
             )
             .fetch();
     }
@@ -30,7 +31,8 @@ public class CustomArticleRepositoryImpl implements CustomArticleRepository {
     public List<Question> findAllQuestionList(StatusType statusType) {
         return queryFactory.selectFrom(question)
             .where(
-                isSameStatusTypeQuestion(statusType)
+                isSameStatusTypeQuestion(statusType),
+                question.deleted.eq(false)
             )
             .fetch();
     }

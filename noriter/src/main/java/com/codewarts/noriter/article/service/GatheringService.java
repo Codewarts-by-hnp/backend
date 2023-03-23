@@ -49,7 +49,7 @@ public class GatheringService extends ArticleService {
 
     @Override
     public GatheringDetailResponse findDetail(Long id, Long memberId) {
-        Gathering gathering = findNotDeletedStudy(id);
+        Gathering gathering = findNotDeletedGathering(id);
         boolean sameWriter = gathering.getWriter().getId().equals(memberId);
 
         if (memberId == null) {
@@ -65,7 +65,7 @@ public class GatheringService extends ArticleService {
     @Transactional
     public void delete(Long id, Long writerId) {
         findMember(writerId);
-        Gathering gathering = findNotDeletedStudy(id);
+        Gathering gathering = findNotDeletedGathering(id);
         gathering.validateWriterOrThrow(writerId);
         gathering.delete();
     }
@@ -73,7 +73,7 @@ public class GatheringService extends ArticleService {
     @Transactional
     public void updateCompletion(Long id, Long writerId, StatusType status) {
         findMember(writerId);
-        Gathering gathering = findNotDeletedStudy(id);
+        Gathering gathering = findNotDeletedGathering(id);
         gathering.validateWriterOrThrow(writerId);
 
         if (gathering.getStatus() == status) {
@@ -90,7 +90,7 @@ public class GatheringService extends ArticleService {
     @Transactional
     public void update(Long id, ArticleUpdateRequest request, Long writerId) {
         findMember(writerId);
-        Gathering gathering = findNotDeletedStudy(id);
+        Gathering gathering = findNotDeletedGathering(id);
         gathering.validateWriterOrThrow(writerId);
         gathering.update(request.getTitle(), request.getContent(), request.getHashtags());
     }
@@ -101,7 +101,7 @@ public class GatheringService extends ArticleService {
             MemberExceptionType.MEMBER_NOT_FOUND));
     }
 
-    private Gathering findNotDeletedStudy(Long id) {
+    private Gathering findNotDeletedGathering(Long id) {
         Gathering gathering = gatheringRepository.findById(id).
             orElseThrow(() -> new GlobalNoriterException(ArticleExceptionType.ARTICLE_NOT_FOUND));
         if (gathering.isDeleted()) {
