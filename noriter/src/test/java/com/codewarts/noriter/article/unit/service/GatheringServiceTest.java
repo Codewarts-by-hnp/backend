@@ -33,7 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
 @SpringBootTest
-public class GatheringServiceTest {
+class GatheringServiceTest {
 
     @Autowired
     GatheringService gatheringService;
