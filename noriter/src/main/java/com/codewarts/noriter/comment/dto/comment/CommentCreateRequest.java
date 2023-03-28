@@ -16,6 +16,7 @@ public class CommentCreateRequest {
     private String content;
     @NotNull(message = "내용은 필수입니다.")
     private Boolean secret;
+    private String dummy;
     public Comment toComment(Article article, Member writer) {
         return Comment.builder()
             .article(article)
