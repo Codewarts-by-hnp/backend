@@ -1,13 +1,13 @@
 auth:
   vendors:
     github:
-      callback_url: ${OAUTH_CALLBACK_URL}
-      client_id: ${OAUTH_CLIENT_ID}
-      client_secret: ${OAUTH_CLIENT_SECRET}
+      callback_url: http://localhost:8080/login
+      client_id: 04b981b2637b1a712e06
+      client_secret: 47385ad1e733eeeba53a9a34019967de59051483
       access_token_api_url: https://github.com/login/oauth/access_token
-      login_form_url: ${OAUTH_LOGIN_FORM_URL}
+      login_form_url: https://github.com/login/oauth/authorize?client_id=04b981b2637b1a712e06&scope=user:email&redirect_uri=http://localhost:8080/login
       user_info_api_url: https://api.github.com/user
 
 user-jwt:
-  issuer: ${JWT_ISSUER}
-  secret_key: ${JWT_SECRET_KEY}
+  issuer: 1sephil
+  secret_key: 0MpKk0eqSSd8YvNFRkt8HNGyDlUqJZSi
