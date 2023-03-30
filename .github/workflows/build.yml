@@ -21,16 +21,16 @@ jobs:
 
       - name: Insert data source information into application.yml
         run: |
-          sed -i "s|\${DATASOURCE_URL}|$DATASOURCE_URL|g" ./src/main/resources/application.yml
-          sed -i "s|\${DATASOURCE_USERNAME}|$DATASOURCE_USERNAME|g" ./src/main/resources/application.yml
-          sed -i "s|\${DATASOURCE_PASSWORD}|$DATASOURCE_PASSWORD|g" ./src/main/resources/application.yml
+          sed -i "s|\${DATASOURCE_URL}|$DATASOURCE_URL|g" ./noriter/src/main/resources/application.yml
+          sed -i "s|\${DATASOURCE_USERNAME}|$DATASOURCE_USERNAME|g" ./noriter/src/main/resources/application.yml
+          sed -i "s|\${DATASOURCE_PASSWORD}|$DATASOURCE_PASSWORD|g" ./noriter/src/main/resources/application.yml
           
-          sed -i "s|\${OAUTH_CALLBACK_URL}|$OAUTH_CALLBACK_URL|g" ./src/main/resources/oauth.yml
-          sed -i "s|\${OAUTH_CLIENT_ID}|$OAUTH_CLIENT_ID|g" ./src/main/resources/oauth.yml
-          sed -i "s|\${OAUTH_CLIENT_SECRET}|$OAUTH_CLIENT_SECRET|g" ./src/main/resources/oauth.yml
-          sed -i "s|\${OAUTH_LOGIN_FORM_URL}|$OAUTH_LOGIN_FORM_URL|g" ./src/main/resources/oauth.yml
-          sed -i "s|\${JWT_ISSUER}|$JWT_ISSUER|g" ./src/main/resources/oauth.yml
-          sed -i "s|\${JWT_SECRET_KEY}|$JWT_SECRET_KEY|g" ./src/main/resources/oauth.yml      
+          sed -i "s|\${OAUTH_CALLBACK_URL}|$OAUTH_CALLBACK_URL|g" ./noriter/src/main/resources/oauth.yml
+          sed -i "s|\${OAUTH_CLIENT_ID}|$OAUTH_CLIENT_ID|g" ./noriter/src/main/resources/oauth.yml
+          sed -i "s|\${OAUTH_CLIENT_SECRET}|$OAUTH_CLIENT_SECRET|g" ./noriter/src/main/resources/oauth.yml
+          sed -i "s|\${OAUTH_LOGIN_FORM_URL}|$OAUTH_LOGIN_FORM_URL|g" ./noriter/src/main/resources/oauth.yml
+          sed -i "s|\${JWT_ISSUER}|$JWT_ISSUER|g" ./noriter/src/main/resources/oauth.yml
+          sed -i "s|\${JWT_SECRET_KEY}|$JWT_SECRET_KEY|g" ./noriter/src/main/resources/oauth.yml      
 
       - name: Cache SonarCloud packages
         uses: actions/cache@v1
