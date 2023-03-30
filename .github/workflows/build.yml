@@ -3,7 +3,7 @@ on:
   push:
     branches:
       - dev
-      - paths: ["noriter/**"]
+    paths: "noriter/**"
 
   pull_request:
     types: [opened, synchronize, reopened]
