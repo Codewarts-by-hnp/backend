@@ -30,7 +30,18 @@ jobs:
           sed -i "s|\${OAUTH_CLIENT_SECRET}|$OAUTH_CLIENT_SECRET|g" ./noriter/src/main/resources/oauth.yml
           sed -i "s|\${OAUTH_LOGIN_FORM_URL}|$OAUTH_LOGIN_FORM_URL|g" ./noriter/src/main/resources/oauth.yml
           sed -i "s|\${JWT_ISSUER}|$JWT_ISSUER|g" ./noriter/src/main/resources/oauth.yml
-          sed -i "s|\${JWT_SECRET_KEY}|$JWT_SECRET_KEY|g" ./noriter/src/main/resources/oauth.yml      
+          sed -i "s|\${JWT_SECRET_KEY}|$JWT_SECRET_KEY|g" ./noriter/src/main/resources/oauth.yml   
+
+        env:
+          DATASOURCE_URL: ${{ secrets.DATASOURCE_URL }}
+          DATASOURCE_USERNAME: ${{ secrets.DATASOURCE_USERNAME }}
+          DATASOURCE_PASSWORD: ${{ secrets.DATASOURCE_PASSWORD }}
+          OAUTH_CALLBACK_URL: ${{ secrets.OAUTH_CALLBACK_URL }}
+          OAUTH_CLIENT_ID: ${{ secrets.OAUTH_CLIENT_ID }}
+          OAUTH_CLIENT_SECRET: ${{ secrets.OAUTH_CLIENT_SECRET }}
+          OAUTH_LOGIN_FORM_URL: ${{ secrets.OAUTH_LOGIN_FORM_URL }}
+          JWT_ISSUER: ${{ secrets.JWT_ISSUER }}
+          JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
 
       - name: Cache SonarCloud packages
         uses: actions/cache@v1
