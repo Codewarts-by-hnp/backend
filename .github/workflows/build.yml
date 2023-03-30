@@ -21,7 +21,6 @@ jobs:
 
       - name: Insert data source information into application.yml
         run: |
-          sed -i "s|\${DATASOURCE_URL}|$DATASOURCE_URL|g" ./noriter/src/main/resources/application.yml
           sed -i "s|\${DATASOURCE_USERNAME}|$DATASOURCE_USERNAME|g" ./noriter/src/main/resources/application.yml
           sed -i "s|\${DATASOURCE_PASSWORD}|$DATASOURCE_PASSWORD|g" ./noriter/src/main/resources/application.yml
           
@@ -33,7 +32,6 @@ jobs:
           sed -i "s|\${JWT_SECRET_KEY}|$JWT_SECRET_KEY|g" ./noriter/src/main/resources/oauth.yml   
 
         env:
-          DATASOURCE_URL: ${{ secrets.DATASOURCE_URL }}
           DATASOURCE_USERNAME: ${{ secrets.DATASOURCE_USERNAME }}
           DATASOURCE_PASSWORD: ${{ secrets.DATASOURCE_PASSWORD }}
           OAUTH_CALLBACK_URL: ${{ secrets.OAUTH_CALLBACK_URL }}

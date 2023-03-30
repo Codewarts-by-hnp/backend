@@ -4,7 +4,7 @@ spring:
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: ${DATASOURCE_URL}
+    url: jdbc:mysql://localhost:3306/noriter_test
     username: ${DATASOURCE_USERNAME}
     password: ${DATASOURCE_PASSWORD}
 
