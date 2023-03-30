@@ -2,7 +2,7 @@ name: CI - BE
 
 on:
   push:
-    branches: [sonar-test]
+    branches: [dev]
   pull_request:
     branches: [dev]
     paths: ["noriter/**"]
