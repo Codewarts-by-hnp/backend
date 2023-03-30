@@ -3,6 +3,8 @@ on:
   push:
     branches:
       - dev
+      - paths: ["noriter/**"]
+
   pull_request:
     types: [opened, synchronize, reopened]
 jobs:
