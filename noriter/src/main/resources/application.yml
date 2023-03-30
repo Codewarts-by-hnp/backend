@@ -4,8 +4,8 @@ spring:
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/noriter_test
-    username: ${DATASOURCE_USERNAME}
+    url: noriter-sonarcloud.cxb87rqx7cpa.ap-northeast-2.rds.amazonaws.com
+    username: philsohanse
     password: ${DATASOURCE_PASSWORD}
 
   jpa:
