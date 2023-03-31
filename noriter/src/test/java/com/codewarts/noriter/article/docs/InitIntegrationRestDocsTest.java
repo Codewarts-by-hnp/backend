@@ -22,16 +22,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpHeaders;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 
 @DisplayNameGeneration(ReplaceUnderscores.class)
 @ExtendWith({RestDocumentationExtension.class})
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@Profile("test")
+@ActiveProfiles("test")
 @Sql("classpath:/data.sql")
 @Import(TestConfig.class)
 public class InitIntegrationRestDocsTest {
