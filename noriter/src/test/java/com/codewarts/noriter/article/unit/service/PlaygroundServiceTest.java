@@ -28,7 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
 @SpringBootTest
-@ActiveProfiles("unit")
+@ActiveProfiles("test")
 class PlaygroundServiceTest {
 
     @Autowired

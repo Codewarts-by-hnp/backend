@@ -1,4 +1,4 @@
-name: SonarCloud Automatical Analysis Build
+name: CI - TestContainers and SonarCloud
 on:
   push:
     branches:
