@@ -1,9 +1,17 @@
 spring:
+  datasource:
+    url: jdbc:tc:mysql:8.0.23:///?rewriteBatchedStatements=true&profileSQL=true&logger=Slf4JLogger&maxQuerySizeToLog=999999
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+    username:
+    password:
+    hikari:
+      maximum-pool-size: 5
+  sql:
+    init:
+      username:
+      password:
+      mode: never
+
   jpa:
     hibernate:
       ddl-auto: create
-    defer-datasource-initialization: true
-  sql:
-    init:
-      mode: always
-      encoding: utf-8
