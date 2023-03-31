@@ -8,10 +8,9 @@ spring:
       maximum-pool-size: 5
   sql:
     init:
-      username:
-      password:
-      mode: never
+      mode: always
 
   jpa:
     hibernate:
       ddl-auto: create
+    defer-datasource-initialization: true
