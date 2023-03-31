@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - dev
+      - sonarcloud-test
   pull_request:
     types: [opened, synchronize, reopened]
 
