@@ -17,5 +17,16 @@ spring:
   config:
     import: classpath:oauth.yml
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+  server:
+    tomcat:
+      mbeanregistry:
+        enabled: true
+
 logging.level:
   org.hibernate.SQL: debug
