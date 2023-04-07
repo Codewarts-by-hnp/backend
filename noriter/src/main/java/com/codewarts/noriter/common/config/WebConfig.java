@@ -4,7 +4,7 @@ package com.codewarts.noriter.common.config;
 import com.codewarts.noriter.auth.jwt.JwtProperties;
 import com.codewarts.noriter.auth.oauth.properties.OAuthPropertiesMapper;
 import com.codewarts.noriter.common.converter.StatusTypeConverter;
-import com.codewarts.noriter.auth.AuthVerificationArgumentResolver;
+import com.codewarts.noriter.auth.resolver.AuthVerificationArgumentResolver;
 import io.netty.resolver.DefaultAddressResolverGroup;
 import java.util.List;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
