@@ -1,13 +1,4 @@
-DELETE from image;
-DELETE from hashtag;
-DELETE from wish;
-truncate table comment;
-DELETE from question;
-DELETE from gathering;
-DELETE from article;
-DELETE from members;
-
-INSERT INTO members
+INSERT INTO member
     (id, email, nickname, profile_image_url, refresh_token, resource_server, resource_server_id)
 VALUES
     (1, 'admin1@gmail.com', 'admin1', 'https://avatars.githubusercontent.com/u/111111?v=4',
