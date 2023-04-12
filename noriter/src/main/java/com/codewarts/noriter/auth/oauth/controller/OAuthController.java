@@ -8,16 +8,15 @@ import com.codewarts.noriter.auth.oauth.dto.OAuthAccessToken;
 import com.codewarts.noriter.auth.oauth.properties.OAuthPropertiesMapper;
 import com.codewarts.noriter.auth.oauth.service.OAuthService;
 import com.codewarts.noriter.auth.service.LoginService;
-import com.codewarts.noriter.member.domain.Member;
 import com.codewarts.noriter.exception.GlobalNoriterException;
 import com.codewarts.noriter.exception.type.AuthExceptionType;
+import com.codewarts.noriter.member.domain.Member;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,7 +25,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @RestController
-@Slf4j
 public class OAuthController {
 
     private final OAuthPropertiesMapper mapper;

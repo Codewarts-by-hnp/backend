@@ -12,6 +12,7 @@ import com.codewarts.noriter.article.dto.question.QuestionUpdateRequest;
 import com.codewarts.noriter.article.repository.ArticleRepository;
 import com.codewarts.noriter.article.service.QuestionService;
 import com.codewarts.noriter.auth.oauth.type.ResourceServer;
+import com.codewarts.noriter.config.DatabaseCleanup;
 import com.codewarts.noriter.exception.GlobalNoriterException;
 import com.codewarts.noriter.exception.type.ArticleExceptionType;
 import com.codewarts.noriter.exception.type.MemberExceptionType;
@@ -19,18 +20,20 @@ import com.codewarts.noriter.member.domain.Member;
 import com.codewarts.noriter.member.repository.MemberRepository;
 import java.util.List;
 import org.assertj.core.api.SoftAssertions;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
 
-@Transactional
 @SpringBootTest
 @ActiveProfiles("test")
 class QuestionServiceTest {
+
+    @Autowired
+    DatabaseCleanup databaseCleanup;
 
     @Autowired
     QuestionService questionService;
@@ -47,6 +50,12 @@ class QuestionServiceTest {
         Member member = new Member(ResourceServer.GITHUB, 1L, "admin", "admin@code.com", null,
             null);
         writerId = memberRepository.save(member).getId();
+    }
+
+    @AfterEach
+    void cleanup() {
+        databaseCleanup.afterPropertiesSet();
+        databaseCleanup.execute();
     }
 
     @DisplayName("질문게시판 글을 생성한다.")

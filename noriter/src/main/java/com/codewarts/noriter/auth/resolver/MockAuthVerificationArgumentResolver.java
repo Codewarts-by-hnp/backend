@@ -1,13 +1,13 @@
-package com.codewarts.noriter.auth;
+package com.codewarts.noriter.auth.resolver;
 
-import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.auth0.jwt.exceptions.TokenExpiredException;
+import com.codewarts.noriter.auth.LoginCheck;
 import com.codewarts.noriter.auth.jwt.JwtProvider;
 import com.codewarts.noriter.exception.GlobalNoriterException;
 import com.codewarts.noriter.exception.type.AuthExceptionType;
 import java.util.Objects;
 import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
@@ -19,7 +19,8 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 
 @Component
 @RequiredArgsConstructor
-public class AuthVerificationArgumentResolver implements HandlerMethodArgumentResolver {
+@Profile("performance")
+public class MockAuthVerificationArgumentResolver implements HandlerMethodArgumentResolver {
 
     private final JwtProvider jwtProvider;
 
@@ -32,10 +33,6 @@ public class AuthVerificationArgumentResolver implements HandlerMethodArgumentRe
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
         NativeWebRequest webRequest, WebDataBinderFactory binderFactory) {
 
-//        if (parseMethod(webRequest).equals(HttpMethod.OPTIONS.name())) {
-//            return null;
-//        }
-
         String accessToken = parseAuthorizationHeader(webRequest);
         String method = parseHttpMethod(webRequest);
         boolean hasAccessToken = StringUtils.hasText(accessToken);
@@ -46,14 +43,7 @@ public class AuthVerificationArgumentResolver implements HandlerMethodArgumentRe
         if (!hasAccessToken) {
             throw new GlobalNoriterException(AuthExceptionType.EMPTY_ACCESS_TOKEN);
         }
-        try {
-            jwtProvider.verifyToken(accessToken);
-        } catch (TokenExpiredException expiredException) {
-            throw new GlobalNoriterException(AuthExceptionType.EXPIRED_ACCESS_TOKEN);
-        } catch (JWTVerificationException verificationException) {
-            throw new GlobalNoriterException(AuthExceptionType.TAMPERED_ACCESS_TOKEN);
-        }
-        return jwtProvider.decode(accessToken);
+        return Long.parseLong(accessToken);
     }
 
     private String parseAuthorizationHeader(NativeWebRequest webRequest) {

@@ -10,10 +10,12 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.re
 import static org.springframework.restdocs.restassured3.RestAssuredRestDocumentation.documentationConfiguration;
 
 import com.codewarts.noriter.auth.jwt.JwtProvider;
+import com.codewarts.noriter.config.DatabaseCleanup;
 import com.codewarts.noriter.config.TestConfig;
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.specification.RequestSpecification;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -29,7 +31,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 
 @DisplayNameGeneration(ReplaceUnderscores.class)
-@ExtendWith({RestDocumentationExtension.class})
+@ExtendWith(RestDocumentationExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 @Sql("classpath:/data.sql")
@@ -42,11 +44,15 @@ public class InitIntegrationRestDocsTest {
     @Autowired
     protected JwtProvider jwtProvider;
 
+    @Autowired
+    protected DatabaseCleanup databaseCleanup;
+
     protected RequestSpecification documentationSpec;
 
     @BeforeEach
     void setup(RestDocumentationContextProvider restDocumentation) {
         RestAssured.port = port;
+
         documentationSpec = new RequestSpecBuilder()
             .addFilter(
                 documentationConfiguration(restDocumentation)
@@ -61,5 +67,11 @@ public class InitIntegrationRestDocsTest {
                             HttpHeaders.VARY))
             )
             .build();
+    }
+
+    @AfterEach
+    void cleanup() {
+        databaseCleanup.afterPropertiesSet();
+        databaseCleanup.execute();
     }
 }
