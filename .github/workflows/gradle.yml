@@ -104,11 +104,11 @@ jobs:
 
 
       - name: Upload to S3
-        run: aws s3 cp --region ap-northeast-2 --acl private ./noriter.zip s3://noriter-be/
+        run: aws s3 cp --region ap-northeast-2 --acl private ./noriter.zip s3://noriter-backend/
 
       - name: Start CodeDeploy
         run: |
           aws deploy create-deployment \
-          --application-name Noriter-Web-Service \
-          --deployment-group-name noriter-webservice-group \
-          --s3-location bucket=noriter-be,key=noriter.zip,bundleType=zip
+          --application-name Noriter-WAS-Deploy \
+          --deployment-group-name Noriter-WAS-Deploy-Group \
+          --s3-location bucket=noriter-backend,key=noriter.zip,bundleType=zip
