@@ -54,6 +54,7 @@ jobs:
           OAUTH_LOGIN_FORM_URL: ${{ secrets.OAUTH_LOGIN_FORM_URL }}
           JWT_ISSUER: ${{ secrets.JWT_ISSUER }}
           JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+          NORITER_PROFILE: ${{ secrets.NORITER_PROFILE }}
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
