@@ -110,6 +110,6 @@ jobs:
       - name: Start CodeDeploy
         run: |
           aws deploy create-deployment \
-          --application-name Noriter-WAS-Deploy \
-          --deployment-group-name Noriter-WAS-Deploy-Group \
+          --application-name Noriter-BE-Deploy \
+          --deployment-group-name Noriter-BE-Deploy-Group \
           --s3-location bucket=noriter-backend,key=noriter.zip,bundleType=zip
